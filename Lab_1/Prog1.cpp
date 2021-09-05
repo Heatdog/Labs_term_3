@@ -5,44 +5,52 @@
 #include "Prog1.h"
 
 namespace Prog1{
-    void start(Matrix& matrix){
-        std::cout << "How many lines do you want?" << std::endl;
-        get_n(matrix.k);
+
+    void start(Matrix& matrix){// функция для старта программы
+        std::cout << "How many lines do you want?" << std::endl;// вводим кол-во строк
+        get_n(matrix.rows);
+        std::cout << "How many columns do you want?" << std::endl; // столбцов
+        get_n(matrix.columns);
+        matrix.line = new Line<Data> [matrix.rows]; // выделяем память под строки
         input(matrix);
     }
 
-    void input(Matrix& matrix){
-        matrix.line = new Line[matrix.k];
-        int n;
-        for (int i = 0; i < matrix.k; ++i){
-            std::cout << "Enter number of columns in line " << i+1 << std::endl;
-            get_n(n);
-            matrix.line[i].n = n;
-            matrix.line[i].data = new int[n];
-            for (int j = 0; j < n; ++j){
-                get_n(matrix.line[i].data[j]);
+    void input(Matrix& matrix){ // ввод чисел в матрицу
+        int n = 0;
+        for (int i = 0; i < matrix.rows; ++i){
+            std::cout << "Line " << i+1 << std::endl;
+            for (int j = 0; j < matrix.columns; ++j){
+                get_n(n); // вводим число
+                if (n != 0){ // если оно не равно нулю, то вставляем в наш список
+                    Data ptr(n, j);
+                    matrix.line[i].push_back(ptr);
+                }
             }
         }
     }
 
-    void print(Matrix const &matrix){
-        for (int i = 0; i < matrix.k; ++i){
-            for (int j = 0; j < matrix.line[i].n; ++j){
-                std::cout << matrix.line[i].data[j];
+    void print(Matrix const &matrix){ //вывод матрицы
+        for (int i = 0; i < matrix.rows; ++i){
+            Node<Data> *ptr = matrix.line[i].get_head(); // сразу смотрим на начало списка
+            for (int j = 0; j < matrix.columns; ++j){
+                if (ptr->data.number == j){ // если номер столбца совпал с прикрепленным номером числа
+                    std::cout << ptr->data.data << " "; // выводим
+                    ptr = ptr->next;
+                } else{
+                    std::cout << 0 << " "; // иначе просто выводим 0
+                }
             }
             std::cout << std::endl;
         }
     }
 
-    void erase(Matrix &matrix){
-        for (int i = 0; i < matrix.k; ++i){
-            delete [] matrix.line[i].data;
-        }
+    void erase(Matrix &matrix){ // удаление матрицы
         delete [] matrix.line;
         matrix.line = nullptr;
     }
+/*
 
-    Matrix additional_task(Matrix const &matrix){
+    Matrix additional_task(Matrix const &matrix){ // доп задание
         Matrix new_matrix;
         new_matrix.k = matrix.k;
         new_matrix.line = new Line [matrix.k];
@@ -50,7 +58,8 @@ namespace Prog1{
         return new_matrix;
     }
 
-    void additional_add(Matrix &new_matrix, Matrix const &matrix){
+
+    void additional_add(Matrix &new_matrix, Matrix const &matrix){ // добавление чисел для доп задания
         int n = 0, j;
         for (int i = 0; i < matrix.k; ++i){
             int k = matrix.line[i].n;
@@ -70,7 +79,7 @@ namespace Prog1{
         }
     }
 
-    bool comparison(int a, int b){
+    bool comparison(int a, int b){ // функция сравнения чисел
         int sum1 = 0, sum2 = 0;
         do{
             sum2 += b % 10;
@@ -83,7 +92,7 @@ namespace Prog1{
         return sum1 == sum2;
     }
 
-    int *new_line(int const old_line[], int n){
+    int *new_line(int const old_line[], int n){ // перезапись строки
         int *line = new int [n];
         for (int i = 0; i < n; ++i){
             line[i] = old_line[i];
@@ -91,5 +100,7 @@ namespace Prog1{
         delete [] old_line;
         return line;
     }
+    */
+
 }
 
