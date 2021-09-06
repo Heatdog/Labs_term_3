@@ -30,12 +30,15 @@ namespace Prog1{
 
     void start(Matrix& matrix);
     void input(Matrix& matrix);
-    //Matrix additional_task(Matrix const &matrix);
+    Matrix additional_task(Matrix const &matrix);
     void print(Matrix const &matrix);
+    void print_not_rectangular(Matrix const &matrix);
+    void print_null(Line<Data> const &line);
+    void print_not_null(Line<Data> const &line);
     void erase(Matrix &matrix);
-    //void additional_add(Matrix &new_matrix, Matrix const &matrix);
-    //bool comparison(int a, int b);
-    //int *new_line(int const old_line[], int n);
+    void additional_add(Matrix &new_matrix, Matrix const &matrix);
+    void additional_add_not_null(Line<Data> &new_matrix, Line<Data> const &matrix);
+    bool comparison(int a, int b);
 
 }
 

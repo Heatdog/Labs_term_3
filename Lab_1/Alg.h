@@ -15,13 +15,17 @@ struct Node{
 template <class T>
 class Line{
 public:
-    explicit Line():head(nullptr), tail(nullptr){}
+    explicit Line():head(nullptr), tail(nullptr), n(0){}
     ~Line();
     void push_back(T &data);
     Node<T> *get_head() const;
+    Node<T> *get_tail() const;
+    int get_number()const;
+    void set_number(int x);
 private:
     Node<T> *head; // начало списка
     Node<T> *tail;
+    int n;
 };
 
 
@@ -35,11 +39,17 @@ void Line<T>::push_back(T &data) {
         tail->next = ptr;
         tail = ptr;
     }
+    n++;
 }
 
 template <class T>
 Node<T> *Line<T>::get_head() const {
     return head;
+}
+
+template <class T>
+Node<T> *Line<T>::get_tail() const {
+    return tail;
 }
 
 template <class T>
@@ -51,6 +61,18 @@ Line<T>::~Line<T>() {
         delete ptr_prev;
     }
 }
+
+template <class T>
+int Line<T>::get_number() const {
+    return n;
+}
+
+template<class T>
+void Line<T>::set_number(int x) {
+    n = x;
+}
+
+
 
 
 #endif //LAB_1_ALG_H

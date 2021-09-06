@@ -31,16 +31,38 @@ namespace Prog1{
 
     void print(Matrix const &matrix){ //вывод матрицы
         for (int i = 0; i < matrix.rows; ++i){
+            std::cout << "||  ";
             Node<Data> *ptr = matrix.line[i].get_head(); // сразу смотрим на начало списка
             for (int j = 0; j < matrix.columns; ++j){
-                if (ptr->data.number == j){ // если номер столбца совпал с прикрепленным номером числа
+                if (ptr != nullptr && ptr->data.number == j){ // если номер столбца совпал с прикрепленным номером числа
                     std::cout << ptr->data.data << " "; // выводим
                     ptr = ptr->next;
                 } else{
                     std::cout << 0 << " "; // иначе просто выводим 0
                 }
             }
-            std::cout << std::endl;
+            std::cout << "  ||" << std::endl;
+        }
+    }
+
+    void print_not_rectangular(Matrix const &matrix){
+        for (int i = 0; i < matrix.rows; ++i){
+            std::cout << "||  ";
+            Node<Data> *ptr = matrix.line[i].get_head();
+            ptr == nullptr ? print_null(matrix.line[i]) : print_not_null(matrix.line[i]);
+            std::cout << "  ||" << std::endl;
+        }
+    }
+
+    void print_null(Line<Data> const &line){
+        for (int i = 0; i < line.get_number(); ++i){
+            std::cout << " 0 ";
+        }
+    }
+
+    void print_not_null(Line<Data> const &line){
+        for (Node<Data> *ptr = line.get_head(); ptr != nullptr; ptr = ptr->next){
+            std::cout << " " << ptr->data.data << " ";
         }
     }
 
@@ -48,36 +70,48 @@ namespace Prog1{
         delete [] matrix.line;
         matrix.line = nullptr;
     }
-/*
+
 
     Matrix additional_task(Matrix const &matrix){ // доп задание
-        Matrix new_matrix;
-        new_matrix.k = matrix.k;
-        new_matrix.line = new Line [matrix.k];
+        Matrix new_matrix = {0, 0, nullptr};
+        new_matrix.columns = matrix.columns; // заполняем тем же кол-вом строк и столбцов
+        new_matrix.rows = matrix.rows;
+        new_matrix.line = new Line<Data> [matrix.rows]; // выделение памяти для списков
         additional_add(new_matrix, matrix);
         return new_matrix;
     }
 
 
     void additional_add(Matrix &new_matrix, Matrix const &matrix){ // добавление чисел для доп задания
-        int n = 0, j;
-        for (int i = 0; i < matrix.k; ++i){
-            int k = matrix.line[i].n;
-            new_matrix.line[i].data = new int [k];
-            for (j = 0; j < k-1; ++j){//записываем все подходящие числа
-                if (comparison(matrix.line[i].data[j], matrix.line[i].data[k-1])){
-                    new_matrix.line[i].data[n] = matrix.line[i].data[j];
-                    n++;
+        for (int i = 0; i < matrix.rows; ++i){
+            Node<Data> *ptr_x = matrix.line[i].get_tail();
+            int number = matrix.line[i].get_number();
+            if (ptr_x == nullptr){ // все элементы это 0
+                new_matrix.line[i].set_number(number);
+            } else { // есть хотя бы 1 ненулевой элемент
+                Data tail = matrix.line[i].get_tail()->data; // смотрим на конец списка
+                if (tail.number + 1 != matrix.columns) { // если последний элемент нулевой
+                    // если последний элемент 0, то в новой строке будут только нули, поэтому просто указываем кол-во нулевых элементов
+                    new_matrix.line[i].set_number(matrix.columns - number);
+                } else {
+                    additional_add_not_null(new_matrix.line[i], matrix.line[i]);
                 }
-            }
-            n++;//записываем последний элемент
-            new_matrix.line[i].data[n-1] = matrix.line[i].data[k-1];
-            new_matrix.line[i].n = n;
-            if (k / 2 >= n && k >= 5){ // если кол-во элементов сильно меньше по сравнению с длиной строки
-                new_matrix.line[i].data = new_line(new_matrix.line[i].data, n);
             }
         }
     }
+
+    void additional_add_not_null(Line<Data> &new_line, Line<Data> const &line){
+        Data tail = line.get_tail()->data;
+        int n = tail.data, j = 0;
+        for (Node<Data> *ptr = line.get_head(); ptr != nullptr; ptr = ptr->next) { // просматриваем весь список
+            Data x(ptr->data.data, j);
+            if (comparison(x.data, n)) {
+                new_line.push_back(x); // заполняем список значениями с первого списка, при этом сохраняем новые ключи
+                j++;
+            }
+        }
+    }
+
 
     bool comparison(int a, int b){ // функция сравнения чисел
         int sum1 = 0, sum2 = 0;
@@ -91,16 +125,4 @@ namespace Prog1{
         } while (a % 10 != a);
         return sum1 == sum2;
     }
-
-    int *new_line(int const old_line[], int n){ // перезапись строки
-        int *line = new int [n];
-        for (int i = 0; i < n; ++i){
-            line[i] = old_line[i];
-        }
-        delete [] old_line;
-        return line;
-    }
-    */
-
 }
-

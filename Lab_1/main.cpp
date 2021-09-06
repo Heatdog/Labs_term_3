@@ -3,15 +3,14 @@
 using namespace Prog1;
 
 int main() {
-    Matrix matrix = {0, 0, nullptr};
+    Matrix matrix = {0, 0, nullptr}, dop_matrix = {0, 0, nullptr};
     start(matrix);
     std::cout << "First matrix " << std::endl;
     print(matrix);
-    erase(matrix);
-    /*dop_matrix = Prog1::additional_task(matrix);
+    dop_matrix = additional_task(matrix);
     std::cout << "Second matrix " << std::endl;
-    Prog1::print(dop_matrix);
-    Prog1::erase(dop_matrix);*/
-    //Prog1::erase(matrix);
+    print_not_rectangular(dop_matrix);
+    erase(dop_matrix);
+    erase(matrix);
     return 0;
 }
