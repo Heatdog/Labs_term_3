@@ -8,10 +8,29 @@ namespace Prog1{
 
     void start(Matrix& matrix){// функция для старта программы
         std::cout << "How many lines do you want?" << std::endl;// вводим кол-во строк
-        get_n(matrix.rows);
+        std::string err;
+        do{//проверка на правильность ввода кол-ва столбцов и строк
+            std::cout << err << std::endl;
+            if (!get_n(matrix.rows)){ // проверка на ввод данных
+                return;
+            }
+            err = "You`re wrong! Try again";
+        } while (matrix.rows <= 0);
         std::cout << "How many columns do you want?" << std::endl; // столбцов
-        get_n(matrix.columns);
-        matrix.line = new Line<Data> [matrix.rows]; // выделяем память под строки
+        err = "";
+        do{
+            std::cout << err << std::endl;
+            if (!get_n(matrix.columns)){
+                return;
+            }
+            err = "You`re wrong! Try again";
+        } while (matrix.columns <= 0);
+        try {
+            matrix.line = new Line<Data> [matrix.rows]; // выделяем память под строки
+        }catch (std::bad_alloc const &a) { // проверка на выделение памяти
+            std::cout << "Can`t allocate memory for rows " << a.what() << std::endl;
+            return;
+        }
         input(matrix);
     }
 
@@ -20,7 +39,9 @@ namespace Prog1{
         for (int i = 0; i < matrix.rows; ++i){
             std::cout << "Line " << i+1 << std::endl;
             for (int j = 0; j < matrix.columns; ++j){
-                get_n(n); // вводим число
+                if(!get_n(n)){ // вводим число
+                    return;
+                }
                 if (n != 0){ // если оно не равно нулю, то вставляем в наш список
                     Data ptr(n, j);
                     matrix.line[i].push_back(ptr);
@@ -74,9 +95,14 @@ namespace Prog1{
 
     Matrix additional_task(Matrix const &matrix){ // доп задание
         Matrix new_matrix = {0, 0, nullptr};
+        try{
+            new_matrix.line = new Line<Data> [matrix.rows]; // выделение памяти для списков
+        }catch (std::bad_alloc const &a){
+            std::cout << "Can`t allocate memory " << a.what() << std::endl;
+            return new_matrix;
+        }
         new_matrix.columns = matrix.columns; // заполняем тем же кол-вом строк и столбцов
         new_matrix.rows = matrix.rows;
-        new_matrix.line = new Line<Data> [matrix.rows]; // выделение памяти для списков
         additional_add(new_matrix, matrix);
         return new_matrix;
     }

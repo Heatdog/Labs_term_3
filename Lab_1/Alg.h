@@ -20,7 +20,7 @@ public:
     void push_back(T &data);
     Node<T> *get_head() const;
     Node<T> *get_tail() const;
-    int get_number()const;
+    int get_number() const;
     void set_number(int x);
 private:
     Node<T> *head; // начало списка
@@ -32,10 +32,21 @@ private:
 template <class T>
 void Line<T>::push_back(T &data) {
     if (head == nullptr){
-        head = new Node<T>(data);
+        try{
+            head = new Node<T>(data);
+        }catch (std::bad_alloc const &a){
+            std::cout << "Can`t allocate memory " << a.what() << std::endl;
+            return;
+        }
         tail = head;
     } else{
-        Node<T> *ptr = new Node<T>(data);
+        Node<T> *ptr = nullptr;
+        try{
+            ptr = new Node<T>(data);
+        }catch (std::bad_alloc const &a){
+            std::cout << "Can`t allocate memory " << a.what() << std::endl;
+            return;
+        }
         tail->next = ptr;
         tail = ptr;
     }
