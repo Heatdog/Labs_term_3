@@ -31,17 +31,17 @@ namespace Prog1{
 
     void print(Matrix const &matrix){ //вывод матрицы
         for (int i = 0; i < matrix.rows; ++i){
-            std::cout << "||  ";
+            std::cout << "||   ";
             Node<Data> *ptr = matrix.line[i].get_head(); // сразу смотрим на начало списка
             for (int j = 0; j < matrix.columns; ++j){
                 if (ptr != nullptr && ptr->data.number == j){ // если номер столбца совпал с прикрепленным номером числа
-                    std::cout << ptr->data.data << " "; // выводим
+                    std::cout << ptr->data.data << "  "; // выводим
                     ptr = ptr->next;
                 } else{
-                    std::cout << 0 << " "; // иначе просто выводим 0
+                    std::cout << 0 << "  "; // иначе просто выводим 0
                 }
             }
-            std::cout << "  ||" << std::endl;
+            std::cout << " ||" << std::endl;
         }
     }
 
@@ -87,9 +87,9 @@ namespace Prog1{
             Node<Data> *ptr_x = matrix.line[i].get_tail();
             int number = matrix.line[i].get_number();
             if (ptr_x == nullptr){ // все элементы это 0
-                new_matrix.line[i].set_number(number);
+                new_matrix.line[i].set_number(matrix.columns);
             } else { // есть хотя бы 1 ненулевой элемент
-                Data tail = matrix.line[i].get_tail()->data; // смотрим на конец списка
+                Data tail = ptr_x->data; // смотрим на конец списка
                 if (tail.number + 1 != matrix.columns) { // если последний элемент нулевой
                     // если последний элемент 0, то в новой строке будут только нули, поэтому просто указываем кол-во нулевых элементов
                     new_matrix.line[i].set_number(matrix.columns - number);
@@ -118,11 +118,11 @@ namespace Prog1{
         do{
             sum2 += b % 10;
             b = b / 10;
-        } while (b % 10 != b);
+        } while (b % 10 != 0);
         do{
             sum1 += a % 10;
             a = a / 10;
-        } while (a % 10 != a);
+        } while (a % 10 != 0);
         return sum1 == sum2;
     }
 }
