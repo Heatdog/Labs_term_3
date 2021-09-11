@@ -4,7 +4,12 @@ using namespace Prog1;
 
 int main() {
     Matrix matrix = {0, 0, nullptr}, dop_matrix = {0, 0, nullptr};
-    start(matrix);
+    bool flag = start(matrix);
+    if (!flag){
+        std::cout << "Incorrect matrix" << std::endl;
+        erase(matrix); // удаление матрицы
+        return 1;
+    }
     std::cout << "First matrix " << std::endl;
     print(matrix);
     dop_matrix = additional_task(matrix);

@@ -6,22 +6,22 @@
 
 namespace Prog1{
 
-    void start(Matrix& matrix){// функция для старта программы
-        std::cout << "How many lines do you want?" << std::endl;// вводим кол-во строк
+    bool start(Matrix& matrix){// функция для старта программы (если что-то пошло не так, то вернет false)
+        std::cout << "How many lines do you want?";// вводим кол-во строк
         std::string err;
         do{//проверка на правильность ввода кол-ва столбцов и строк
             std::cout << err << std::endl;
-            if (!get_n(matrix.rows)){ // проверка на ввод данных
-                return;
+            if (!(std::cin >> matrix.rows)){ // проверка на ввод данных
+                return false;
             }
             err = "You`re wrong! Try again";
         } while (matrix.rows <= 0);
-        std::cout << "How many columns do you want?" << std::endl; // столбцов
+        std::cout << "How many columns do you want?"; // столбцов
         err = "";
         do{
             std::cout << err << std::endl;
-            if (!get_n(matrix.columns)){
-                return;
+            if (!(std::cin >> matrix.columns)){ // проверка на ввод данных
+                return false;
             }
             err = "You`re wrong! Try again";
         } while (matrix.columns <= 0);
@@ -29,18 +29,19 @@ namespace Prog1{
             matrix.line = new Line<Data> [matrix.rows]; // выделяем память под строки
         }catch (std::bad_alloc const &a) { // проверка на выделение памяти
             std::cout << "Can`t allocate memory for rows " << a.what() << std::endl;
-            return;
+            return false;
         }
-        input(matrix);
+        return input(matrix); // возвращаемый тип зависит от правильности ввода чисел в матрицу
     }
 
-    void input(Matrix& matrix){ // ввод чисел в матрицу
+    bool input(Matrix& matrix){ // ввод чисел в матрицу
         int n = 0;
         for (int i = 0; i < matrix.rows; ++i){
             std::cout << "Line " << i+1 << std::endl;
             for (int j = 0; j < matrix.columns; ++j){
-                if(!get_n(n)){ // вводим число
-                    return;
+                if (!(std::cin >> n)){ // проверка на ввод данных
+                    // удавление до этого (у меня реализован деструктор для этого)
+                    return false;
                 }
                 if (n != 0){ // если оно не равно нулю, то вставляем в наш список
                     Data ptr(n, j);
@@ -48,6 +49,7 @@ namespace Prog1{
                 }
             }
         }
+        return true;
     }
 
     void print(Matrix const &matrix){ //вывод матрицы
@@ -58,6 +60,7 @@ namespace Prog1{
                 if (ptr != nullptr && ptr->data.number == j){ // если номер столбца совпал с прикрепленным номером числа
                     std::cout << ptr->data.data << "  "; // выводим
                     ptr = ptr->next;
+                    // с оператором попробовать (j ? " " : "")
                 } else{
                     std::cout << 0 << "  "; // иначе просто выводим 0
                 }
@@ -131,7 +134,7 @@ namespace Prog1{
         int n = tail.data, j = 0;
         for (Node<Data> *ptr = line.get_head(); ptr != nullptr; ptr = ptr->next) { // просматриваем весь список
             Data x(ptr->data.data, j);
-            if (comparison(x.data, n)) {
+            if (comparison(x.data, n)) { // один раз посчитать сумму
                 new_line.push_back(x); // заполняем список значениями с первого списка, при этом сохраняем новые ключи
                 j++;
             }

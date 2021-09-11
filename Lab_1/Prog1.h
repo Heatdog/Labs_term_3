@@ -21,15 +21,8 @@ namespace Prog1{
         Line<Data> *line;
     };
 
-    template <class T>
-    bool get_n(T& n){
-        std::cout << "Enter number" << std::endl;
-        std::cin >> n;
-        return std::cin.good();
-    }
-
-    void start(Matrix& matrix);
-    void input(Matrix& matrix);
+    bool start(Matrix& matrix);
+    bool input(Matrix& matrix);
     Matrix additional_task(Matrix const &matrix);
     void print(Matrix const &matrix);
     void print_not_rectangular(Matrix const &matrix);
