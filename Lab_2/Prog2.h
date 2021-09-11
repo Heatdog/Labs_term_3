@@ -5,4 +5,5 @@
 #ifndef LAB_2_PROG2_H
 #define LAB_2_PROG2_H
 
+
 #endif //LAB_2_PROG2_H
