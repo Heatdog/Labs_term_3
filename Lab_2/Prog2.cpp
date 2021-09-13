@@ -5,6 +5,7 @@
 #include "Prog2.h"
 #include <cmath>
 #include <cstring>
+#include <cstdio>
 
 namespace Prog2 {
 
@@ -30,7 +31,7 @@ namespace Prog2 {
             return pi / 2 * (a + b);
         } else if (c == mn) {
             return mn * pi; // площадь 2 окружностей (радиус m, проверял)
-        } else if (c == 0) { // площадь лемниската Бернулли, где коэф a^2 = 2*m*m;
+        } else if (c == 0) { // площадь лемниската Бернулли, где коэффициент a^2 = 2*m*m;
             return mn;
         } else { // гиперболический тип
             b = mn - c;
@@ -75,8 +76,9 @@ namespace Prog2 {
     }
 
     double LemniscataButa::radius(int fi) const {
+        double const rad = 3.14 / 180; // для перевода в радианы, т.к. функция считает именно в радианах
         std::string type = this->type();
-        double cos_fi = cos(fi), sin_fi = sin(fi);
+        double cos_fi = cos(fi * rad), sin_fi = sin(fi * rad);
         if (type == "two circle"){
             return polar_cos*cos_fi;
         } else if (type == "lemniscata bernoulli"){
@@ -89,8 +91,20 @@ namespace Prog2 {
     char *LemniscataButa::get_in_polar() const { // r^2 = " "*(cos(fi))^2 + " "*(sin(fi))^2
         std::string type = this->type();
         char s1[] = "r^2 = *(cos(fi))^2 + *(sin(fi))^2";
-        unsigned long l1 = strlen(s1) + 1; // кол-во элементов с нуль байтом
-
+        unsigned long l = strlen(s1) + 1; // кол-во элементов с нуль байтом
+        char num[20];
+        sprintf(num, "%.2f", polar_cos);
+        l += strlen(num);
+        sprintf(num, "%.2f", polar_sin);
+        l += strlen(num);
+        char *s = new char[l];
+        sprintf(s, "r^2 = %.2f*(cos(fi))^2", polar_cos);
+        int k = strlen(s);
+        if (type == "elliptical"){
+            sprintf(s + k, " + %.2f*(sin(fi))^2", polar_sin);
+        } else if (type == "hyperbolic"){
+            sprintf(s + k, " - %.2f*(sin(fi))^2", -polar_sin);
+        }
+        return s;
     }
-
 }

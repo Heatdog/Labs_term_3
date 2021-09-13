@@ -11,8 +11,8 @@ namespace Prog2 {
 
     class LemniscataButa {
     public:
-        explicit LemniscataButa(double c = 0, double m = 0) : c(c), m(m) {
-            set_polar();
+        explicit LemniscataButa(double c = 0, double m = 0) : c(c), m(m), polar_cos(0), polar_sin(0) {
+            set_polar(); // коэффициенты могут принимать любые значения, при отрицательных поворот на пи/2
         }
 
         ~LemniscataButa() = default;
