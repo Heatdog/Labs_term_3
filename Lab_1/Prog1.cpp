@@ -131,10 +131,11 @@ namespace Prog1{
 
     void additional_add_not_null(Line<Data> &new_line, Line<Data> const &line){
         Data tail = line.get_tail()->data;
-        int n = tail.data, j = 0;
+        int j = 0;
+        int sum_ = summ(tail.data); // сумма цифр последнего элемента
         for (Node<Data> *ptr = line.get_head(); ptr != nullptr; ptr = ptr->next) { // просматриваем весь список
             Data x(ptr->data.data, j);
-            if (comparison(x.data, n)) { // один раз посчитать сумму
+            if (sum_ == summ(x.data)) { // если суммы равны
                 new_line.push_back(x); // заполняем список значениями с первого списка, при этом сохраняем новые ключи
                 j++;
             }
@@ -142,16 +143,12 @@ namespace Prog1{
     }
 
 
-    bool comparison(int a, int b){ // функция сравнения чисел
-        int sum1 = 0, sum2 = 0;
-        do{
-            sum2 += b % 10;
-            b = b / 10;
-        } while (b % 10 != 0);
+    int summ(int a){ // функция сравнения чисел
+        int sum1 = 0;
         do{
             sum1 += a % 10;
             a = a / 10;
         } while (a % 10 != 0);
-        return sum1 == sum2;
+        return sum1;
     }
 }

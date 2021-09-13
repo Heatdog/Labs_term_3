@@ -31,7 +31,7 @@ namespace Prog1{
     void erase(Matrix &matrix);
     void additional_add(Matrix &new_matrix, Matrix const &matrix);
     void additional_add_not_null(Line<Data> &new_matrix, Line<Data> const &matrix);
-    bool comparison(int a, int b);
+    int summ(int a);
 
 }
 
