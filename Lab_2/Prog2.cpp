@@ -40,24 +40,6 @@ namespace Prog2 {
         }
     }
 
-    LemniscataButa LemniscataButa::polar() const { // возвращаем еще 1 кривую, но уже с полярными коэффициентами
-        double mn = 2 * m * m;
-        LemniscataButa polar;
-        if (c > mn){ // из википедии (эллиптическая)
-            polar.c = mn + c;
-            polar.m = c - mn;
-        } else if (c == mn){ // сам выводил для 2 окружностей
-            polar.c = -2*m;
-            polar.m = 2*m;
-        } else if (c == 0){ // лемнискат Бернулли
-            polar.c = mn;
-        } else{ // гиперболическая
-            polar.c = mn + c;
-            polar.m = mn - c;
-        }
-        return polar;
-    }
-
     void LemniscataButa::set_polar() {
         double mn = 2 * m * m;
         if (c > mn){ // из википедии (эллиптическая)
@@ -76,7 +58,7 @@ namespace Prog2 {
     }
 
     double LemniscataButa::radius(int fi) const {
-        double const rad = 3.14 / 180; // для перевода в радианы, т.к. функция считает именно в радианах
+        double const rad = 3.14 / 180; // Для перевода в радианы, т.к. функция считает именно в радианах
         std::string type = this->type();
         double cos_fi = cos(fi * rad), sin_fi = sin(fi * rad);
         if (type == "two circle"){
@@ -97,7 +79,14 @@ namespace Prog2 {
         l += strlen(num);
         sprintf(num, "%.2f", polar_sin);
         l += strlen(num);
-        char *s = new char[l];
+        char *s;
+        try {
+            s = new char[l];
+        } catch (std::bad_alloc const &a) {
+            std::cout << a.what() << std::endl;
+            std::cout << "Can`t allocate memory!" << std::endl;
+            return nullptr;
+        }
         sprintf(s, "r^2 = %.2f*(cos(fi))^2", polar_cos);
         int k = strlen(s);
         if (type == "elliptical"){
@@ -106,5 +95,61 @@ namespace Prog2 {
             sprintf(s + k, " - %.2f*(sin(fi))^2", -polar_sin);
         }
         return s;
+    }
+
+    void dialog(){
+        int m, c;
+        std::cout << "Set first parameter(m)" << std::endl;
+        std::cin >> c;
+        std::cout << "Set second parameter(m)" << std::endl;
+        std::cin >> m;
+        LemniscataButa line(c, m); // вызываем конструктор с данными параметрами
+        while (true) {
+            int i = 1;
+            std::string functions[] = {"Type", "Area", "Polar coordinates", "radius", "formula", "change parameters"};
+            std::cout << "Input 0 to quit" << std::endl;
+            for (std::string const &a: functions) { // выводим на экран
+                std::cout << i << ") " << a << std::endl;
+                i++;
+            }
+            std::cout << "Input number of command" << std::endl;
+            std::cin >> i;
+            if (i == 0) {
+                break;
+            }
+            switch (i) {
+                case 1:std::cout << line.type();
+                    break;
+                case 2:std::cout << line.area();
+                    break;
+                case 3:std::cout << "Cos parameter: " << line.get_polar_cos() << "\nSin parameter: " << line.get_polar_sin();
+                    break;
+                case 4: {
+                    int fi;
+                    std::cout << "Input angle : ";
+                    std::cin >> fi;
+                    std::cout << line.radius(fi);
+                    break;
+                }
+                case 5: {
+                    char *s = line.get_in_polar();
+                    std::cout << s << std::endl;
+                    delete[] s;
+                    break;
+                }
+                case 6:{
+                    int m_, c_;
+                    std::cout << "Input new c-parameter" << std::endl;
+                    std::cin >> c_;
+                    std::cout << "Input new m-parameter" << std::endl;
+                    std::cin >> m_;
+                    line.set_c(c_), line.set_m(m_);
+                    break;
+                }
+                default:std::cout << "We can`t find this command!";
+                    break;
+            }
+            std::cout << std::endl;
+        }
     }
 }

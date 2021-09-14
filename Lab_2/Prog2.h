@@ -27,10 +27,12 @@ namespace Prog2 {
 
         void set_c(int const &c_) {
             c = c_;
+            set_polar(); // изменяем полярные координаты
         }
 
         void set_m(int const &m_) {
             m = m_;
+            set_polar();
         }
 
         double get_polar_cos() const{
@@ -43,7 +45,6 @@ namespace Prog2 {
 
         std::string type() const;
         double area() const;
-        LemniscataButa polar() const;
         double radius(int fi) const;
         char* get_in_polar() const;
     private:
@@ -53,6 +54,8 @@ namespace Prog2 {
         double polar_cos; // коэф перед косинусом в полярных координатах
         double polar_sin; // перед синусом
     };
+
+    void dialog();
 }
 
 #endif //LAB_2_PROG2_H
