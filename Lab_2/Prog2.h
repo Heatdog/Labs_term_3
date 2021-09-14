@@ -25,12 +25,12 @@ namespace Prog2 {
             return m;
         }
 
-        void set_c(int const &c_) {
+        void set_c(double const &c_) {
             c = c_;
             set_polar(); // изменяем полярные координаты
         }
 
-        void set_m(int const &m_) {
+        void set_m(double const &m_) {
             m = m_;
             set_polar();
         }

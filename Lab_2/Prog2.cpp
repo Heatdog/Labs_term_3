@@ -28,15 +28,19 @@ namespace Prog2 {
         double a = mn + c, b, a_, b_;
         if (c > mn) { // Эллиптический тип (легче сравнивать именно числа, т.к. они нужны для вычисления)
             b = c - mn;
-            return pi / 2 * (a + b);
+            return ( (pi / 2) * (a + b));
         } else if (c == mn) {
             return mn * pi; // площадь 2 окружностей (радиус m, проверял)
         } else if (c == 0) { // площадь лемниската Бернулли, где коэффициент a^2 = 2*m*m;
             return mn;
         } else { // гиперболический тип
             b = mn - c;
-            a_ = sqrt(a), b_ = sqrt(b);
-            return ((a - b) / 2 * atan(a / b) + a_ * b_ / 2);
+            if (a < 0 || b < 0){
+                return 0;
+            } else {
+                a_ = sqrt(a), b_ = sqrt(b);
+                return ((a - b) / 2 * atan(a_ / b_) + a_ * b_ / 2);
+            }
         }
     }
 
@@ -45,11 +49,12 @@ namespace Prog2 {
         if (c > mn){ // из википедии (эллиптическая)
             polar_cos = mn + c;
             polar_sin = c - mn;
-        } else if (c == mn){ // сам выводил для 2 окружностей
-            polar_cos = -2*m;
-            polar_sin = 0;
         } else if (c == 0){ // лемнискат Бернулли
             polar_cos = mn;
+            polar_sin = 0;
+        }
+        else if (c == mn){ // сам выводил для 2 окружностей
+            polar_cos = -2*m;
             polar_sin = 0;
         } else{ // гиперболическая
             polar_cos = mn + c;
@@ -59,14 +64,27 @@ namespace Prog2 {
 
     double LemniscataButa::radius(int fi) const {
         double const rad = 3.14 / 180; // Для перевода в радианы, т.к. функция считает именно в радианах
+        if (polar_cos == 0 && polar_sin == 0){
+            return 0;
+        }
         std::string type = this->type();
-        double cos_fi = cos(fi * rad), sin_fi = sin(fi * rad);
+        double cos_fi = cos(fi * rad), sin_fi = sin(fi * rad), sum;
         if (type == "two circle"){
-            return polar_cos*cos_fi;
+            return -polar_cos*cos_fi;
         } else if (type == "lemniscata bernoulli"){
-            return sqrt(polar_cos*cos(2*fi));
+            sum = polar_cos*cos(2*fi * rad);
+            if (sum <= 0){
+                return 0;
+            } else{
+                return sqrt(sum);
+            }
         } else{ // Сразу для 2 случаев, т.к. различие только в коэффициенте
-            return sqrt(polar_cos*cos_fi*cos_fi + polar_sin*sin_fi*sin_fi);
+            sum = polar_cos*cos_fi*cos_fi + polar_sin*sin_fi*sin_fi;
+            if (sum <= 0){
+                return 0;
+            } else{
+                return sqrt(sum);
+            }
         }
     }
 
@@ -87,12 +105,16 @@ namespace Prog2 {
             std::cout << "Can`t allocate memory!" << std::endl;
             return nullptr;
         }
-        sprintf(s, "r^2 = %.2f*(cos(fi))^2", polar_cos);
-        int k = strlen(s);
-        if (type == "elliptical"){
-            sprintf(s + k, " + %.2f*(sin(fi))^2", polar_sin);
-        } else if (type == "hyperbolic"){
-            sprintf(s + k, " - %.2f*(sin(fi))^2", -polar_sin);
+        if (polar_cos == 0){
+            sprintf(s, "r^2 = 0");
+        } else {
+            sprintf(s, "r^2 = %.2f*(cos(fi))^2", polar_cos);
+            int k = strlen(s);
+            if (type == "elliptical") {
+                sprintf(s + k, " + %.2f*(sin(fi))^2", polar_sin);
+            } else if (type == "hyperbolic") {
+                sprintf(s + k, " - %.2f*(sin(fi))^2", -polar_sin);
+            }
         }
         return s;
     }
