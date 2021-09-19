@@ -164,7 +164,7 @@ namespace Prog2 {
                     break;
                 }
                 case 5: {
-                    int const len = 10;
+                    int const len = 100;
                     char s1[len]; //проверить на выход за границу массива
                     try { // закидываем все операции с потенциальной ошибкой (stack unwinding)
                         line.get_in_polar(s1, len);
