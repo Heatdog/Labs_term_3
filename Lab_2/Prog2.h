@@ -9,6 +9,13 @@
 
 namespace Prog2 {
 
+    enum Type{ // перечисляемый тип для типа фигуры
+        ELLIPTICAL,
+        TWO_CIRCLE,
+        LEMNISCATA_BERNOULLI,
+        HYPERBOLIC
+    };
+
     class LemniscataButa {
     public:
         explicit LemniscataButa(double c = 0, double m = 0) : c(c), m(m), polar_cos(0), polar_sin(0) {
@@ -17,7 +24,7 @@ namespace Prog2 {
 
         ~LemniscataButa() = default;
 
-        double get_c() const {
+        double get_c() const { // часть методов реализованы в h файле, т.к. они небольшие
             return c;
         }
 
@@ -43,10 +50,10 @@ namespace Prog2 {
             return polar_sin;
         }
 
-        std::string type() const;
+        Type type() const;
         double area() const;
-        double radius(int fi) const;
-        char* get_in_polar() const;
+        double radius(double fi) const;
+        void get_in_polar(char s[], int len) const;
     private:
         void set_polar();
         double c; // Т.к. коэффициенты могут быть нецелыми, например -0.5
@@ -56,6 +63,7 @@ namespace Prog2 {
     };
 
     void dialog();
+    bool is_equal(double const &x, double const &y);
 }
 
 #endif //LAB_2_PROG2_H

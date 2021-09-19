@@ -7,31 +7,31 @@
 #include <cstring>
 #include <cstdio>
 
+
 namespace Prog2 {
 
-    std::string LemniscataButa::type() const {
+    Type LemniscataButa::type() const {  // перечислимый тип сделать (+)
         double mn = 2 * m * m;
         if (c > mn) {
-            return "elliptical"; // эллиптический тип
-        } else if (c == mn) {
-            return "two circle"; // 2 окружности
-        } else if (c == 0) {
-            return "lemniscata bernoulli"; // лемнискат Бернулли
+            return ELLIPTICAL; // эллиптический тип
+        } else if (is_equal(c, mn)) { // для операторов сравнения > и < оставим погрешность
+            return TWO_CIRCLE; // 2 окружности
+        } else if (is_equal(c, 0)) {
+            return LEMNISCATA_BERNOULLI; // лемнискат Бернулли
         } else {
-            return "hyperbolic"; // гиперболический
+            return HYPERBOLIC; // гиперболический
         }
     }
 
     double LemniscataButa::area() const {
-        double const pi = 3.14;
         double mn = 2 * m * m;
         double a = mn + c, b, a_, b_;
         if (c > mn) { // Эллиптический тип (легче сравнивать именно числа, т.к. они нужны для вычисления)
             b = c - mn;
-            return ( (pi / 2) * (a + b));
-        } else if (c == mn) {
-            return mn * pi; // площадь 2 окружностей (радиус m, проверял)
-        } else if (c == 0) { // площадь лемниската Бернулли, где коэффициент a^2 = 2*m*m;
+            return ( (M_PI / 2) * (a + b));
+        } else if (is_equal(c, mn)) {
+            return mn * M_PI; // площадь 2 окружностей (радиус m, проверял)
+        } else if (is_equal(c, 0)) { // площадь лемниската Бернулли, где коэффициент a^2 = 2*m*m;
             return mn;
         } else { // гиперболический тип
             b = mn - c;
@@ -49,11 +49,10 @@ namespace Prog2 {
         if (c > mn){ // из википедии (эллиптическая)
             polar_cos = mn + c;
             polar_sin = c - mn;
-        } else if (c == 0){ // лемнискат Бернулли
+        } else if (is_equal(c, 0)){ // лемнискат Бернулли
             polar_cos = mn;
             polar_sin = 0;
-        }
-        else if (c == mn){ // сам выводил для 2 окружностей
+        } else if (is_equal(c, mn)){ // сам выводил для 2 окружностей
             polar_cos = -2*m;
             polar_sin = 0;
         } else{ // гиперболическая
@@ -62,16 +61,16 @@ namespace Prog2 {
         }
     }
 
-    double LemniscataButa::radius(int fi) const {
-        double const rad = 3.14 / 180; // Для перевода в радианы, т.к. функция считает именно в радианах
-        if (polar_cos == 0 && polar_sin == 0){
+    double LemniscataButa::radius(double fi) const { // дабл (больше тестов на отрицательное)
+        double const rad = M_PI / 180; // Для перевода в радианы, т.к. функция считает именно в радианах
+        if (is_equal(polar_cos, 0) && is_equal(polar_sin, 0)){
             return 0;
         }
-        std::string type = this->type();
+        Type type = this->type();
         double cos_fi = cos(fi * rad), sin_fi = sin(fi * rad), sum;
-        if (type == "two circle"){
-            return -polar_cos*cos_fi;
-        } else if (type == "lemniscata bernoulli"){
+        if (type == TWO_CIRCLE){
+            return std::fabs(polar_cos*cos_fi); // возвращаем модуль
+        } else if (type == LEMNISCATA_BERNOULLI){
             sum = polar_cos*cos(2*fi * rad);
             if (sum <= 0){
                 return 0;
@@ -88,83 +87,105 @@ namespace Prog2 {
         }
     }
 
-    char *LemniscataButa::get_in_polar() const { // r^2 = " "*(cos(fi))^2 + " "*(sin(fi))^2
-        std::string type = this->type();
+    void LemniscataButa::get_in_polar(char s[], int len) const { // r^2 = " "*(cos(fi))^2 + " "*(sin(fi))^2 (передавать буффер)
+        Type type = this->type();
         char s1[] = "r^2 = *(cos(fi))^2 + *(sin(fi))^2";
         unsigned long l = strlen(s1) + 1; // кол-во элементов с нуль байтом
         char num[20];
-        sprintf(num, "%.2f", polar_cos);
+        sprintf(num, "%.2f", polar_cos); // записываем во временный буффер
         l += strlen(num);
         sprintf(num, "%.2f", polar_sin);
         l += strlen(num);
-        char *s;
-        try {
-            s = new char[l];
-        } catch (std::bad_alloc const &a) {
-            std::cout << a.what() << std::endl;
-            std::cout << "Can`t allocate memory!" << std::endl;
-            return nullptr;
+        if (l > len){
+            throw std::out_of_range("Can`t input in massive! Out of range");
         }
         if (polar_cos == 0){
             sprintf(s, "r^2 = 0");
         } else {
             sprintf(s, "r^2 = %.2f*(cos(fi))^2", polar_cos);
             int k = strlen(s);
-            if (type == "elliptical") {
+            if (type == ELLIPTICAL) {
                 sprintf(s + k, " + %.2f*(sin(fi))^2", polar_sin);
-            } else if (type == "hyperbolic") {
+            } else if (type == HYPERBOLIC) {
                 sprintf(s + k, " - %.2f*(sin(fi))^2", -polar_sin);
             }
         }
-        return s;
     }
 
     void dialog(){
-        int m, c;
-        std::cout << "Set first parameter(m)" << std::endl;
-        std::cin >> c;
+        double m, c;
+        std::string const error = "Input error!";
+        bool flag = true;
+        std::cout << "Set first parameter(c)" << std::endl;
+        if (!(std::cin >> c)){
+            std::cout << error << std::endl;
+            return;
+        }
         std::cout << "Set second parameter(m)" << std::endl;
-        std::cin >> m;
+        if (!(std::cin >> m)){
+            std::cout << error << std::endl;
+            return;
+        }
         LemniscataButa line(c, m); // вызываем конструктор с данными параметрами
-        while (true) {
-            int i = 1;
-            std::string functions[] = {"Type", "Area", "Polar coordinates", "radius", "formula", "change parameters"};
-            std::cout << "Input 0 to quit" << std::endl;
+        while (flag) {
+            int i = 0;
+            std::string functions[] = {"Quit", "Type", "Area", "Polar coordinates", "radius", "formula", "change parameters"};
+            std::string Type[] = {"Elliptical", "Two circle", "Lemniscata Bernoulli", "Hyperbolic"};
             for (std::string const &a: functions) { // выводим на экран
                 std::cout << i << ") " << a << std::endl;
                 i++;
             }
             std::cout << "Input number of command" << std::endl;
-            std::cin >> i;
-            if (i == 0) {
-                break;
+            if (!(std::cin >> i)) {
+                std::cout << error << std::endl;
+                return;
             }
             switch (i) {
-                case 1:std::cout << line.type();
+                case 0:{
+                    flag = false;
                     break;
+                }
+                case 1:{
+                    std::cout << Type[line.type()];
+                    break;
+                }
                 case 2:std::cout << line.area();
                     break;
                 case 3:std::cout << "Cos parameter: " << line.get_polar_cos() << "\nSin parameter: " << line.get_polar_sin();
                     break;
                 case 4: {
-                    int fi;
+                    double fi;
                     std::cout << "Input angle : ";
-                    std::cin >> fi;
+                    if (!(std::cin >> fi)){
+                        std::cout << error << std::endl;
+                        return;
+                    }
                     std::cout << line.radius(fi);
                     break;
                 }
                 case 5: {
-                    char *s = line.get_in_polar();
-                    std::cout << s << std::endl;
-                    delete[] s;
+                    int const len = 10;
+                    char s1[len]; //проверить на выход за границу массива
+                    try { // закидываем все операции с потенциальной ошибкой (stack unwinding)
+                        line.get_in_polar(s1, len);
+                        std::cout << s1 << std::endl;
+                    }catch (std::exception const &a){ // обрабатываем исключение на переполнение массива
+                        std::cout << a.what() << std::endl;
+                    }
                     break;
                 }
                 case 6:{
-                    int m_, c_;
+                    double m_, c_;
                     std::cout << "Input new c-parameter" << std::endl;
-                    std::cin >> c_;
+                    if (!(std::cin >> c_)){
+                        std::cout << error << std::endl;
+                        return;
+                    }
                     std::cout << "Input new m-parameter" << std::endl;
-                    std::cin >> m_;
+                    if (!(std::cin >> m_)){
+                        std::cout << error << std::endl;
+                        return;
+                    }
                     line.set_c(c_), line.set_m(m_);
                     break;
                 }
@@ -173,5 +194,9 @@ namespace Prog2 {
             }
             std::cout << std::endl;
         }
+    }
+
+    bool is_equal(double const &x, double const &y){ // Функция Дональда Кнута (работает через процентное отношение наиб. числа)
+        return fabs(x - y) <= ( (fabs(x) < fabs(y) ? fabs(x) : fabs(y)) * 0.00001);
     }
 }
