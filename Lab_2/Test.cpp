@@ -9,18 +9,18 @@ using namespace Prog2;
 
 TEST(LemniscataTest, DefaultConstructor){
     LemniscataButa line;
-    EXPECT_DOUBLE_EQ(0, line.get_c());
-    EXPECT_DOUBLE_EQ(0, line.get_m());
-    EXPECT_DOUBLE_EQ(0, line.get_polar_cos());
-    EXPECT_DOUBLE_EQ(0, line.get_polar_sin());
+    EXPECT_NEAR(0, line.get_c(), 0.0001);
+    EXPECT_NEAR(0, line.get_m(), 0.0001);
+    EXPECT_NEAR(0, line.get_polar_cos(), 0.0001);
+    EXPECT_NEAR(0, line.get_polar_sin(), 0.0001);
 }
 
 TEST(LemniscataTest, Constructor){
     LemniscataButa line(2, 3); // гиперболический (несколько тестов для 1 типа)
-    EXPECT_DOUBLE_EQ(2, line.get_c());
-    EXPECT_DOUBLE_EQ(3, line.get_m());
-    EXPECT_DOUBLE_EQ(20 ,line.get_polar_cos());
-    EXPECT_DOUBLE_EQ(-16 ,line.get_polar_sin());
+    EXPECT_NEAR(2, line.get_c(), 0.0001);
+    EXPECT_NEAR(3, line.get_m(), 0.0001);
+    EXPECT_NEAR(20 ,line.get_polar_cos(), 0.0001);
+    EXPECT_NEAR(-16 ,line.get_polar_sin(), 0.0001);
 
     LemniscataButa line_1_1(-2.8, 2.9);
     EXPECT_NEAR(-2.7999, line_1_1.get_c(), 0.0001);
@@ -29,10 +29,10 @@ TEST(LemniscataTest, Constructor){
     EXPECT_NEAR(-19.62,line_1_1.get_polar_sin(), 0.0001);
 
     LemniscataButa line_1(10, 1); // эллиптический
-    EXPECT_DOUBLE_EQ(10, line_1.get_c());
-    EXPECT_DOUBLE_EQ(1, line_1.get_m());
-    EXPECT_DOUBLE_EQ(12 ,line_1.get_polar_cos());
-    EXPECT_DOUBLE_EQ(8 ,line_1.get_polar_sin());
+    EXPECT_NEAR(10, line_1.get_c(), 0.0001);
+    EXPECT_NEAR(1, line_1.get_m(), 0.0001);
+    EXPECT_NEAR(12 ,line_1.get_polar_cos(), 0.0001);
+    EXPECT_NEAR(8 ,line_1.get_polar_sin(), 0.0001);
 
     LemniscataButa line_2_1(101.28, -4.34);
     EXPECT_NEAR(101.28, line_2_1.get_c(), 0.0001);
@@ -41,10 +41,10 @@ TEST(LemniscataTest, Constructor){
     EXPECT_NEAR(63.608800,line_2_1.get_polar_sin(), 0.0001);
 
     LemniscataButa line_2(2, 1); // 2 окружности
-    EXPECT_DOUBLE_EQ(2, line_2.get_c());
-    EXPECT_DOUBLE_EQ(1, line_2.get_m());
-    EXPECT_DOUBLE_EQ(-2 ,line_2.get_polar_cos());
-    EXPECT_DOUBLE_EQ(0 ,line_2.get_polar_sin());
+    EXPECT_NEAR(2, line_2.get_c(), 0.0001);
+    EXPECT_NEAR(1, line_2.get_m(), 0.0001);
+    EXPECT_NEAR(-2 ,line_2.get_polar_cos(), 0.0001);
+    EXPECT_NEAR(0 ,line_2.get_polar_sin(), 0.0001);
 
     LemniscataButa line_3_1(8, 2);
     EXPECT_NEAR(8, line_3_1.get_c(), 0.0001);
@@ -53,10 +53,10 @@ TEST(LemniscataTest, Constructor){
     EXPECT_NEAR(0 ,line_3_1.get_polar_sin(), 0.0001);
 
     LemniscataButa line_3(0, 1); // лемнискат Бернулли
-    EXPECT_DOUBLE_EQ(0, line_3.get_c());
-    EXPECT_DOUBLE_EQ(1, line_3.get_m());
-    EXPECT_DOUBLE_EQ(2 ,line_3.get_polar_cos());
-    EXPECT_DOUBLE_EQ(0 ,line_3.get_polar_sin());
+    EXPECT_NEAR(0, line_3.get_c(), 0.0001);
+    EXPECT_NEAR(1, line_3.get_m(), 0.0001);
+    EXPECT_NEAR(2 ,line_3.get_polar_cos(), 0.0001);
+    EXPECT_NEAR(0 ,line_3.get_polar_sin(), 0.0001);
 
     LemniscataButa line_4_1(0, -5.84);
     EXPECT_NEAR(0, line_4_1.get_c(), 0.0001);
@@ -73,16 +73,16 @@ TEST(LemniscataTest, Constructor){
 
 TEST(LemniscataTest, SetGet){
     LemniscataButa line(2, 3);
-    EXPECT_DOUBLE_EQ(line.get_c(), 2);
-    EXPECT_DOUBLE_EQ(line.get_m(), 3);
+    EXPECT_NEAR(line.get_c(), 2, 0.0001);
+    EXPECT_NEAR(line.get_m(), 3, 0.0001);
 
     line.set_c(5), line.set_m(-0.6);
-    EXPECT_DOUBLE_EQ(line.get_c(), 5);
-    EXPECT_DOUBLE_EQ(line.get_m(), -0.6);
+    EXPECT_NEAR(line.get_c(), 5, 0.0001);
+    EXPECT_NEAR(line.get_m(), -0.6, 0.0001);
 
     line.set_c(0);
-    EXPECT_DOUBLE_EQ(line.get_c(), 0);
-    EXPECT_DOUBLE_EQ(line.get_m(), -0.6);
+    EXPECT_NEAR(line.get_c(), 0, 0.0001);
+    EXPECT_NEAR(line.get_m(), -0.6, 0.0001);
 
     line.set_c(-48.2678), line.set_m(-235671.999);
     EXPECT_NEAR(line.get_c(), -48.2678, 0.0001);
@@ -108,7 +108,7 @@ TEST(LemniscataTest, Type){ // сравнение через нумерация 
 
 TEST(LemniscataTest, Area){
     LemniscataButa line(2, 3);
-    EXPECT_DOUBLE_EQ(line.area(), 10.626409251135019);
+    EXPECT_NEAR(line.area(), 10.626409251135019, 0.0001);
 
     LemniscataButa line_1_1(-2.8, 2.9);
     EXPECT_NEAR(line_1_1.area(), 6.327684, 0.0001);
@@ -120,54 +120,54 @@ TEST(LemniscataTest, Area){
     EXPECT_NEAR(line_2_1.area(), 318.1805, 0.0001);
 
     LemniscataButa line_2(2, 1);
-    EXPECT_DOUBLE_EQ(line_2.area(), 6.2831853071795862);
+    EXPECT_NEAR(line_2.area(), 6.2831853071795862, 0.0001);
 
     LemniscataButa line_3_1(8, 2);
     EXPECT_NEAR(line_3_1.area(), 25.13274, 0.0001);
 
     LemniscataButa line_3(0, 1);
-    EXPECT_DOUBLE_EQ(line_3.area(), 2);
+    EXPECT_NEAR(line_3.area(), 2, 0.0001);
 
     LemniscataButa line_4_1(0, -5.84);
     EXPECT_NEAR(line_4_1.area(), 68.21119, 0.0001);
 
     LemniscataButa line_4(0, 0);
-    EXPECT_DOUBLE_EQ(line_4.area(), 0);
+    EXPECT_NEAR(line_4.area(), 0, 0.0001);
 }
 
 TEST(LemniscataTest, Radius){
     LemniscataButa line(2, 3);
-    EXPECT_DOUBLE_EQ(line.radius(30), 3.3166247903554003);
+    EXPECT_NEAR(line.radius(30), 3.3166247903554003, 0.0001);
 
     LemniscataButa line_2(2, 3);
-    EXPECT_DOUBLE_EQ(line_2.radius(60), 0);
+    EXPECT_NEAR(line_2.radius(60), 0, 0.0001);
 
     LemniscataButa line_1(10, 1);
-    EXPECT_DOUBLE_EQ(line_1.radius(60), 3);
+    EXPECT_NEAR(line_1.radius(60), 3, 0.0001);
 
     LemniscataButa line_3(2, 1);
-    EXPECT_DOUBLE_EQ(line_3.radius(60), 1);
+    EXPECT_NEAR(line_3.radius(60), 1, 0.0001);
 
     LemniscataButa line_4(0, 1);
-    EXPECT_DOUBLE_EQ(line_4.radius(30), 1);
+    EXPECT_NEAR(line_4.radius(30), 1, 0.0001);
 
     LemniscataButa line_5(0, 0);
-    EXPECT_DOUBLE_EQ(line_5.radius(60), 0);
+    EXPECT_NEAR(line_5.radius(60), 0, 0.0001);
 
     LemniscataButa line_6(-5.2, -8.4);
-    EXPECT_DOUBLE_EQ(line_6.radius(-25.8), 9.0805492539204469);
+    EXPECT_NEAR(line_6.radius(-25.8), 9.0805492539204469, 0.0001);
 
     LemniscataButa line_1_1(-2.8, 2.9);
     EXPECT_NEAR(line_1_1.radius(-128.9), 0, 0.0001);
 
     LemniscataButa line_2_1(101.28, -4.34);
-    EXPECT_NEAR(line_1_1.radius(0), 3.74432, 0.0001);
+    EXPECT_NEAR(line_2_1.radius(0), 11.787756, 0.0001);
 
     LemniscataButa line_3_1(8, 2);
     EXPECT_NEAR(line_3_1.radius(391), 3.4286, 0.0001);
 
     LemniscataButa line_4_1(0, -5.84);
-    EXPECT_NEAR(line_2.radius(48.184), 0.059581, 0.0001);
+    EXPECT_NEAR(line_4_1.radius(48.184), 0, 0.0001);
 
 
 }
@@ -195,6 +195,23 @@ TEST(LemniscataTest, String){ // тестирование строк
     LemniscataButa line_4(0, 0);
     line_4.get_in_polar(s, len);
     EXPECT_STREQ(s, "r^2 = 0");
+
+    LemniscataButa line_1_1(-2.8, 2.9);
+    line_1_1.get_in_polar(s, len);
+    EXPECT_STREQ(s, "r^2 = 14.02*(cos(fi))^2 - 19.62*(sin(fi))^2");
+
+    LemniscataButa line_2_1(101.28, -4.34);
+    line_2_1.get_in_polar(s, len);
+    EXPECT_STREQ(s, "r^2 = 138.95*(cos(fi))^2 + 63.61*(sin(fi))^2");
+
+    LemniscataButa line_3_1(8, 2);
+    line_3_1.get_in_polar(s, len);
+    EXPECT_STREQ(s, "r^2 = -4.00*(cos(fi))^2");
+
+    LemniscataButa line_4_1(0, -5.84);
+    line_4_1.get_in_polar(s, len);
+    EXPECT_STREQ(s, "r^2 = 68.21*(cos(fi))^2");
+
 }
 
 TEST(LemniscataTest, Exception){
