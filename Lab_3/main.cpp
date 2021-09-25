@@ -3,8 +3,11 @@
 using namespace Prog3;
 
 int main() {
-    int k = 19;
-    Number i(99999999999);
+    Number i(10), f(6);
+    Number k = sum(i, f);
     i.output();
+    f.output();
+    k.output();
+
     return 0;
 }
