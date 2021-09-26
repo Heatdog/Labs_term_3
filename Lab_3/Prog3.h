@@ -11,29 +11,28 @@ namespace Prog3 {
 
     class Number {
     public:
-        Number():len(0){};
+        Number();
         explicit Number(long a);
         explicit Number(std::string const &a);
         void output() const; // вывод
         Number dop_code() const; // дополнительный код
         char sign() const; // знак
+        void get_data(char s[], int l) const;
+        Number& operator=(Number const &a); // оператор присваивания (в основном для суммы)
         Number& prefix();
         Number postfix_dec();
-        Number& operator=(Number const &a); // оператор присваивания (в основном для суммы)
 
         friend Number sum(Number &a, Number &b); // сумма 2 чисел
     private:
-        int const max = 20; // максимальная длина
-        int len; // длина массива битов
-        char data[20]; // храню число в обратном порядке (включая знак, находящейся по индексу len)
+        static int const len; // последний элемент (для знака)
+        char data[20]; // храню число в обратном порядке (включая знак, находящейся в конце массива)
     };
 
-    void to_bit(long &a, char* data, int &len, int const &max); // представление в двоичном виде
-    void copy(char const a[], char b[], int finish); // копирование чисел из массива 1 в 2
-    void cope_rev(char const a[], char b[], int len); // копирование в дополнительном коде
-    bool bit_sum(char const a[], char const b[], char s[], int len_max, int len_min, bool comp); // битовая сумма
-    bool copy_sum(char const a[], char s[], int start, int finish, bool flag); // копирование с учетом флага
-    bool compar(char const a[], char const b[], int len); // сравнение 2 чисел
+    void to_bit(long &a, char* data, int const &len); // представление в двоичном виде
+    void input_zero(char a[], int start, int end);
+    void copy(char const a[], char b[], int const &finish); // копирование чисел из массива 1 в 2
+    void cope_rev(char const a[], char b[], int const &len); // копирование в дополнительном коде
+    void bit_sum(char const a[], char const b[], char s[], int  const &len); // битовая сумма
 }
 
 
