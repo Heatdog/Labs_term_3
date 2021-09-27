@@ -18,14 +18,15 @@ namespace Prog3 {
         Number dop_code() const; // дополнительный код
         char sign() const; // знак
         void get_data(char s[], int l) const;
-        Number& operator=(Number const &a); // оператор присваивания (в основном для суммы)
+        Number& operator=(Number const &a); // оператор присваивания
+        Number(Number const &a); // конструктор копирования
         Number& prefix();
         Number postfix_dec();
 
         friend Number sum(Number &a, Number &b); // сумма 2 чисел
     private:
         static int const len; // последний элемент (для знака)
-        char data[20]; // храню число в обратном порядке (включая знак, находящейся в конце массива)
+        char data[10]; // храню число в обратном порядке (включая знак, находящейся в конце массива)
     };
 
     void to_bit(long &a, char* data, int const &len); // представление в двоичном виде

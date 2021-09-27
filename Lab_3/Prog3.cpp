@@ -6,7 +6,7 @@
 
 namespace Prog3{
 
-    int const Number::len = 19;
+    int const Number::len = 9;
 
     Number::Number() {
         input_zero(data, 0, len);
@@ -18,7 +18,7 @@ namespace Prog3{
         try {
             to_bit(a, data, len);
         }catch (std::exception const &a){ // обработка ошибки на слишком большое число
-            std::cout << a.what() << std::endl;
+            throw std::out_of_range("This number too big!");
         }
     }
 
@@ -28,11 +28,10 @@ namespace Prog3{
             try {
                 to_bit(ptr, data, len);
             }catch (std::exception const &a){ // обработка ошибки на слишком большое число
-                std::cout << a.what() << std::endl;
+                throw std::out_of_range("This number too big!");
             }
         }catch (std::invalid_argument const &k){
-            std::cout << k.what() << std::endl;
-            std::cout << "Can`t find a number!" << std::endl;
+            throw std::invalid_argument("Can`t find a number!");
         }
     }
 
@@ -59,6 +58,7 @@ namespace Prog3{
             a = a / 2;
             i++;
         } while (a != 0);
+        input_zero(data, i, len); // заполняем мусор нулями
         data[len] = sign;
     }
 
@@ -108,12 +108,11 @@ namespace Prog3{
 
     Number sum(Number &a, Number &b){
         Number result;
-        Number a_dop, b_dop;
-        a_dop = a.dop_code(), b_dop = b.dop_code(); // новые числа для дополнительного кода
+        Number a_dop(a.dop_code()), b_dop(b.dop_code()); // новые числа для дополнительного кода
         try {
             bit_sum(a_dop.data, b_dop.data, result.data, Number::len); // суммируем биты + смотрим на переполнение
         } catch (std::exception const &err){
-            std::cout << err.what() << std::endl;
+            throw std::out_of_range("Переполнение разрядной сетки!");
         }
         if (result.sign() == '1'){ // Если число отрицательное, то переводим в прямой код, т.к. мы храним числа в прямом коде
             cope_rev(result.data, result.data, Number::len);
@@ -174,6 +173,10 @@ namespace Prog3{
         for (int i = 0; i <= len; i++){
             s[i] = data[i];
         }
+    }
+
+    Number::Number(Number const &a){
+        copy(a.data, data, len);
     }
 
     /*
