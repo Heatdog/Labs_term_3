@@ -17,7 +17,7 @@ namespace Prog3{
     Number::Number(long a) {
         try {
             to_bit(a, data, len);
-        }catch (std::exception const &a){ // обработка ошибки на слишком большое число
+        }catch (std::out_of_range const &a){ // обработка ошибки на слишком большое число
             throw std::out_of_range("This number too big!");
         }
     }
@@ -27,7 +27,7 @@ namespace Prog3{
             long ptr = std::stol(a); // преобразуем в long (проверка на получения числа)
             try {
                 to_bit(ptr, data, len);
-            }catch (std::exception const &a){ // обработка ошибки на слишком большое число
+            }catch (std::out_of_range const &a){ // обработка ошибки на слишком большое число
                 throw std::out_of_range("This number too big!");
             }
         }catch (std::invalid_argument const &k){
