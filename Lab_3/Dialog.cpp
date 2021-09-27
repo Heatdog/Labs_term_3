@@ -16,7 +16,14 @@ void dialog(){
         std::cout << error << std::endl;
         return;
     }
-    Number number(a);
+    Number number;
+    try {
+        Number number_test(a);
+        number = number_test;
+    } catch (std::exception const &err1) { // может быть несколько ошибок, но они уже обработаны
+        std::cout << err1.what() << std::endl;
+        return;
+    }
     while (flag) {
         int i = 0;
         std::string functions[] = {"Выход", "Вывод числа", "Дополнительный код", "Суммирование", "Знак"};
@@ -54,8 +61,12 @@ void dialog(){
                     return;
                 }
                 Number number1(s1), number2(s2);
-                number = sum(number1, number2);
-                number.output();
+                try {
+                    number = sum(number1, number2);
+                    number.output();
+                }catch (std::out_of_range const &err2){
+                    std::cout << err2.what() << std::endl;
+                }
                 break;
             }
             case 4: {
