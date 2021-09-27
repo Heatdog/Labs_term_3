@@ -18,7 +18,7 @@ namespace Prog3{
         try {
             to_bit(a, data, len);
         }catch (std::out_of_range const &a){ // обработка ошибки на слишком большое число
-            throw std::out_of_range("This number too big!");
+            throw a;
         }
     }
 
@@ -28,10 +28,10 @@ namespace Prog3{
             try {
                 to_bit(ptr, data, len);
             }catch (std::out_of_range const &a){ // обработка ошибки на слишком большое число
-                throw std::out_of_range("This number too big!");
+                throw a;
             }
         }catch (std::invalid_argument const &k){
-            throw std::invalid_argument("Can`t find a number!");
+            throw k;
         }
     }
 
@@ -111,8 +111,8 @@ namespace Prog3{
         Number a_dop(a.dop_code()), b_dop(b.dop_code()); // новые числа для дополнительного кода
         try {
             bit_sum(a_dop.data, b_dop.data, result.data, Number::len); // суммируем биты + смотрим на переполнение
-        } catch (std::exception const &err){
-            throw std::out_of_range("Переполнение разрядной сетки!");
+        } catch (std::out_of_range const &err){
+            throw err;
         }
         if (result.sign() == '1'){ // Если число отрицательное, то переводим в прямой код, т.к. мы храним числа в прямом коде
             cope_rev(result.data, result.data, Number::len);
