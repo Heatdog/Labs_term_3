@@ -45,6 +45,15 @@ TEST(NumberTest, Constructor){ // числа хранятся в обратно�
     Number number_s_3("-27");
     number_s_3.get_data(s, 9);
     EXPECT_STREQ(s, "1101100001");
+
+    Number number1(511);
+    number1.get_data(s, 9);
+    EXPECT_STREQ(s, "1111111110");
+
+    Number number2(-511);
+    number2.get_data(s, 9);
+    EXPECT_STREQ(s, "1111111111");
+
 }
 
 TEST(NumberTest, DopCode){
@@ -73,6 +82,14 @@ TEST(NumberTest, DopCode){
     Number number6("48");
     number6.dop_code().get_data(s, 9);
     EXPECT_STREQ(s, "0000110000");
+
+    Number number7("511");
+    number7.dop_code().get_data(s, 9);
+    EXPECT_STREQ(s, "1111111110");
+
+    Number number8("-511");
+    number8.dop_code().get_data(s, 9);
+    EXPECT_STREQ(s, "1000000001");
 }
 
 TEST(NumberTest, Sum){
@@ -110,9 +127,13 @@ TEST(NumberTest, Sum){
     sum(number8_1, number8_2).get_data(s, 9);
     EXPECT_STREQ(s, "0101100001");
 
-    Number number9_1(-0), number9_2(0);
+    Number number9_1(-0), number9_2(1);
     sum(number9_1, number9_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_STREQ(s, "1000000000");
+
+    Number number10_1(11), number10_2(-10);
+    sum(number10_1, number10_2).get_data(s, 9);
+    EXPECT_STREQ(s, "1000000000");
 }
 
 TEST(NumberTest, Prefix){
@@ -180,12 +201,14 @@ TEST(NumberTest, Sign){
 }
 
 TEST(NumberTest, Exception){
-    EXPECT_THROW(Number number1(99999999999999999), std::out_of_range);
-    EXPECT_THROW(Number number2("99999999999999999"), std::out_of_range);
+    EXPECT_THROW(Number number1(1235), std::out_of_range);
+    EXPECT_THROW(Number number2("99999"), std::out_of_range);
     EXPECT_THROW(Number number3("abc"), std::invalid_argument);
-    Number a(400), b(200);
+    Number a(418), b(200);
     EXPECT_THROW(sum(a, b), std::out_of_range);
-
-
+    Number f(511);
+    EXPECT_THROW(f.prefix(), std::out_of_range);
+    Number h(-511);
+    EXPECT_THROW(h.postfix_dec(), std::invalid_argument);
 }
 

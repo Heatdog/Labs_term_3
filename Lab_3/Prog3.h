@@ -11,17 +11,20 @@ namespace Prog3 {
 
     class Number {
     public:
-        Number();
+        // безопасные
+        Number() noexcept;
+        void output() const noexcept; // вывод
+        char sign() const noexcept; // знак
+        Number& operator=(Number const &a) noexcept; // оператор присваивания
+        Number(Number const &a) noexcept; // конструктор копирования
+
+        // выбрасывают исключения
         explicit Number(long a);
-        explicit Number(std::string const &a);
-        void output() const; // вывод
         Number dop_code() const; // дополнительный код
-        char sign() const; // знак
-        void get_data(char s[], int l) const;
-        Number& operator=(Number const &a); // оператор присваивания
-        Number(Number const &a); // конструктор копирования
+        explicit Number(std::string const &a);
         Number& prefix();
         Number postfix_dec();
+        void get_data(char s[], int l) const;
 
         friend Number sum(Number &a, Number &b); // сумма 2 чисел
     private:
@@ -34,6 +37,7 @@ namespace Prog3 {
     void copy(char const a[], char b[], int const &finish); // копирование чисел из массива 1 в 2
     void cope_rev(char const a[], char b[], int const &len); // копирование в дополнительном коде
     void bit_sum(char const a[], char const b[], char s[], int  const &len); // битовая сумма
+    void one_bit_sum(char const &a, char const &b, char &s, bool &flag);
 }
 
 
