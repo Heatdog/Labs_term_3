@@ -26,7 +26,7 @@ namespace Prog3 {
         Number postfix_dec();
         void get_data(char s[], int l) const;
 
-        friend Number sum(Number &a, Number &b); // сумма 2 чисел
+        friend Number sum(Number const &a, Number const &b); // сумма 2 чисел
     private:
         static int const len; // последний элемент (для знака)
         char data[10]; // храню число в обратном порядке (включая знак, находящейся в конце массива)

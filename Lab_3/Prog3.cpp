@@ -100,7 +100,7 @@ namespace Prog3{
     }
 
 
-    Number sum(Number &a, Number &b){
+    Number sum(Number const &a, Number const &b){
         Number result;
         Number a_dop(a.dop_code()), b_dop(b.dop_code()); // новые числа для дополнительного кода
         bit_sum(a_dop.data, b_dop.data, result.data, Number::len); // суммируем биты + смотрим на переполнение
