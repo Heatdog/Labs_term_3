@@ -32,12 +32,15 @@ namespace Prog3 {
         char data[10]; // храню число в обратном порядке (включая знак, находящейся в конце массива)
     };
 
+    // безопасные
+    void input_zero(char a[], int start, int end) noexcept;
+    void copy(char const a[], char b[], int const &finish) noexcept; // копирование чисел из массива 1 в 2
+    void one_bit_sum(char const &a, char const &b, char &s, bool &flag) noexcept;
+
+    // с исключением
     void to_bit(long &a, char* data, int const &len); // представление в двоичном виде
-    void input_zero(char a[], int start, int end);
-    void copy(char const a[], char b[], int const &finish); // копирование чисел из массива 1 в 2
     void cope_rev(char const a[], char b[], int const &len); // копирование в дополнительном коде
     void bit_sum(char const a[], char const b[], char s[], int  const &len); // битовая сумма
-    void one_bit_sum(char const &a, char const &b, char &s, bool &flag);
 }
 
 

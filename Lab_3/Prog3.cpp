@@ -50,7 +50,7 @@ namespace Prog3{
         data[len] = sign;
     }
 
-    void input_zero(char a[], int start, int end){
+    void input_zero(char a[], int start, int end) noexcept{
         for (int i = start; i < end; i++){
             a[i] = '0';
         }
@@ -66,7 +66,7 @@ namespace Prog3{
         return data[len];
     }
 
-    void copy(char const a[], char b[], int const &finish){ // обычное копирование чисел (исключение не может быть вызвано, т.к.длины равны)
+    void copy(char const a[], char b[], int const &finish) noexcept{ // обычное копирование чисел (исключение не может быть вызвано, т.к.длины равны)
         for (int i = 0; i <= finish; i++){ // тем более исключение вызвалось на этапе создания экземпляра
             b[i] = a[i];
         }
@@ -169,7 +169,7 @@ namespace Prog3{
    }
      */
 
-    void one_bit_sum(char const &a, char const &b, char &s, bool &flag){
+    void one_bit_sum(char const &a, char const &b, char &s, bool &flag) noexcept{
         if (a == '0' && b == '0') {
             flag ? s = '1' : s = '0';
             flag = false;
