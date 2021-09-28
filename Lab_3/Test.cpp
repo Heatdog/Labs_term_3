@@ -210,5 +210,8 @@ TEST(NumberTest, Exception){
     EXPECT_THROW(f.prefix(), std::out_of_range);
     Number h(-511);
     EXPECT_THROW(h.postfix_dec(), std::invalid_argument);
+
+    char s[5];
+    EXPECT_THROW(a.get_data(s, 4), std::out_of_range);
 }
 
