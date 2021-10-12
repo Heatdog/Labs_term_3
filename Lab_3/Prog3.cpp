@@ -209,12 +209,17 @@ namespace Static{
     std::istream &input(std::istream &is, Number &num) noexcept {
         std::string result;
         is >> result;
-        try {
-            num = Number(result);
-        } catch (std::invalid_argument const &err1) {
-            is.setstate(std::ios::failbit);
-        } catch (std::out_of_range const &err2) {
-            is.setstate(std::ios::failbit);
+        if (is.fail()) {
+            is.clear();
+            is.ignore(32767, '\n');
+        } else {
+            try {
+                num = Number(result);
+            } catch (std::invalid_argument const &err1) {
+                is.setstate(std::ios::failbit);
+            } catch (std::out_of_range const &err2) {
+                is.setstate(std::ios::failbit);
+            }
         }
         return is;
     }
@@ -227,12 +232,17 @@ namespace Static{
     std::istream &operator>>(std::istream &is, Number &num) noexcept{
         std::string result;
         is >> result;
-        try {
-            num = Number(result);
-        } catch (std::invalid_argument const &err1) {
-            is.setstate(std::ios::failbit);
-        } catch (std::out_of_range const &err2) {
-            is.setstate(std::ios::failbit);
+        if (is.fail()){
+            is.clear();
+            is.ignore(32767,'\n');
+        } else {
+            try {
+                num = Number(result);
+            } catch (std::invalid_argument const &err1) {
+                is.setstate(std::ios::failbit);
+            } catch (std::out_of_range const &err2) {
+                is.setstate(std::ios::failbit);
+            }
         }
         return is;
     }
@@ -267,5 +277,20 @@ namespace Static{
         *this += a;
         return *this;
     }
+
+    Number::Number(Number && a) noexcept{
+        copy(a.data, data, a.len, Number::max);
+        len = a.len;
+        a.len = 0;
+    }
+
+    Number& Number::operator=(Number && a) noexcept{
+        copy(a.data, data, a.len, Number::max);
+        len = a.len;
+        a.len = 0;
+        return *this;
+    }
+
+
 }
 

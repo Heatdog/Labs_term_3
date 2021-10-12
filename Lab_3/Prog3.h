@@ -16,7 +16,9 @@ namespace Static {
         void output() const noexcept; // вывод в консоль
         char sign() const noexcept; // знак
         void output(std::ostream &os) const noexcept; // вывод в поток
-        Number(Number const &a) noexcept; // конструктор копирования (move семантика)
+        Number(Number const &a) noexcept; // конструктор копирования
+        Number(Number && a) noexcept; // перемещающийся конструктор
+
 
         // выбрасывают исключения
         Number(long a);
@@ -31,6 +33,7 @@ namespace Static {
         Number operator--(int);
         Number& operator=(Number const &a) noexcept; // оператор присваивания
         Number& operator+=(Number const &a);
+        Number& operator=(Number && a) noexcept; // перемещающийся оператор присваивания
 
 
         friend Number sum(Number const &a, Number const &b); // сумма 2 чисел

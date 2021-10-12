@@ -299,21 +299,32 @@ TEST(NumberTest, OverloadPostfix){
 }
 
 TEST(NumberTest, OverloadIsstream){
-    Number num; // совпадение
+    Number num;
     std::string result;
     std::istringstream is("112");
     std::ostringstream os;
     is >> num;
     EXPECT_EQ(num.output(result), "01110000");
     os << num;
-    std::string s = os.str();
-    EXPECT_EQ("01110000\n", s);
+    EXPECT_EQ("01110000\n", os.str());
 
-    Number num1(112); // несовпадение
-    std::istringstream is1("1010111");
+    Number num1(112);
+    std::istringstream is1("abc");
     is1 >> num1;
-    EXPECT_TRUE(is1.fail()); // выпадает ошибка
-    EXPECT_EQ("01110000", num1.output(result));
+    EXPECT_TRUE(is1.fail());
+
+    Number num2;
+    std::istringstream is2("-432");
+    std::ostringstream os2;
+    is2 >> num2;
+    EXPECT_EQ(num2.output(result), "1110110000");
+    os2 << num2;
+    EXPECT_EQ("1110110000\n", os2.str());
+
+    Number num3;
+    std::istringstream is3("999999999999999999999");
+    is3 >> num3;
+    EXPECT_TRUE(is3.fail());
 }
 
 TEST(NumberTest, Exception){
