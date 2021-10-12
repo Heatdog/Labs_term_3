@@ -65,6 +65,8 @@ namespace Dynamic{
             for (int i = len, j = 1; i > 0; i--, j++) {
                 str.at(j) = data[i];
             }
+        } else{
+            str.clear();
         }
         return str;
     }
