@@ -11,47 +11,42 @@ namespace Dynamic{
 
     class Number {
     public:
-        // безопасные
         Number() noexcept;
         char sign() const noexcept; // знак
-        void output(std::ostream &os) const noexcept; // вывод в поток
-        Number(Number const &a) noexcept; // конструктор копирования (move семантика)
-        ~Number();
-
-        // выбрасывают исключения
+        Number(Number const &a) noexcept; // конструктор копирования
+        ~Number() noexcept;
         Number(long a);
-        Number dop_code() const; // дополнительный код (передавать по ссылке куда мы хотим записать)
+        Number dop_code() const noexcept; // дополнительный код (передавать по ссылке куда мы хотим записать)
         Number(std::string const &a);
         std::string &output(std::string &str) const; // вывод в переменную string
+        Number(Number && a) noexcept; // перемещающийся конструктор
 
         // перегрузка
-        Number& operator++();
-        Number operator--(int);
+        Number& operator++() noexcept;
+        Number operator--(int) noexcept;
         Number& operator=(Number const &a) noexcept; // оператор присваивания
-        Number& operator+=(Number const &a);
+        Number& operator+=(Number const &a) noexcept;
+        Number& operator=(Number && a) noexcept; // перемещающийся оператор присваивания
 
-
+        friend std::ostream &operator<<(std::ostream &os, Number const &num) noexcept;
     private:
         int len;
         char *data;
     };
 
-    // безопасные
+
     std::istream &input(std::istream &is, Number &num) noexcept;
     std::ostream &output(std::ostream &os, Number const &num) noexcept;
     void one_bit_sum(char const &a, char const &b, char &s, bool &flag) noexcept;
-    void dop_add(char const a[], char const b[], char s[], int const &len, int &i, int max, bool &flag) noexcept;
-
-    // с исключением
-    void to_bit(long &a, char* data, int &len); // представление в двоичном виде
-    void cope_rev(char const a[], char b[], int len, int max); // копирование в дополнительном коде
-    void bit_sum(char const a[], char const b[], char s[], int const &len_a, int const &len_b, int &len, int max); // битовая сумма
-    void copy(char const *a, char *b, int start, int finish);
+    char *dop_add(char const *a, char const *b, char *s, int const &len, int &i, bool &flag) noexcept;
+    char *to_bit(long &a, char* data, int &len) noexcept; // представление в двоичном виде
+    char *cope_rev(char const *a, char *b, int len) noexcept; // копирование в дополнительном коде
+    char *bit_sum(char const *a, char const *b, char *s, int len_a, int len_b, int &len) noexcept; // битовая сумма
+    char *copy(char const *a, char *b, int len) noexcept;
 
     // перегрузка
     std::istream &operator>>(std::istream &is, Number &num) noexcept;
-    std::ostream &operator<<(std::ostream &os, Number const &num) noexcept;
-    Number operator+(Number num1, Number const &num2);
+    Number operator+(Number num1, Number const &num2) noexcept;
 }
 
 #endif //LAB3DYNEMIC_PROG3_H
