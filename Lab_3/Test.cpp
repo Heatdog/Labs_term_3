@@ -192,6 +192,34 @@ TEST(NumberTest, Overload){
     EXPECT_EQ("00", num8.output(result));
 }
 
+TEST(NumberTest, Move){
+    std::string result;
+
+    Number num1(110);
+    Number num2;
+    num2 = std::move(num1);
+    EXPECT_EQ("01101110", num2.output(result));
+    EXPECT_EQ("", num1.output(result));
+
+    Number num3(59);
+    Number num4;
+    num4 = std::move(num3);
+    EXPECT_EQ("0111011", num4.output(result));
+    EXPECT_EQ("", num3.output(result));
+
+    Number num5(-78);
+    Number num6;
+    num6 = std::move(num5);
+    EXPECT_EQ("11001110", num6.output(result));
+    EXPECT_EQ("", num5.output(result));
+
+    Number num7(0);
+    Number num8;
+    num8 = std::move(num7);
+    EXPECT_EQ("00", num8.output(result));
+    EXPECT_EQ("", num7.output(result));
+}
+
 TEST(NumberTest, OverloadPrefix){
     std::string s;
 

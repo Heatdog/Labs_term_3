@@ -37,6 +37,8 @@ namespace Static{
             for (int i = len - 1, j = 1; i >= 0; i--, j++) {
                 str.at(j) = data[i];
             }
+        } else{
+            str.clear();
         }
         return str;
     }
