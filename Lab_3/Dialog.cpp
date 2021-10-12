@@ -5,7 +5,7 @@
 #include "Dialog.h"
 #include "Prog3.h"
 
-using namespace Prog3;
+using namespace Static;
 
 void dialog(){
     std::string a, s1, s2; // будем вводить строчку как самый общий случай

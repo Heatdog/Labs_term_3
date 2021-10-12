@@ -5,213 +5,347 @@
 #include <gtest/gtest.h>
 #include "Prog3.h"
 
-using namespace Prog3;
+using namespace Static;
 
 TEST(NumberTest, DefaultConstructor){
     Number number;
-    char s[10];
+    std::string s;
 
-    number.get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_EQ(number.output(s), "");
 }
 
 TEST(NumberTest, Constructor){ // числа хранятся в обратном порядке!
-    Number number(11);
-    char s[10];
+    std::string s;
 
-    number.get_data(s, 9);
-    EXPECT_STREQ(s, "1101000000");
+    Number number(11);
+    EXPECT_EQ(number.output(s), "01011");
 
     Number number_1(-0);
-    number_1.get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_EQ(number_1.output(s), "00");
 
     Number number_2(-21);
-    number_2.get_data(s, 9);
-    EXPECT_STREQ(s, "1010100001");
+    EXPECT_EQ(number_2.output(s), "110101");
 
     Number number_3(43);
-    number_3.get_data(s, 9);
-    EXPECT_STREQ(s, "1101010000");
+    EXPECT_EQ(number_3.output(s), "0101011");
 
     Number number_s_1("58");
-    number_s_1.get_data(s, 9);
-    EXPECT_STREQ(s, "0101110000");
+    EXPECT_EQ(number_s_1.output(s), "0111010");
 
     Number number_s_2("0");
-    number_s_2.get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_EQ(number_s_2.output(s), "00");
 
     Number number_s_3("-27");
-    number_s_3.get_data(s, 9);
-    EXPECT_STREQ(s, "1101100001");
+    EXPECT_EQ(number_s_3.output(s), "111011");
 
     Number number1(511);
-    number1.get_data(s, 9);
-    EXPECT_STREQ(s, "1111111110");
+    EXPECT_EQ(number1.output(s), "0111111111");
 
     Number number2(-511);
-    number2.get_data(s, 9);
-    EXPECT_STREQ(s, "1111111111");
-
+    EXPECT_EQ(number2.output(s), "1111111111");
 }
 
 TEST(NumberTest, DopCode){
-    char s[10];
+    std::string s;
 
     Number number1(-12);
-    number1.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "0010111111");
+    EXPECT_EQ(number1.dop_code().output(s), "10100");
 
     Number number2(-0);
-    number2.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_EQ(number2.dop_code().output(s), "00");
 
     Number number3(59);
-    number3.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "1101110000");
+    EXPECT_EQ(number3.dop_code().output(s), "0111011");
 
     Number number4("-15");
-    number4.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "1000111111");
+    EXPECT_EQ(number4.dop_code().output(s), "10001");
 
     Number number5("-134");
-    number5.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "0101111011");
+    EXPECT_EQ(number5.dop_code().output(s), "101111010");
 
     Number number6("48");
-    number6.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "0000110000");
+    EXPECT_EQ(number6.dop_code().output(s), "0110000");
 
     Number number7("511");
-    number7.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "1111111110");
-
-    Number number8("-511");
-    number8.dop_code().get_data(s, 9);
-    EXPECT_STREQ(s, "1000000001");
+    EXPECT_EQ(number7.dop_code().output(s), "0111111111");
 }
 
 TEST(NumberTest, Sum){
-    char s[10];
+    std::string s;
 
     Number number1_1(14), number1_2(27);
-    sum(number1_1, number1_2).get_data(s, 9);
-    EXPECT_STREQ(s, "1001010000");
+    EXPECT_EQ(sum(number1_1, number1_2).output(s), "0101001");
 
     Number number2_1("4"), number2_2("8");
-    sum(number2_1, number2_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0011000000");
+    EXPECT_EQ(sum(number2_1, number2_2).output(s), "01100");
 
     Number number3_1(-30), number3_2(-13);
-    sum(number3_1, number3_2).get_data(s, 9);
-    EXPECT_STREQ(s, "1101010001");
+    EXPECT_EQ(sum(number3_1, number3_2).output(s), "1101011");
 
     Number number4_1("-10"), number4_2("-8");
-    sum(number4_1, number4_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0100100001");
+    EXPECT_EQ(sum(number4_1, number4_2).output(s), "110010");
 
     Number number5_1(46), number5_2(-10);
-    sum(number5_1, number5_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0010010000");
+    EXPECT_EQ(sum(number5_1, number5_2).output(s), "0100100");
 
     Number number6_1("30"), number6_2("-24");
-    sum(number6_1, number6_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0110000000");
+    EXPECT_EQ(sum(number6_1, number6_2).output(s), "000110");
 
     Number number7_1(14), number7_2(-30);
-    sum(number7_1, number7_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0000100001");
+    EXPECT_EQ(sum(number7_1, number7_2).output(s), "110000");
 
     Number number8_1("6"), number8_2("-32");
-    sum(number8_1, number8_2).get_data(s, 9);
-    EXPECT_STREQ(s, "0101100001");
+    EXPECT_EQ(sum(number8_1, number8_2).output(s), "1011010");
 
     Number number9_1(-0), number9_2(1);
-    sum(number9_1, number9_2).get_data(s, 9);
-    EXPECT_STREQ(s, "1000000000");
+    EXPECT_EQ(sum(number9_1, number9_2).output(s), "01");
 
     Number number10_1(11), number10_2(-10);
-    sum(number10_1, number10_2).get_data(s, 9);
-    EXPECT_STREQ(s, "1000000000");
+    EXPECT_EQ(sum(number10_1, number10_2).output(s), "00001");
 }
 
 TEST(NumberTest, Prefix){
-    char s[10];
+    std::string s;
 
     Number number1_1(4), number1_2(2);
-    sum(number1_1.prefix(), number1_2).get_data(s, 9);
-    EXPECT_STREQ(s, "1110000000");
+    EXPECT_EQ(sum(number1_1.prefix(), number1_2).output(s), "0111");
 
     Number number2(-1);
-    number2.prefix().get_data(s, 9);
-    EXPECT_STREQ(s, "0000000000");
+    EXPECT_EQ(number2.prefix().output(s), "00");
 
     Number number3("10");
-    number3.prefix().get_data(s, 9);
-    EXPECT_STREQ(s, "1101000000");
+    EXPECT_EQ(number3.prefix().output(s), "01011");
 }
 
 TEST(NumberTest, Postfix){
-    char s[10];
+    std::string s;
 
     Number number1_1(4);
-    for (int i = 0; i < 1; i++, number1_1.postfix_dec()){
-        number1_1.get_data(s, 9);
-        EXPECT_STREQ(s, "0010000000");
-    }
-    number1_1.get_data(s, 9);
-    EXPECT_STREQ(s, "1100000000");
+    EXPECT_EQ(number1_1.output(s), "0100");
+    number1_1.postfix_dec();
+    EXPECT_EQ(number1_1.output(s), "0011");
 
     Number number2_1(-6);
-    for (int i = 0; i < 1; i++, number2_1.postfix_dec()){
-        number2_1.get_data(s, 9);
-        EXPECT_STREQ(s, "0110000001");
-    }
-    number2_1.get_data(s, 9);
-    EXPECT_STREQ(s, "1110000001");
+    EXPECT_EQ(number2_1.output(s), "1110");
+    number2_1.postfix_dec();
+    EXPECT_EQ(number2_1.output(s), "1111");
 
     Number number3_1("0");
-    for (int i = 0; i < 1; i++, number3_1.postfix_dec()){
-        number3_1.get_data(s, 9);
-        EXPECT_STREQ(s, "0000000000");
-    }
-    number3_1.get_data(s, 9);
-    EXPECT_STREQ(s, "1000000001");
+    EXPECT_EQ(number3_1.output(s), "00");
+    number3_1.postfix_dec();
+    EXPECT_EQ(number3_1.output(s), "11");
 }
 
 TEST(NumberTest, Sign){
-    char s[1];
-
     Number number(46);
-    s[0] = number.sign();
-    EXPECT_STREQ(s, "0");
+    EXPECT_EQ(number.sign(), '0');
 
     Number number1(-0);
-    s[0] = number1.sign();
-    EXPECT_STREQ(s, "0");
+    EXPECT_EQ(number1.sign(), '0');
 
     Number number2(-12);
-    s[0] = number2.sign();
-    EXPECT_STREQ(s, "1");
+    EXPECT_EQ(number2.sign(), '1');
 
     Number number3(0);
-    s[0] = number3.sign();
-    EXPECT_STREQ(s, "0");
+    EXPECT_EQ(number3.sign(), '0');
+}
+
+TEST(NumberTest, Isstream){
+    Number num; // совпадение
+    std::string result;
+    std::istringstream is("112");
+    std::ostringstream os;
+    input(is, num);
+    EXPECT_EQ(num.output(result), "01110000");
+    output(os, num);
+    std::string s = os.str();
+    EXPECT_EQ("01110000\n", s);
+
+    Number num1(112); // несовпадение
+    std::istringstream is1("1010111");
+    input(is1, num1);
+    EXPECT_TRUE(is1.fail()); // выпадает ошибка
+    EXPECT_EQ("01110000", num1.output(result));
+}
+
+TEST(NumberTest, Overload){
+    std::string result;
+
+    Number num1("110");
+    Number num2;
+    num2 = num1;
+    EXPECT_EQ("01101110", num2.output(result));
+
+    Number num3(59);
+    Number num4;
+    num4 = num3;
+    EXPECT_EQ("0111011", num4.output(result));
+
+    Number num5(-78);
+    Number num6;
+    num6 = num5;
+    EXPECT_EQ("11001110", num6.output(result));
+
+    Number num7(0);
+    Number num8;
+    num8 = num7;
+    EXPECT_EQ("00", num8.output(result));
+}
+
+TEST(NumberTest, OverloadPrefix){
+    std::string s;
+
+    Number number1_1(4), number1_2(2);
+    EXPECT_EQ(sum(++number1_1, number1_2).output(s), "0111");
+
+    Number number2(-1);
+    EXPECT_EQ((++number2).output(s), "00");
+
+    Number number3("10");
+    EXPECT_EQ((++number3).output(s), "01011");
+}
+
+
+
+TEST(NumberTest, OverloadSum){
+    std::string s;
+
+    Number number1_1(14), number1_2(27);
+    EXPECT_EQ((number1_1 + number1_2).output(s), "0101001");
+
+    Number number2_1("4"), number2_2("8");
+    EXPECT_EQ((number2_1 + number2_2).output(s), "01100");
+
+    Number number3_1(-30), number3_2(-13);
+    EXPECT_EQ((number3_1 + number3_2).output(s), "1101011");
+
+    Number number4_1("-10"), number4_2("-8");
+    EXPECT_EQ((number4_1 + number4_2).output(s), "110010");
+
+    Number number5_1(46), number5_2(-10);
+    EXPECT_EQ((number5_1 + number5_2).output(s), "0100100");
+
+    Number number6_1("30"), number6_2("-24");
+    EXPECT_EQ((number6_1 + number6_2).output(s), "000110");
+
+    Number number7_1(14), number7_2(-30);
+    EXPECT_EQ((number7_1 + number7_2).output(s), "110000");
+
+    Number number8_1("6"), number8_2("-32");
+    EXPECT_EQ((number8_1 + number8_2).output(s), "1011010");
+
+    Number number9_1(-0), number9_2(1);
+    EXPECT_EQ((number9_1 + number9_2).output(s), "01");
+
+    Number number10_1(11), number10_2(-10);
+    EXPECT_EQ((number10_1 + number10_2).output(s), "00001");
+}
+
+TEST(NumberTest, OverloadSum_2){
+    std::string s;
+
+    Number number1_1(14), number1_2(27);
+    EXPECT_EQ((number1_1 += number1_2).output(s), "0101001");
+
+    Number number2_1("4"), number2_2("8");
+    EXPECT_EQ((number2_1 += number2_2).output(s), "01100");
+
+    Number number3_1(-30), number3_2(-13);
+    EXPECT_EQ((number3_1 += number3_2).output(s), "1101011");
+
+    Number number4_1("-10"), number4_2("-8");
+    EXPECT_EQ((number4_1 += number4_2).output(s), "110010");
+
+    Number number5_1(46), number5_2(-10);
+    EXPECT_EQ((number5_1 += number5_2).output(s), "0100100");
+
+    Number number6_1("30"), number6_2("-24");
+    EXPECT_EQ((number6_1 += number6_2).output(s), "000110");
+
+    Number number7_1(14), number7_2(-30);
+    EXPECT_EQ((number7_1 += number7_2).output(s), "110000");
+
+    Number number8_1("6"), number8_2("-32");
+    EXPECT_EQ((number8_1 += number8_2).output(s), "1011010");
+
+    Number number9_1(-0), number9_2(1);
+    EXPECT_EQ((number9_1 += number9_2).output(s), "01");
+
+    Number number10_1(11), number10_2(-10);
+    EXPECT_EQ((number10_1 += number10_2).output(s), "00001");
+}
+
+
+TEST(NumberTest, OverloadPostfix){
+    std::string s;
+
+    Number number1_1(4);
+    EXPECT_EQ(number1_1.output(s), "0100");
+    number1_1--;
+    EXPECT_EQ(number1_1.output(s), "0011");
+
+    Number number2_1(-6);
+    EXPECT_EQ(number2_1.output(s), "1110");
+    EXPECT_EQ((number2_1--).output(s), "1110");
+
+    Number number3_1("0");
+    EXPECT_EQ(number3_1.output(s), "00");
+    EXPECT_EQ((number3_1--).output(s), "00");
+
+    Number number4_1("400");
+    EXPECT_EQ(number4_1.output(s), "0110010000");
+    number4_1--;
+    EXPECT_EQ(number4_1.output(s), "0110001111");
+}
+
+TEST(NumberTest, OverloadIsstream){
+    Number num; // совпадение
+    std::string result;
+    std::istringstream is("112");
+    std::ostringstream os;
+    is >> num;
+    EXPECT_EQ(num.output(result), "01110000");
+    os << num;
+    std::string s = os.str();
+    EXPECT_EQ("01110000\n", s);
+
+    Number num1(112); // несовпадение
+    std::istringstream is1("1010111");
+    is1 >> num1;
+    EXPECT_TRUE(is1.fail()); // выпадает ошибка
+    EXPECT_EQ("01110000", num1.output(result));
 }
 
 TEST(NumberTest, Exception){
     EXPECT_THROW(Number number1(1235), std::out_of_range);
     EXPECT_THROW(Number number2("99999"), std::out_of_range);
     EXPECT_THROW(Number number3("abc"), std::invalid_argument);
+
     Number a(418), b(200);
     EXPECT_THROW(sum(a, b), std::out_of_range);
+
+    Number j("-500"), l("-375");
+    EXPECT_THROW(sum(j, l), std::out_of_range);
+
     Number f(511);
     EXPECT_THROW(f.prefix(), std::out_of_range);
+
     Number h(-511);
     EXPECT_THROW(h.postfix_dec(), std::invalid_argument);
 
-    char s[5];
-    EXPECT_THROW(a.get_data(s, 4), std::out_of_range);
+    Number num1("388"), num2(478);
+    EXPECT_THROW(num1 + num2, std::out_of_range);
+
+    Number num3(488), num4("298");
+    EXPECT_THROW(num3 += num4, std::out_of_range);
+
+    Number num5(-390), num6("-413");
+    EXPECT_THROW(num5 + num6, std::out_of_range);
+
+    Number num7(511);
+    EXPECT_THROW(++num7, std::out_of_range);
+
+    Number num8(-511);
+    EXPECT_THROW(num8--, std::invalid_argument);
 }
 
