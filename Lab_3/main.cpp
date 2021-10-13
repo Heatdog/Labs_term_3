@@ -2,5 +2,6 @@
 
 
 int main() {
+    dialog();
     return 0;
 }

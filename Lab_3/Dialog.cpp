@@ -8,7 +8,7 @@
 using namespace Static;
 
 void dialog(){
-    std::string a, s1, s2; // будем вводить строчку как самый общий случай
+    std::string a, s1, s2;
     std::string const error = "Ошибка ввода!";
     bool flag = true;
     std::cout << "Введите число" << std::endl;
@@ -18,11 +18,11 @@ void dialog(){
     }
     Number number;
     try {
-        Number number_test(a);
-        number = number_test;
-    } catch (std::exception const &err1) { // может быть несколько ошибок, но они уже обработаны
+        number = Number(a);
+    }catch (std::invalid_argument const &err1){
         std::cout << err1.what() << std::endl;
-        return;
+    }catch (std::out_of_range const &err2){
+        std::cout << err2.what() << std::endl;
     }
     while (flag) {
         int i = 0;
@@ -42,11 +42,11 @@ void dialog(){
                 break;
             }
             case 1:{
-                number.output();
+                std::cout << number;
                 break;
             }
             case 2: {
-                number.dop_code().output();
+                std::cout << number.dop_code();
                 break;
             }
             case 3: {
@@ -62,8 +62,8 @@ void dialog(){
                 }
                 Number number1(s1), number2(s2);
                 try {
-                    number = sum(number1, number2);
-                    number.output();
+                    number = number1 + number2;
+                    std::cout << number;
                 }catch (std::out_of_range const &err2){
                     std::cout << err2.what() << std::endl;
                 }

@@ -16,11 +16,11 @@ namespace Static{
     }
 
     Number::Number(std::string const &a) {
-        long ptr = std::stol(a); // преобразуем в long (проверка на получения числа) своя функция на сочень большие числа
+        long ptr = std::stol(a);
         to_bit(ptr, data, len, max);
     }
 
-    void Number::output() const noexcept { // передавать поток по ссылке
+    void Number::output() const noexcept {
         if (len != 0) {
             std::cout << data[max - 1] << "`";
             for (int i = len - 1; i >= 0; i--) {
@@ -38,7 +38,7 @@ namespace Static{
                 str.at(j) = data[i];
             }
         } else{
-            str.clear();
+            str.clear(); // очищение переменной
         }
         return str;
     }
@@ -57,7 +57,7 @@ namespace Static{
     void to_bit(long &a, char* data, int &len, int max){
         char sign;
         a >= 0 ? sign = '0' : sign = '1';
-        int i = 0; // записываем в обратном порядке
+        int i = 0;
         do{
             if (i+1 >= max){ // оставляем 1 элемент для записи знака числа
                 throw std::out_of_range("This number too big!");
@@ -82,7 +82,7 @@ namespace Static{
     }
 
     void copy(char const a[], char b[], int len, int max) noexcept{ // обычное копирование чисел (исключение не может быть вызвано, т.к.длины равны)
-        for (int i = 0; i < len; i++){ // тем более исключение вызвалось на этапе создания экземпляра
+        for (int i = 0; i < len; i++){
             b[i] = a[i];
         }
         b[max-1] = a[max-1];
@@ -92,7 +92,7 @@ namespace Static{
         bool flag = true; // запоминаем единицу, которую хотим добавить, чтобы 2 раза не проходить массив
         int k = 0, i; // k нужна для выявления переполнения при переходе из доп кода в прямой
         for (i = 0; i < len; i++){
-            if (flag){ // добавляем единицу
+            if (flag){
                 if (a[i] == '0'){
                     b[i] = '0';
                     k++;
@@ -100,7 +100,7 @@ namespace Static{
                     b[i] = '1';
                     flag = false;
                 }
-            } else{ // ничего не добавляем
+            } else{
                 if (a[i] == '0') {
                     b[i] = '1';
                 } else{
@@ -165,7 +165,7 @@ namespace Static{
     }
 
 
-    Number& Number::operator=(Number const &a) noexcept{ // нужен чтобы можно было переприсваивать результат суммы
+    Number& Number::operator=(Number const &a) noexcept{
         if (this != &a){ // проверяем, не является ли это тем же самым
             copy(a.data, data, a.len, Number::max);
             len = a.len;
@@ -196,9 +196,9 @@ namespace Static{
             flag ? s = '1' : s = '0';
             flag = false;
         } else if (a == '1' && b == '1') {
-            flag ? s = '1' : s = '0'; // всегда изменяем флаг
+            flag ? s = '1' : s = '0';
             flag = true;
-        } else { // в зависимости от случая
+        } else {
             if (flag){
                 s = '0';
                 flag = true;
@@ -211,10 +211,7 @@ namespace Static{
     std::istream &input(std::istream &is, Number &num) noexcept {
         std::string result;
         is >> result;
-        if (is.fail()) {
-            is.clear();
-            is.ignore(32767, '\n');
-        } else {
+        if (!is.fail()) {
             try {
                 num = Number(result);
             } catch (std::invalid_argument const &err1) {
@@ -234,10 +231,7 @@ namespace Static{
     std::istream &operator>>(std::istream &is, Number &num) noexcept{
         std::string result;
         is >> result;
-        if (is.fail()){
-            is.clear();
-            is.ignore(32767,'\n');
-        } else {
+        if (!is.fail()){
             try {
                 num = Number(result);
             } catch (std::invalid_argument const &err1) {
@@ -263,8 +257,8 @@ namespace Static{
         return *this;
     }
 
-    Number operator+(Number num1, Number const &num2){
-        return num1+=num2;
+    Number operator+(Number const &num1, Number const &num2){
+        return sum(num1, num2);
     }
 
     Number Number::operator--(int){
@@ -293,6 +287,22 @@ namespace Static{
         return *this;
     }
 
+    Number Number::operator++(int){
+        Number x(*this);
+        Number a(1);
+        *this += a;
+        return x;
+    }
+
+    Number& Number::operator--(){
+        Number a("-1");
+        *this += a;
+        return *this;
+    }
+
+    int Number::get_max() noexcept{
+        return max;
+    }
 
 }
 

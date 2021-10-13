@@ -4,6 +4,7 @@
 
 #include <gtest/gtest.h>
 #include "Prog3.h"
+#include <cmath>
 
 using namespace Static;
 
@@ -43,6 +44,11 @@ TEST(NumberTest, Constructor){ // числа хранятся в обратно�
 
     Number number2(-511);
     EXPECT_EQ(number2.output(s), "1111111111");
+
+
+    EXPECT_THROW(Number number3(pow(2, Number::get_max()+1)), std::out_of_range);
+    EXPECT_THROW(Number number4(std::to_string(pow(2, Number::get_max()+1))), std::out_of_range);
+    EXPECT_THROW(Number number5("abc"), std::invalid_argument);
 }
 
 TEST(NumberTest, DopCode){
@@ -102,6 +108,12 @@ TEST(NumberTest, Sum){
 
     Number number10_1(11), number10_2(-10);
     EXPECT_EQ(sum(number10_1, number10_2).output(s), "00001");
+
+    Number a(418), b(200);
+    EXPECT_THROW(sum(a, b), std::out_of_range);
+
+    Number j("-500"), l("-375");
+    EXPECT_THROW(sum(j, l), std::out_of_range);
 }
 
 TEST(NumberTest, Prefix){
@@ -115,6 +127,9 @@ TEST(NumberTest, Prefix){
 
     Number number3("10");
     EXPECT_EQ(number3.prefix().output(s), "01011");
+
+    Number f(511);
+    EXPECT_THROW(f.prefix(), std::out_of_range);
 }
 
 TEST(NumberTest, Postfix){
@@ -134,6 +149,9 @@ TEST(NumberTest, Postfix){
     EXPECT_EQ(number3_1.output(s), "00");
     number3_1.postfix_dec();
     EXPECT_EQ(number3_1.output(s), "11");
+
+    Number h(-511);
+    EXPECT_THROW(h.postfix_dec(), std::invalid_argument);
 }
 
 TEST(NumberTest, Sign){
@@ -151,21 +169,32 @@ TEST(NumberTest, Sign){
 }
 
 TEST(NumberTest, Isstream){
-    Number num; // совпадение
+    Number num;
     std::string result;
     std::istringstream is("112");
     std::ostringstream os;
     input(is, num);
     EXPECT_EQ(num.output(result), "01110000");
     output(os, num);
-    std::string s = os.str();
-    EXPECT_EQ("01110000\n", s);
+    EXPECT_EQ("01110000\n", os.str());
 
-    Number num1(112); // несовпадение
-    std::istringstream is1("1010111");
-    input(is1, num1);
-    EXPECT_TRUE(is1.fail()); // выпадает ошибка
-    EXPECT_EQ("01110000", num1.output(result));
+    Number num1(112);
+    std::istringstream is1("abc");
+    input(is1 ,num1);
+    EXPECT_TRUE(is1.fail()); // еще bad
+
+    Number num2;
+    std::istringstream is2("-432");
+    std::ostringstream os2;
+    input(is2, num2);
+    EXPECT_EQ(num2.output(result), "1110110000");
+    output(os2, num2);
+    EXPECT_EQ("1110110000\n", os2.str());
+
+    Number num3;
+    std::istringstream is3("999999999999999999999");
+    input(is3, num3);
+    EXPECT_TRUE(is3.fail());
 }
 
 TEST(NumberTest, Overload){
@@ -231,6 +260,9 @@ TEST(NumberTest, OverloadPrefix){
 
     Number number3("10");
     EXPECT_EQ((++number3).output(s), "01011");
+
+    Number num7(511);
+    EXPECT_THROW(++num7, std::out_of_range);
 }
 
 
@@ -267,6 +299,12 @@ TEST(NumberTest, OverloadSum){
 
     Number number10_1(11), number10_2(-10);
     EXPECT_EQ((number10_1 + number10_2).output(s), "00001");
+
+    Number num1("388"), num2(478);
+    EXPECT_THROW(num1 + num2, std::out_of_range);
+
+    Number num5(-390), num6("-413");
+    EXPECT_THROW(num5 + num6, std::out_of_range);
 }
 
 TEST(NumberTest, OverloadSum_2){
@@ -301,6 +339,9 @@ TEST(NumberTest, OverloadSum_2){
 
     Number number10_1(11), number10_2(-10);
     EXPECT_EQ((number10_1 += number10_2).output(s), "00001");
+
+    Number num3(488), num4("298");
+    EXPECT_THROW(num3 += num4, std::out_of_range);
 }
 
 
@@ -324,6 +365,9 @@ TEST(NumberTest, OverloadPostfix){
     EXPECT_EQ(number4_1.output(s), "0110010000");
     number4_1--;
     EXPECT_EQ(number4_1.output(s), "0110001111");
+
+    Number num8(-511);
+    EXPECT_THROW(num8--, std::invalid_argument);
 }
 
 TEST(NumberTest, OverloadIsstream){
@@ -339,7 +383,7 @@ TEST(NumberTest, OverloadIsstream){
     Number num1(112);
     std::istringstream is1("abc");
     is1 >> num1;
-    EXPECT_TRUE(is1.fail());
+    EXPECT_TRUE(is1.fail()); // еще bad
 
     Number num2;
     std::istringstream is2("-432");
@@ -354,37 +398,3 @@ TEST(NumberTest, OverloadIsstream){
     is3 >> num3;
     EXPECT_TRUE(is3.fail());
 }
-
-TEST(NumberTest, Exception){
-    EXPECT_THROW(Number number1(1235), std::out_of_range);
-    EXPECT_THROW(Number number2("99999"), std::out_of_range);
-    EXPECT_THROW(Number number3("abc"), std::invalid_argument);
-
-    Number a(418), b(200);
-    EXPECT_THROW(sum(a, b), std::out_of_range);
-
-    Number j("-500"), l("-375");
-    EXPECT_THROW(sum(j, l), std::out_of_range);
-
-    Number f(511);
-    EXPECT_THROW(f.prefix(), std::out_of_range);
-
-    Number h(-511);
-    EXPECT_THROW(h.postfix_dec(), std::invalid_argument);
-
-    Number num1("388"), num2(478);
-    EXPECT_THROW(num1 + num2, std::out_of_range);
-
-    Number num3(488), num4("298");
-    EXPECT_THROW(num3 += num4, std::out_of_range);
-
-    Number num5(-390), num6("-413");
-    EXPECT_THROW(num5 + num6, std::out_of_range);
-
-    Number num7(511);
-    EXPECT_THROW(++num7, std::out_of_range);
-
-    Number num8(-511);
-    EXPECT_THROW(num8--, std::invalid_argument);
-}
-
