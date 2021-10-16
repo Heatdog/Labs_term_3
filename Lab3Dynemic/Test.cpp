@@ -13,10 +13,10 @@ TEST(NumberTest, DefaultConstructor){
     Number number;
     std::string s;
 
-    EXPECT_EQ(number.output(s), "");
+    EXPECT_EQ(number.output(s), "00");
 }
 
-TEST(NumberTest, Constructor){ // числа хранятся в обратном порядке!
+TEST(NumberTest, Constructor){
     std::string s;
 
     Number number(11);
@@ -45,6 +45,8 @@ TEST(NumberTest, Constructor){ // числа хранятся в обратно�
 
     Number number2(-511);
     EXPECT_EQ(number2.output(s), "1111111111");
+
+    EXPECT_THROW(Number number3("abc"), std::invalid_argument);
 }
 
 TEST(NumberTest, DopCode){
@@ -97,6 +99,19 @@ TEST(NumberTest, Overload){
     Number num8;
     num8 = num7;
     EXPECT_EQ("00", num8.output(result));
+
+    std::string s1;
+    Number num9(5);
+    Number num10 = Number(3) + Number(2);
+    EXPECT_EQ(num9.output(s1), num10.output(result));
+
+    Number num11(120);
+    Number num12 = Number(110) + Number(10);
+    EXPECT_EQ(num11.output(s1), num12.output(result));
+
+    Number num13(120);
+    Number num14 = Number(140) + Number(-20);
+    EXPECT_EQ(num13.output(s1), num14.output(result));
 }
 
 TEST(NumberTest, Move){
@@ -146,19 +161,23 @@ TEST(NumberTest, OverloadSum){
     EXPECT_EQ((number5_1 + number5_2).output(s), "0100100");
 
     Number number6_1("30"), number6_2("-24");
-    EXPECT_EQ((number6_1 + number6_2).output(s), "000110");
+    EXPECT_EQ((number6_1 + number6_2).output(s), "0110");
 
     Number number7_1(14), number7_2(-30);
     EXPECT_EQ((number7_1 + number7_2).output(s), "110000");
 
     Number number8_1("6"), number8_2("-32");
-    EXPECT_EQ((number8_1 + number8_2).output(s), "1011010");
+    EXPECT_EQ((number8_1 + number8_2).output(s), "111010");
 
     Number number9_1(-0), number9_2(1);
     EXPECT_EQ((number9_1 + number9_2).output(s), "01");
 
     Number number10_1(11), number10_2(-10);
-    EXPECT_EQ((number10_1 + number10_2).output(s), "00001");
+    EXPECT_EQ((number10_1 + number10_2).output(s), "01");
+
+    std::string s1;
+    Number number11(-120);
+    EXPECT_EQ((Number(20) + Number(-140)).output(s), number11.output(s1));
 }
 
 TEST(NumberTest, OverloadSum_2){
@@ -180,19 +199,25 @@ TEST(NumberTest, OverloadSum_2){
     EXPECT_EQ((number5_1 += number5_2).output(s), "0100100");
 
     Number number6_1("30"), number6_2("-24");
-    EXPECT_EQ((number6_1 += number6_2).output(s), "000110");
+    EXPECT_EQ((number6_1 += number6_2).output(s), "0110");
 
     Number number7_1(14), number7_2(-30);
     EXPECT_EQ((number7_1 += number7_2).output(s), "110000");
 
     Number number8_1("6"), number8_2("-32");
-    EXPECT_EQ((number8_1 += number8_2).output(s), "1011010");
+    EXPECT_EQ((number8_1 += number8_2).output(s), "111010");
 
     Number number9_1(-0), number9_2(1);
     EXPECT_EQ((number9_1 += number9_2).output(s), "01");
 
     Number number10_1(11), number10_2(-10);
-    EXPECT_EQ((number10_1 += number10_2).output(s), "00001");
+    EXPECT_EQ((number10_1 += number10_2).output(s), "01");
+
+    Number number11(10);
+    EXPECT_EQ((number11 += number11).output(s), "010100");
+
+    Number number12(-35);
+    EXPECT_EQ((number12 += number12).output(s), "11000110");
 }
 
 TEST(NumberTest, OverloadPostfix){
@@ -201,7 +226,7 @@ TEST(NumberTest, OverloadPostfix){
     Number number1_1(4);
     EXPECT_EQ(number1_1.output(s), "0100");
     number1_1--;
-    EXPECT_EQ(number1_1.output(s), "0011");
+    EXPECT_EQ(number1_1.output(s), "011");
 
     Number number2_1(-6);
     EXPECT_EQ(number2_1.output(s), "1110");

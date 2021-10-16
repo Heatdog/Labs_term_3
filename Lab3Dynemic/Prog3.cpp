@@ -5,45 +5,49 @@
 #include "Prog3.h"
 
 namespace Dynamic{
-    Number::Number() noexcept : len(0), data(nullptr){}
-
-    Number::Number(long a) {
-        data = to_bit(a, data, len);
+    //1) пустой конструктор для инициализации экземпляров и массивов экземпляров класса по умолчанию;
+    Number::Number()  : len(1), data(new char [2]){
+        data[0] = '0';
+        data[1] = '0';
     }
 
+    //2) создание экземпляров класса с инициализацией значением целого числа типа long;
+    Number::Number(long a) {
+        data = to_bit(a, data, len); // если a != 0 и null -> throw (bad alloc перекидывается выше)
+    }
+
+    // 3) создание экземпляров класса с инициализацией значением числа как строки символов;
     Number::Number(std::string const &a) {
         long ptr = std::stol(a);
         data = to_bit(ptr, data, len);
     }
 
+    // деструктор
     Number::~Number() noexcept{
         delete [] data;
         len = 0;
     }
 
-    char *to_bit(long &a, char *data, int &len) noexcept{
+    char *to_bit(long &a, char *data, int &len){
         int max = 20;
         char *data_new = nullptr;
-        try {
-            data = new char[max];
-        }catch (std::bad_alloc const &err){
-            return nullptr;
-        }
+        data = new char[max]; // просто аварийно завершаем работу при bad alloc
         a >= 0 ? data[0] = '0' : data[0] = '1';
-        int i = 1; // записываем в обратном порядке
+        int i = 1;
         do{
-            if (i == max){
+            if (i == max){ // расширение массива
                 max += 20;
                 try {
                     data_new = new char[max];
                 }catch (std::bad_alloc const &err){
-                    return nullptr;
+                    delete[] data; // чтобы не было утечки
+                    throw err;
                 }
                 data_new = copy(data, data_new, max-20);
                 delete [] data;
                 data = data_new;
             }
-            a % 2 == 0 ? data[i] = '0' : data[i] = '1'; // выбираем, что нам следует записать
+            a % 2 == 0 ? data[i] = '0' : data[i] = '1';
             a = a / 2;
             i++;
         } while (a != 0);
@@ -58,6 +62,7 @@ namespace Dynamic{
         return b;
     }
 
+    // вывод в переменную string
     std::string &Number::output(std::string &str) const{
         if (len != 0) {
             str.resize(len+1); // отмечаем длину строки
@@ -66,24 +71,21 @@ namespace Dynamic{
                 str.at(j) = data[i];
             }
         } else{
-            str.clear();
+            str = "";
         }
         return str;
     }
 
+    //8) выполнение операции определения знака числа.
     char Number::sign() const noexcept{
         return data[0];
     }
 
-    Number Number::dop_code() const noexcept{
+    // 5) получение дополнительного кода числа;
+    Number Number::dop_code() const{
         Number rev;
-        try {
-            rev.data = new char[len + 1];
-        }catch (std::bad_alloc const &err){
-            rev.len = 0;
-            rev.data = nullptr;
-            return rev;
-        }
+        delete[] rev.data; // против утечки от конструктора
+        rev.data = new char[len + 1]; // при bad alloc метод прекратит работу
         this->sign() == '0' ? rev.data = copy(data, rev.data, len) : rev.data = cope_rev(data, rev.data, len);
         rev.len = len;
         return rev;
@@ -114,19 +116,17 @@ namespace Dynamic{
         return b;
     }
 
-    Number& Number::operator+=(Number const &a) noexcept{
+    // 6) выполнение операции сложения чисел с разными знаками в дополнительном коде;
+    Number& Number::operator+=(Number const &a) {
         Number a_dop(a.dop_code()), b_dop(this->dop_code());
         delete [] data;
-        try {
-            a.len > this->len ? data = new char[a.len + 2] : data = new char[this->len +2]; // с запасом на переполнение
-        }catch (std::bad_alloc const &err){
-            len = 0;
-            data = nullptr;
-            return *this;
-        }
+        a.len > this->len ? data = new char[a.len + 2] : data = new char[this->len +2]; // с запасом на переполнение
         data = bit_sum(a_dop.data, b_dop.data, this->data, a.len, this->len, this->len);
         if (this->sign() == '1'){
             data = cope_rev(this->data, this->data, this->len);
+        }
+        if (data[len] == '0') {
+            reduce_bits(this->data, this->len);
         }
         return *this;
     }
@@ -185,49 +185,45 @@ namespace Dynamic{
         return s;
     }
 
-    Number operator+(Number num1, Number const &num2) noexcept{
+    // 6) выполнение операции сложения чисел с разными знаками в дополнительном коде;
+    Number operator+(Number num1, Number const &num2) {
         return num1+=num2;
     }
 
-    Number::Number(Number const &a) noexcept{
-        try {
-            data = new char[a.len + 1];
-        }catch (std::bad_alloc const &err){
-            len = 0;
-            data = nullptr;
-        }
+    // конструктор копирования
+    Number::Number(Number const &a) {
+        data = new char[a.len + 1];
         data = copy(a.data, data, a.len);
         len = a.len;
     }
 
-    Number& Number::operator=(Number const &a) noexcept{ // нужен чтобы можно было переприсваивать результат суммы
+    // оператор присваивания
+    Number& Number::operator=(Number const &a){
         if (this != &a){ // проверяем, не является ли это тем же самым
-            try {
-                data = new char[a.len + 1];
-            }catch (std::bad_alloc const &err){
-                len = 0;
-                data = nullptr;
-                return *this;
-            }
+            delete[] data;
+            data = new char[a.len + 1];
             data = copy(a.data, data, a.len);
             len = a.len;
         }
         return *this;
     }
 
-    Number Number::operator--(int) noexcept{
+    //  выполнение операции уменьшения числа после его использования;
+    Number Number::operator--(int) {
         Number x(*this);
         Number a(-1);
         *this += a;
         return x;
     }
 
-    Number& Number::operator++() noexcept{
+    //7) выполнение операции увеличения числа на единицу до использования числа;
+    Number& Number::operator++() {
         Number a("1");
         *this += a;
         return *this;
     }
 
+    // 4) вывод их значений в выходной поток;
     std::ostream &operator<<(std::ostream &os, Number const &num) noexcept{
         if (num.len != 0){
             os << num.data[0];
@@ -239,35 +235,61 @@ namespace Dynamic{
         return os;
     }
 
+    // 4) ввод экземпляров класса из входного потока
     std::istream &operator>>(std::istream &is, Number &num) noexcept{
         std::string result;
         is >> result;
-        if (is.fail()) {
-            is.clear();
-            is.ignore(32767, '\n');
-        } else {
+        if (!is.fail()) {
             try {
                 num = Number(result);
             } catch (std::invalid_argument const &err1) {
                 is.setstate(std::ios::failbit);
             } catch (std::out_of_range const &err2) {
                 is.setstate(std::ios::failbit);
+            } catch (std::bad_alloc const &err3){
+                is.setstate(std::ios::failbit);
             }
         }
         return is;
     }
 
+    // перемещающийся конструктор
     Number::Number(Number && a) noexcept : len(a.len), data(a.data){
         a.len = 0;
         a.data = nullptr;
     }
 
+    // перемещающийся оператор присваивания
     Number& Number::operator=(Number && a) noexcept{
         delete [] data;
         data = a.data;
         len = a.len;
         a.data = nullptr;
         a.len = 0;
+        return *this;
+    }
+
+    void reduce_bits(char *s, int &len) noexcept{
+        if (!(len == 1 && s[len] == '0')) { // если число не нулевое
+            while (s[len] == '0') {
+                len--;
+            }
+            copy(s, s, len);
+        }
+    }
+
+    // (доп задание) постфикс
+    Number Number::operator++(int){
+        Number x(*this);
+        Number a(1);
+        *this += a;
+        return x;
+    }
+
+    // (доп задание) префикс
+    Number& Number::operator--(){
+        Number a("-1");
+        *this += a;
         return *this;
     }
 }

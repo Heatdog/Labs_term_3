@@ -20,7 +20,7 @@ void dialog(){
     while (flag) {
         int i = 0;
         std::string functions[] = {"Выход", "Вывод числа", "Дополнительный код", "Суммирование", "Знак"};
-        for (std::string const &r: functions) { // выводим на экран
+        for (std::string const &r: functions) {
             std::cout << i << ") " << r << std::endl;
             i++;
         }
