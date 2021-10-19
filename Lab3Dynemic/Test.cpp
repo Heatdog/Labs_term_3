@@ -218,6 +218,12 @@ TEST(NumberTest, OverloadSum_2){
 
     Number number12(-35);
     EXPECT_EQ((number12 += number12).output(s), "11000110");
+
+    Number number13("47000001"), number13_1("-47000000");
+    EXPECT_EQ((number13 += number13_1).output(s), "01");
+
+    Number number14(47000001), number14_1(-47000000);
+    EXPECT_EQ((number14 += number14_1).output(s), "01");
 }
 
 TEST(NumberTest, OverloadPostfix){

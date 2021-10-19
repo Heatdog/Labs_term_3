@@ -25,7 +25,6 @@ namespace Dynamic{
     // деструктор
     Number::~Number() noexcept{
         delete [] data;
-        len = 0;
     }
 
     char *to_bit(long &a, char *data, int &len){
@@ -43,7 +42,7 @@ namespace Dynamic{
                     delete[] data; // чтобы не было утечки
                     throw err;
                 }
-                data_new = copy(data, data_new, max-20);
+                data_new = copy(data, data_new, max-21);
                 delete [] data;
                 data = data_new;
             }
@@ -126,7 +125,7 @@ namespace Dynamic{
             data = cope_rev(this->data, this->data, this->len);
         }
         if (data[len] == '0') {
-            reduce_bits(this->data, this->len);
+            this->data = reduce_bits(this->data, this->len);
         }
         return *this;
     }
@@ -269,13 +268,23 @@ namespace Dynamic{
         return *this;
     }
 
-    void reduce_bits(char *s, int &len) noexcept{
+    char *reduce_bits(char *s, int &len) noexcept{
         if (!(len == 1 && s[len] == '0')) { // если число не нулевое
+            int i = 0;
             while (s[len] == '0') {
                 len--;
+                i++;
             }
-            copy(s, s, len);
+            if (i >= 10){ // если кол-во лишних разрядов слишком большое
+                char* ex = new char [len+1];
+                ex = copy(s, ex, len);
+                delete [] s;
+                s = ex;
+            } else {
+                copy(s, s, len);
+            }
         }
+        return s;
     }
 
     // (доп задание) постфикс

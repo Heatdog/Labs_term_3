@@ -46,7 +46,7 @@ namespace Dynamic{
     char *cope_rev(char const *a, char *b, int len) noexcept; // копирование в дополнительном коде
     char *bit_sum(char const *a, char const *b, char *s, int len_a, int len_b, int &len) noexcept; // битовая сумма
     char *copy(char const *a, char *b, int len) noexcept; // копирование
-    void reduce_bits(char *s, int &len) noexcept; // уменьшение разрядной сетки
+    char *reduce_bits(char *s, int &len) noexcept; // уменьшение разрядной сетки
 
     // перегрузка
     std::istream &operator>>(std::istream &is, Number &num) noexcept; // 4) ввод экземпляров класса из входного потока
