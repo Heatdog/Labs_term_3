@@ -9,7 +9,10 @@
 #include <vector>
 
 void dialog();
-bool orthogonality(Prog3::Vector const &vec1, Prog3::Vector const &vec2);
+std::vector<int> orthogonality(Prog3::Vector &vec1, Prog3::Vector &vec2);
+int neighbor(Prog3::Vector &vec1, Prog3::Vector &vec2);
+bool merger(Prog3::Vector &vec1, Prog3::Vector &vec2);
+void input(Prog3::Vector &vec1, Prog3::Vector &vec2);
 
 
 

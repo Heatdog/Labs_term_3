@@ -47,18 +47,35 @@ namespace Prog3 {
 
 	Vector::Vector(int x) : top(0), SZ(0), c(new char[0])
 	{
-		if (x <= 0) throw std::invalid_argument("Number of X in vector need to be > 0");
+		if (x <= 0){
+            delete[] c;
+            throw std::invalid_argument("Number of X in vector need to be > 0");
+        }
 
-		for (int i = 0; i < x; i++)
-			this->set_C('X');
+		for (int i = 0; i < x; i++) {
+            try {
+                this->set_C('X');
+            } catch (std::invalid_argument const &err) {
+                delete[] c;
+                throw err;
+            }
+        }
 	}
 
 	Vector::Vector(std::string str) :top(0), SZ(0), c(new char[0])
 	{
-		if (str.length() <= 0) throw std::out_of_range("Length of vector need to be > 0");
+		if (str.length() <= 0){
+            delete[] c;
+            throw std::out_of_range("Length of vector need to be > 0");
+        }
 
 		for (int i = 0; i < str.length(); i++) {
-			this->set_C(str[i]);
+            try {
+                this->set_C(str[i]);
+            }catch (std::invalid_argument const &err){
+                delete[] c;
+                throw err;
+            }
 		}
 	}
 
@@ -195,7 +212,18 @@ namespace Prog3 {
     std::istream &operator>>(std::istream &is, Vector &num){
         std::string result;
         is >> result;
-        num = Vector(result);
+        if (is.good()){
+            try {
+                num = Vector(result);
+            }catch (std::invalid_argument const &err){
+                is.setstate(std::ios::failbit);
+            }catch (std::out_of_range const &err){
+                is.setstate(std::ios::failbit);
+            }
+        } else{
+            is.clear();
+            is.ignore(32767,'\n');
+        }
         return is;
     }
 }
