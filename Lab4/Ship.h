@@ -31,6 +31,8 @@ enum ShipType{
 struct Capitan{
     Capitan() noexcept = default;
     explicit Capitan(std::string const &name_, std::string const &rang_) noexcept : name(name_), rang(rang_){}
+    Capitan(Capitan const &a) = default;
+    Capitan& operator=(Capitan const &a);
     std::string name;
     std::string rang;
 };
@@ -39,6 +41,8 @@ class Weapon{
 public:
     Weapon() noexcept;
     explicit Weapon(WeaponName name_, int damage_, int rate_, double range_, int max_ammo_, int ammo_, int price_);
+    Weapon(Weapon const &a) = default;
+    Weapon& operator=(Weapon const &a);
     int shoot() noexcept; // выстрелить
 
     // ----------------- Геттеры-----------
@@ -66,6 +70,8 @@ public:
     Ship() noexcept;
     explicit Ship(ShipType type_, std::string const &name, Capitan const &capitan_, double speed_, double max_speed_,
                   int hp, int max_hp_, int price);
+    Ship(Ship const &a) = default;
+    Ship& operator=(Ship const &a);
 
     // ------------ Геттеры --------------
     ShipType get_type() const noexcept{return type;}
@@ -111,6 +117,8 @@ public:
     TransportShip() noexcept;
     explicit TransportShip(std::string const &name, Capitan const &capitan_, double speed_, double max_speed_,
                            int hp_, int max_hp_, int price_, int weight_, int max_weight_);
+    TransportShip(TransportShip const &a) = default;
+    TransportShip& operator=(TransportShip const &a) = default;
 
     // ------------------ Геттеры ---------------
     int get_weight() const noexcept override{return weight;}
@@ -138,6 +146,8 @@ public:
                         int hp_, int max_hp_, int price_, std::array<Weapon, 4> const &weapons_);
     explicit BattleShip(ShipType type, std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
                         int hp_, int max_hp_, int price_);
+    BattleShip(BattleShip const &a) = default;
+    BattleShip& operator=(BattleShip const &a) = default;
 
     // --------- Сеттеры --------------------
     void set_weapons(Weapon const &wp, int number){weapons.at(number-1) = wp;}
@@ -166,6 +176,8 @@ public:
                              int hp_, int max_hp_, int price_, int weight_, int max_weight_);
     explicit BattleTransport(std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
     int hp_, int max_hp_, int price_, int weight_, int max_weight_, std::array<Weapon, 4> const &weapons_);
+    BattleTransport(BattleTransport const &a) = default;
+    BattleTransport& operator=(BattleTransport const &a) = default;
 
     //-------------- Сеттеры -------------------
     void set_weapons(Weapon const &wp, int number){weapons.at(number-1) = wp;}

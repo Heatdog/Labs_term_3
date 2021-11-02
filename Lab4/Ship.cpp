@@ -4,6 +4,18 @@
 
 #include "Ship.h"
 
+// ----------- Капитан ----------------------
+
+Capitan &Capitan::operator=(const Capitan &a) {
+    if (this != &a){
+        name.clear();
+        rang.clear();
+        name = a.name;
+        rang = a.rang;
+    }
+    return *this;
+}
+
 // ----------- Вооружение --------------------
 
 Weapon::Weapon() noexcept : name(UNDEFINED), damage(0), rate(0), range(0), max_ammo(0), ammo(0), price(0) {}
@@ -13,6 +25,19 @@ Weapon::Weapon(WeaponName name_, int damage_, int rate_, double range_, int max_
     if (damage <= 0 || rate <= 0 || range <= 0 || max_ammo <= 0 || ammo <= 0 || price <= 0){
         throw std::invalid_argument("Invalid arg!");
     }
+}
+
+Weapon &Weapon::operator=(const Weapon &a) {
+    if (this != &a){
+        name = a.name;
+        damage = a.damage;
+        rate = a.rate;
+        range = a.range;
+        max_ammo = a.max_ammo;
+        ammo = a.ammo;
+        price = a.price;
+    }
+    return *this;
 }
 
 // выстрелить -----------------
@@ -36,6 +61,21 @@ Ship::Ship(ShipType type_, std::string const &name, Capitan const &capitan_, dou
     if (speed <= 0 || max_speed <= 0 || hp <= 0 || max_hp_ <= 0){
         throw std::invalid_argument("Invalid arg!");
     }
+}
+
+Ship &Ship::operator=(const Ship &a) {
+    if (this != &a){
+        type = a.type;
+        name.clear();
+        name = a.name;
+        capitan = a.capitan;
+        speed = a.speed;
+        max_speed = a.max_speed;
+        hp = a.hp;
+        max_hp = a.max_hp;
+        price = a.price;
+    }
+    return *this;
 }
 
 // получить попадание -------------------
