@@ -182,7 +182,7 @@ TEST(BattleShipTest, Constructor){
     data2.at(1) = shop.at(0);
     data2.at(2) = shop.at(1);
     data2.at(3) = shop.at(2);
-    BattleShip sp2("Shp2", cap2, 20, 20, 1000, 1000, 50000, data2);
+    BattleShip sp2(BATTLESHIP, "Shp2", cap2, 20, 20, 1000, 1000, 50000, data2);
     EXPECT_EQ(sp2.get_type(), BATTLESHIP);
     EXPECT_EQ(sp2.get_name(), "Shp2");
     EXPECT_EQ(sp2.get_cap().name, "John");
@@ -208,7 +208,7 @@ TEST(BattleShipTest, Methods){
     data2.at(1) = shop.at(0);
     data2.at(2) = shop.at(1);
     data2.at(3) = shop.at(2);
-    BattleShip sp2("Shp2", cap2, 20, 20, 1000, 1000, 50000, data2);
+    BattleShip sp2(BATTLESHIP, "Shp2", cap2, 20, 20, 1000, 1000, 50000, data2);
     sp2.modify_weapon(1, SMALL);
     sp2.modify_weapon(4, BIG);
     std::array<Weapon, 4> data3 = sp2.get_wp();
@@ -306,6 +306,67 @@ TEST(BattleTransportTest, Methods){
     EXPECT_EQ(sp4.get_max_hp(), 500);
 
     EXPECT_THROW(sp2.set_weight(210), std::invalid_argument);
+}
+
+TEST(ShopTest, Ships){
+    std::vector<std::shared_ptr<Ship>> data = set_ships();
+    std::shared_ptr<Ship> sp1 = data.at(0);
+    EXPECT_EQ(sp1->get_type(), TRANSPORT);
+    EXPECT_EQ(sp1->get_name(), "convoy");
+    EXPECT_EQ(sp1->get_speed(), 30);
+    EXPECT_EQ(sp1->get_max_speed(), 30);
+    EXPECT_EQ(sp1->get_hp(), 1000);
+    EXPECT_EQ(sp1->get_max_hp(), 1000);
+    EXPECT_EQ(sp1->get_price(), 3000);
+    EXPECT_EQ(sp1->get_weight(), 0);
+    EXPECT_EQ(sp1->get_max_weight(), 200);
+
+    std::shared_ptr<Ship> sp2 = data.at(1);
+    EXPECT_EQ(sp2->get_type(), BATTLETRANSPORT);
+    EXPECT_EQ(sp2->get_name(), "battle convoy");
+    EXPECT_EQ(sp2->get_speed(), 25);
+    EXPECT_EQ(sp2->get_max_speed(), 25);
+    EXPECT_EQ(sp2->get_hp(), 1000);
+    EXPECT_EQ(sp2->get_max_hp(), 1000);
+    EXPECT_EQ(sp2->get_price(), 5000);
+    EXPECT_EQ(sp2->get_weight(), 0);
+    EXPECT_EQ(sp2->get_max_weight(), 50);
+
+    std::shared_ptr<Ship> sp3 = data.at(2);
+    EXPECT_EQ(sp3->get_type(), DESTROYER);
+    EXPECT_EQ(sp3->get_name(), "destroyer");
+    EXPECT_EQ(sp3->get_speed(), 30);
+    EXPECT_EQ(sp3->get_max_speed(), 30);
+    EXPECT_EQ(sp3->get_hp(), 1500);
+    EXPECT_EQ(sp3->get_max_hp(), 1500);
+    EXPECT_EQ(sp3->get_price(), 4000);
+
+    std::shared_ptr<Ship> sp4 = data.at(3);
+    EXPECT_EQ(sp4->get_type(), LCRUISER);
+    EXPECT_EQ(sp4->get_name(), "light cruiser");
+    EXPECT_EQ(sp4->get_speed(), 25);
+    EXPECT_EQ(sp4->get_max_speed(), 25);
+    EXPECT_EQ(sp4->get_hp(), 2500);
+    EXPECT_EQ(sp4->get_max_hp(), 2500);
+    EXPECT_EQ(sp4->get_price(), 6000);
+
+    std::shared_ptr<Ship> sp5 = data.at(4);
+    EXPECT_EQ(sp5->get_type(), HCRUISER);
+    EXPECT_EQ(sp5->get_name(), "heavy cruiser");
+    EXPECT_EQ(sp5->get_speed(), 18);
+    EXPECT_EQ(sp5->get_max_speed(), 18);
+    EXPECT_EQ(sp5->get_hp(), 4000);
+    EXPECT_EQ(sp5->get_max_hp(), 4000);
+    EXPECT_EQ(sp5->get_price(), 9000);
+
+    std::shared_ptr<Ship> sp6 = data.at(5);
+    EXPECT_EQ(sp6->get_type(), BATTLESHIP);
+    EXPECT_EQ(sp6->get_name(), "battle ship");
+    EXPECT_EQ(sp6->get_speed(), 12);
+    EXPECT_EQ(sp6->get_max_speed(), 12);
+    EXPECT_EQ(sp6->get_hp(), 9000);
+    EXPECT_EQ(sp6->get_max_hp(), 9000);
+    EXPECT_EQ(sp6->get_price(), 14000);
 }
 
 
