@@ -4,6 +4,8 @@
 
 #include "Ship.h"
 
+#include <utility>
+
 // ----------- Капитан ----------------------
 
 Capitan &Capitan::operator=(const Capitan &a) {
@@ -52,11 +54,12 @@ int Weapon::shoot() noexcept {
 // ---------------- Корабль (базовый класс для всего остального) -------------------------
 
 Ship::Ship() noexcept : type(UNDEFINEDSHIP), capitan(Capitan()), speed(0), max_speed(0), hp(0),
-    max_hp(0), price(0){}
+    max_hp(0), price(0){
+}
 
 
-Ship::Ship(ShipType type_, std::string const &name, Capitan const &capitan_, double speed_, double max_speed_, int hp_, int max_hp_,
-    int price_) : type(type_), name(name), capitan(capitan_), speed(speed_), max_speed(max_speed_),
+Ship::Ship(ShipType type_, std::string name_, Capitan const &capitan_, double speed_, double max_speed_, int hp_, int max_hp_,
+    int price_) : type(type_), name(std::move(name_)), capitan(capitan_), speed(speed_), max_speed(max_speed_),
     hp(hp_), max_hp(max_hp_), price(price_){
     if (speed <= 0 || max_speed <= 0 || hp <= 0 || max_hp_ <= 0){
         throw std::invalid_argument("Invalid arg!");
@@ -94,7 +97,7 @@ void Ship::set_speed(double speed_) {
 // ---------------------- Транспортный корабль -----------------------
 
 TransportShip::TransportShip() noexcept : Ship(), weight(0), max_weight(0), ratio(1) {
-    set_name(TRANSPORT);
+    set_type(TRANSPORT);
 }
 
 TransportShip::TransportShip(std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
@@ -134,12 +137,12 @@ void TransportShip::set_ratio(double rat_) {
 // --------------------- Военный корабль -------------------
 
 BattleShip::BattleShip() noexcept : Ship() {
-    set_name(BATTLESHIP);
+    set_type(BATTLESHIP);
 }
 
 BattleShip::BattleShip(ShipType type, const std::string &name_, const Capitan &capitan_, double speed_, double max_speed_,
-     int hp_, int max_hp_, int price_, const std::array<Weapon, 4> &weapons_)
-     : Ship(type, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_), weapons(weapons_){}
+     int hp_, int max_hp_, int price_, std::array<Weapon, 4> weapons_)
+     : Ship(type, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_), weapons(std::move(weapons_)){}
 
 BattleShip::BattleShip(ShipType type, const std::string &name_, const Capitan &capitan_, double speed_,
      double max_speed_, int hp_, int max_hp_, int price_) : Ship(type, name_, capitan_, speed_,
@@ -163,22 +166,21 @@ int BattleShip::shoot(int x, int y) noexcept{
 // ------------------ Военный транспорт ------------------
 
 BattleTransport::BattleTransport() noexcept : TransportShip() {
-    set_name(BATTLETRANSPORT);
+    set_type(BATTLETRANSPORT);
 }
 
 BattleTransport::BattleTransport(const std::string &name_, const Capitan &capitan_, double speed_,
         double max_speed_, int hp_, int max_hp_, int price_, int weight_, int max_weight_,
-        const std::array<Weapon, 4> &weapons_)
-        : TransportShip(name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_, weight_, max_weight_), weapons(weapons_){
-    set_name(BATTLETRANSPORT);
+        std::array<Weapon, 4> weapons_)
+        : TransportShip(name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_, weight_, max_weight_), weapons(std::move(weapons_)){
+    set_type(BATTLETRANSPORT);
 }
 
 BattleTransport::BattleTransport(const std::string &name_, const Capitan &capitan_, double speed_, double max_speed_,
        int hp_, int max_hp_, int price_, int weight_, int max_weight_) :
        TransportShip(name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_, weight_, max_weight_){
-    set_name(BATTLETRANSPORT);
+    set_type(BATTLETRANSPORT);
 }
-
 
 void BattleTransport::modify_weapon(int number, WeaponName weapon) {
     Battle::modify_weapon<BattleTransport>(*this, number, weapon);
