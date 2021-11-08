@@ -63,19 +63,19 @@ TEST(WeaponTest, Shoot){
 TEST(CaptianTest, Constructor){
     Capitan cap1;
     EXPECT_EQ(cap1.name, "");
-    EXPECT_EQ(cap1.rang, "");
+    EXPECT_EQ(cap1.rang, LIEUTENANT);
 
-    Capitan cap2("John", "Admiral");
+    Capitan cap2("John", ADMIRAL);
     EXPECT_EQ(cap2.name, "John");
-    EXPECT_EQ(cap2.rang, "Admiral");
+    EXPECT_EQ(cap2.rang, ADMIRAL);
 }
 
 TEST(TransportTest, Constructor){
     TransportShip sp1;
     EXPECT_EQ(sp1.get_type(), TRANSPORT);
-    EXPECT_EQ(sp1.get_name(), "");
+    EXPECT_EQ(sp1.get_name(), "transport");
     EXPECT_EQ(sp1.get_cap().name, "");
-    EXPECT_EQ(sp1.get_cap().rang, "");
+    EXPECT_EQ(sp1.get_cap().rang, LIEUTENANT);
     EXPECT_EQ(sp1.get_speed(), 0);
     EXPECT_EQ(sp1.get_max_speed(), 0);
     EXPECT_EQ(sp1.get_hp(), 0);
@@ -84,12 +84,12 @@ TEST(TransportTest, Constructor){
     EXPECT_EQ(sp1.get_weight(), 0);
     EXPECT_EQ(sp1.get_max_weight(), 0);
 
-    Capitan cap2("John", "1");
+    Capitan cap2("John", MAJOR);
     TransportShip sp2("Shp2", cap2, 20, 20, 1000, 1000, 50000, 0, 200);
     EXPECT_EQ(sp2.get_type(), TRANSPORT);
     EXPECT_EQ(sp2.get_name(), "Shp2");
     EXPECT_EQ(sp2.get_cap().name, "John");
-    EXPECT_EQ(sp2.get_cap().rang, "1");
+    EXPECT_EQ(sp2.get_cap().rang, MAJOR);
     EXPECT_EQ(sp2.get_speed(), 20);
     EXPECT_EQ(sp2.get_max_speed(), 20);
     EXPECT_EQ(sp2.get_hp(), 1000);
@@ -102,7 +102,7 @@ TEST(TransportTest, Constructor){
     EXPECT_EQ(sp3.get_type(), TRANSPORT);
     EXPECT_EQ(sp3.get_name(), "Shp3");
     EXPECT_EQ(sp3.get_cap().name, "John");
-    EXPECT_EQ(sp3.get_cap().rang, "1");
+    EXPECT_EQ(sp3.get_cap().rang, MAJOR);
     EXPECT_EQ(sp3.get_speed(), 10);
     EXPECT_EQ(sp3.get_max_speed(), 20);
     EXPECT_EQ(sp3.get_hp(), 1000);
@@ -111,12 +111,12 @@ TEST(TransportTest, Constructor){
     EXPECT_EQ(sp3.get_weight(), 100);
     EXPECT_EQ(sp3.get_max_weight(), 200);
 
-    Capitan cap3("Rick", "2");
+    Capitan cap3("Rick", ADMIRAL);
     TransportShip sp4("Shp4", cap3, 20, 20, 500, 500, 10000, 175, 200);
     EXPECT_EQ(sp4.get_type(), TRANSPORT);
     EXPECT_EQ(sp4.get_name(), "Shp4");
     EXPECT_EQ(sp4.get_cap().name, "Rick");
-    EXPECT_EQ(sp4.get_cap().rang, "2");
+    EXPECT_EQ(sp4.get_cap().rang, ADMIRAL);
     EXPECT_EQ(sp4.get_speed(), 2.5);
     EXPECT_EQ(sp4.get_max_speed(), 20);
     EXPECT_EQ(sp4.get_hp(), 500);
@@ -125,15 +125,29 @@ TEST(TransportTest, Constructor){
     EXPECT_EQ(sp4.get_weight(), 175);
     EXPECT_EQ(sp4.get_max_weight(), 200);
 
+    TransportShip sp5("transport1", 100);
+    EXPECT_EQ(sp5.get_type(), TRANSPORT);
+    EXPECT_EQ(sp5.get_name(), "transport1");
+    EXPECT_EQ(sp5.get_cap().name, "");
+    EXPECT_EQ(sp5.get_cap().rang, LIEUTENANT);
+    EXPECT_EQ(sp5.get_speed(), 15);
+    EXPECT_EQ(sp5.get_max_speed(), 30);
+    EXPECT_EQ(sp5.get_hp(), 1000);
+    EXPECT_EQ(sp5.get_max_hp(), 1000);
+    EXPECT_EQ(sp5.get_price(), 3000);
+    EXPECT_EQ(sp5.get_weight(), 100);
+    EXPECT_EQ(sp5.get_max_weight(), 200);
+
     EXPECT_THROW(TransportShip("Sh5", cap3, 20, 20, 500, 500, 1000, -5, -100), std::invalid_argument);
+    EXPECT_THROW(TransportShip("sp1", -20), std::invalid_argument);
 }
 
 TEST(TransportTest, Methods){
     double eps = 0.000001;
-    Capitan cap2("John", "1");
+    Capitan cap2("John", LIEUTENANT);
     TransportShip sp3("Shp3", cap2, 20, 20, 1000, 1000, 50000, 100, 200);
 
-    Capitan cap3("Rick", "2");
+    Capitan cap3("Rick", MAJOR);
     TransportShip sp4("Shp4", cap3, 20, 20, 500, 500, 10000, 175, 200);
 
     sp3.set_weight(150);
@@ -162,9 +176,9 @@ TEST(BattleShipTest, Constructor){
 
     BattleShip sp1;
     EXPECT_EQ(sp1.get_type(), BATTLESHIP);
-    EXPECT_EQ(sp1.get_name(), "");
+    EXPECT_EQ(sp1.get_name(), "battleship");
     EXPECT_EQ(sp1.get_cap().name, "");
-    EXPECT_EQ(sp1.get_cap().rang, "");
+    EXPECT_EQ(sp1.get_cap().rang, LIEUTENANT);
     EXPECT_EQ(sp1.get_speed(), 0);
     EXPECT_EQ(sp1.get_max_speed(), 0);
     EXPECT_EQ(sp1.get_hp(), 0);
@@ -176,7 +190,7 @@ TEST(BattleShipTest, Constructor){
     EXPECT_EQ(data.at(2).get_name(), UNDEFINED);
     EXPECT_EQ(data.at(3).get_name(), UNDEFINED);
 
-    Capitan cap2("John", "1");
+    Capitan cap2("John", ADMIRAL);
     std::array<Weapon, 4> data2;
     data2.at(0) = shop.at(0);
     data2.at(1) = shop.at(0);
@@ -186,7 +200,7 @@ TEST(BattleShipTest, Constructor){
     EXPECT_EQ(sp2.get_type(), BATTLESHIP);
     EXPECT_EQ(sp2.get_name(), "Shp2");
     EXPECT_EQ(sp2.get_cap().name, "John");
-    EXPECT_EQ(sp2.get_cap().rang, "1");
+    EXPECT_EQ(sp2.get_cap().rang, ADMIRAL);
     EXPECT_EQ(sp2.get_speed(), 20);
     EXPECT_EQ(sp2.get_max_speed(), 20);
     EXPECT_EQ(sp2.get_hp(), 1000);
@@ -197,21 +211,41 @@ TEST(BattleShipTest, Constructor){
     EXPECT_EQ(data3.at(1).get_name(), BIG);
     EXPECT_EQ(data3.at(2).get_name(), MEDIUM);
     EXPECT_EQ(data3.at(3).get_name(), SMALL);
+
+    BattleShip sp3(DESTROYER, "Shp3", BIG, SMALL, SMALL, MEDIUM);
+    EXPECT_EQ(sp3.get_type(), DESTROYER);
+    EXPECT_EQ(sp3.get_name(), "Shp3");
+    EXPECT_EQ(sp3.get_speed(), 30);
+    EXPECT_EQ(sp3.get_max_speed(), 30);
+    EXPECT_EQ(sp3.get_hp(), 1500);
+    EXPECT_EQ(sp3.get_max_hp(), 1500);
+    EXPECT_EQ(sp3.get_price(), 22000);
+    std::array<Weapon, 4> data4 = sp3.get_wp();
+    EXPECT_EQ(data4.at(0).get_name(), BIG);
+    EXPECT_EQ(data4.at(1).get_name(), SMALL);
+    EXPECT_EQ(data4.at(2).get_name(), SMALL);
+    EXPECT_EQ(data4.at(3).get_name(), MEDIUM);
+
 }
 
 TEST(BattleShipTest, Methods){
     std::vector<Weapon> shop = set_weapon();
 
-    Capitan cap2("John", "1");
+    Capitan cap2("John", MAJOR);
     std::array<Weapon, 4> data2;
     data2.at(0) = shop.at(0);
     data2.at(1) = shop.at(0);
     data2.at(2) = shop.at(1);
     data2.at(3) = shop.at(2);
     BattleShip sp2(BATTLESHIP, "Shp2", cap2, 20, 20, 1000, 1000, 50000, data2);
+    std::array<Weapon, 4> data3 = sp2.get_wp();
+    EXPECT_EQ(data3.at(0).get_name(), BIG);
+    EXPECT_EQ(data3.at(1).get_name(), BIG);
+    EXPECT_EQ(data3.at(2).get_name(), MEDIUM);
+    EXPECT_EQ(data3.at(3).get_name(), SMALL);
     sp2.modify_weapon(1, SMALL);
     sp2.modify_weapon(4, BIG);
-    std::array<Weapon, 4> data3 = sp2.get_wp();
+    data3 = sp2.get_wp();
     EXPECT_EQ(data3.at(0).get_name(), SMALL);
     EXPECT_EQ(data3.at(1).get_name(), BIG);
     EXPECT_EQ(data3.at(2).get_name(), MEDIUM);
@@ -232,9 +266,9 @@ TEST(BattleTransportTest, Constructor){
 
     BattleTransport sp1;
     EXPECT_EQ(sp1.get_type(), BATTLETRANSPORT);
-    EXPECT_EQ(sp1.get_name(), "");
+    EXPECT_EQ(sp1.get_name(), "battle convoy");
     EXPECT_EQ(sp1.get_cap().name, "");
-    EXPECT_EQ(sp1.get_cap().rang, "");
+    EXPECT_EQ(sp1.get_cap().rang, LIEUTENANT);
     EXPECT_EQ(sp1.get_speed(), 0);
     EXPECT_EQ(sp1.get_max_speed(), 0);
     EXPECT_EQ(sp1.get_hp(), 0);
@@ -248,7 +282,7 @@ TEST(BattleTransportTest, Constructor){
     EXPECT_EQ(sp1.get_weight(), 0);
     EXPECT_EQ(sp1.get_max_weight(), 0);
 
-    Capitan cap2("John", "1");
+    Capitan cap2("John", ADMIRAL);
     std::array<Weapon, 4> data2;
     data2.at(0) = shop.at(0);
     data2.at(1) = shop.at(0);
@@ -258,7 +292,7 @@ TEST(BattleTransportTest, Constructor){
     EXPECT_EQ(sp2.get_type(), BATTLETRANSPORT);
     EXPECT_EQ(sp2.get_name(), "Shp2");
     EXPECT_EQ(sp2.get_cap().name, "John");
-    EXPECT_EQ(sp2.get_cap().rang, "1");
+    EXPECT_EQ(sp2.get_cap().rang, ADMIRAL);
     EXPECT_EQ(sp2.get_speed(), 10);
     EXPECT_EQ(sp2.get_max_speed(), 20);
     EXPECT_EQ(sp2.get_hp(), 1000);
@@ -271,13 +305,33 @@ TEST(BattleTransportTest, Constructor){
     EXPECT_EQ(data3.at(3).get_name(), SMALL);
     EXPECT_EQ(sp2.get_weight(), 100);
     EXPECT_EQ(sp2.get_max_weight(), 200);
+
+    double eps = 0.00001;
+    BattleTransport sp3("transport_battle1", SMALL, SMALL, MEDIUM, MEDIUM, 25);
+    EXPECT_EQ(sp3.get_type(), BATTLETRANSPORT);
+    EXPECT_EQ(sp3.get_name(), "transport_battle1");
+    EXPECT_EQ(sp3.get_cap().name, "");
+    EXPECT_EQ(sp3.get_cap().rang, LIEUTENANT);
+    EXPECT_NEAR(sp3.get_speed(), 12.5, eps);
+    EXPECT_EQ(sp3.get_max_speed(), 25);
+    EXPECT_EQ(sp3.get_hp(), 1000);
+    EXPECT_EQ(sp3.get_max_hp(), 1000);
+    EXPECT_EQ(sp3.get_price(), 17000);
+    EXPECT_EQ(sp3.get_weight(), 25);
+    EXPECT_EQ(sp3.get_max_weight(), 50);
+    std::array<Weapon, 4> data4 = sp3.get_wp();
+    EXPECT_EQ(data4.at(0).get_name(), SMALL);
+    EXPECT_EQ(data4.at(1).get_name(), SMALL);
+    EXPECT_EQ(data4.at(2).get_name(), MEDIUM);
+    EXPECT_EQ(data4.at(3).get_name(), MEDIUM);
+
 }
 
 
 TEST(BattleTransportTest, Methods){
     double eps = 0.000001;
     std::vector<Weapon> shop = set_weapon();
-    Capitan cap2("John", "1");
+    Capitan cap2("John", MAJOR);
     std::array<Weapon, 4> data2;
     data2.at(0) = shop.at(0);
     data2.at(1) = shop.at(0);
@@ -285,7 +339,7 @@ TEST(BattleTransportTest, Methods){
     data2.at(3) = shop.at(2);
     BattleTransport sp2("Shp3", cap2, 20, 20, 1000, 1000, 50000, 100, 200, data2);
 
-    Capitan cap3("Rick", "2");
+    Capitan cap3("Rick", LIEUTENANT);
     BattleTransport sp4("Shp4", cap3, 20, 20, 500, 500, 10000, 175, 200, data2);
 
     sp2.set_weight(150);

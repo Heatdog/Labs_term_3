@@ -29,13 +29,19 @@ enum ShipType{
     BATTLESHIP,
 };
 
+enum RangType{
+    LIEUTENANT,
+    MAJOR,
+    ADMIRAL,
+};
+
 struct Capitan{
-    Capitan() noexcept = default;
-    explicit Capitan(std::string name_, std::string rang_) noexcept : name(std::move(name_)), rang(std::move(rang_)){}
+    Capitan() noexcept : name(""), rang(LIEUTENANT) {};
+    explicit Capitan(std::string name_, RangType rang_) noexcept : name(std::move(name_)), rang(rang_){}
     Capitan(Capitan const &a) = default;
     Capitan& operator=(Capitan const &a);
     std::string name;
-    std::string rang;
+    RangType rang; // замена на enum
 };
 
 class Weapon{
@@ -89,9 +95,15 @@ public:
     void set_type(ShipType type_) noexcept{type = type_;}
     void set_speed(double speed_);
     void set_name(std::string const &name_) noexcept {name = name_;}
+    void set_cap(Capitan const &cap_) noexcept {capitan = cap_;}
+    void set_max_speed(double max_speed_);
+    void set_hp(int hp_);
+    void set_max_hp(int hp_);
+    void set_price(int price_);
     //-----------------
 
     void take_damage(int damage); // получить попадание
+    void increase_price(int price_) noexcept;
 
     //-------- Виртуальные методы для переопределения -------------
     virtual int get_weight() const noexcept {return 0;}
@@ -99,6 +111,7 @@ public:
     virtual double get_ratio() const noexcept {return 0;};
     virtual Weapon get_weapons(int number) const {return {};};
     virtual std::array<Weapon, 4> get_wp() const {return {};};
+    virtual void modify_weapon(int number, WeaponName weapon){};
     //---------------------------------------------------------
 private:
     ShipType type; // тип корабля
@@ -117,6 +130,7 @@ public:
     TransportShip() noexcept;
     explicit TransportShip(std::string const &name, Capitan const &capitan_, double speed_, double max_speed_,
                            int hp_, int max_hp_, int price_, int weight_, int max_weight_);
+    explicit TransportShip(std::string const &name, int weight);
     TransportShip(TransportShip const &a) = default;
     TransportShip& operator=(TransportShip const &a) = default;
 
@@ -127,6 +141,7 @@ public:
     //---------------------------
 
     void set_weight(int amount); // установить вес
+    void set_max_weight(int weight); // установить макс вес
     double new_max_speed(int weight_) noexcept; // определить макс скорость при выбранной нагрузке
     void set_ratio(double rat_);
 
@@ -144,6 +159,7 @@ public:
                         int hp_, int max_hp_, int price_, std::array<Weapon, 4> weapons_);
     explicit BattleShip(ShipType type, std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
                         int hp_, int max_hp_, int price_);
+    explicit BattleShip(ShipType type_, std::string const &name_, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4);
     BattleShip(BattleShip const &a) = default;
     BattleShip& operator=(BattleShip const &a) = default;
 
@@ -151,12 +167,12 @@ public:
     void set_weapons(Weapon const &wp, int number){weapons.at(number-1) = wp;}
     // -------------------------------------
 
-    // ---------- Геттеры ----------------------
+    // ---------- Переопределенные методы ----------------------
     Weapon get_weapons(int number) const override{return weapons.at(number-1);}
     std::array<Weapon, 4> get_wp() const override{return weapons;}
+    void modify_weapon(int number, WeaponName weapon) override; // модифицировать вооружение
     // -----------------------------------------
 
-    void modify_weapon(int number, WeaponName weapon); // модифицировать вооружение
     Weapon info_weapon(int number) const; // информация об оружии в данном участке корабля
     int shoot(int x, int y) noexcept; // выстрел из всех орудий
 private:
@@ -171,6 +187,7 @@ public:
                              int hp_, int max_hp_, int price_, int weight_, int max_weight_);
     explicit BattleTransport(std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
     int hp_, int max_hp_, int price_, int weight_, int max_weight_, std::array<Weapon, 4> weapons_);
+    explicit BattleTransport(std::string const &name_, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_);
     BattleTransport(BattleTransport const &a) = default;
     BattleTransport& operator=(BattleTransport const &a) = default;
 
@@ -178,12 +195,12 @@ public:
     void set_weapons(Weapon const &wp, int number){weapons.at(number-1) = wp;}
     // ---------------------------------------
 
-    // ----------------- Геттеры -----------------
+    // ----------------- Переопределенные методы -----------------
     Weapon get_weapons(int number) const override{return weapons.at(number-1);}
     std::array<Weapon, 4> get_wp() const override{return weapons;}
+    void modify_weapon(int number, WeaponName weapon) override; // модифицировать вооружение
     // ---------------------------------------
 
-    void modify_weapon(int number, WeaponName weapon); // модифицировать вооружение
     Weapon info_weapon(int number) const; // информация об оружии в данном участке корабля
     int shoot(int x, int y) noexcept; // выстрел из всех орудий
 private:
