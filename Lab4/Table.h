@@ -24,9 +24,9 @@ private:
     std::unordered_map<std::string, Element> table;
 public:
     explicit Table() = default;
-    bool insert(std::shared_ptr<Ship> ship) noexcept;
-    unsigned long erase(std::string const &name) noexcept;
-    std::shared_ptr<Ship> find(std::string const &name) noexcept;
+    void insert(std::shared_ptr<Ship> ship);
+    void erase(std::string const &name);
+    std::shared_ptr<Ship> find(std::string const &name);
     unsigned long count() noexcept;
 };
 

@@ -24,7 +24,7 @@ Weapon::Weapon() noexcept : name(UNDEFINED), damage(0), rate(0), range(0), max_a
 Weapon::Weapon(WeaponName name_, int damage_, int rate_, double range_, int max_ammo_, int ammo_, int price_)
     :name(name_), damage(damage_), rate(rate_), range(range_), max_ammo(max_ammo_), ammo(ammo_), price(price_){
     if (damage < 0 || rate < 0 || range < 0 || max_ammo < 0 || ammo < 0 || price < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! Weapon constructor");
     }
 }
 
@@ -60,8 +60,8 @@ Ship::Ship() noexcept : type(UNDEFINEDSHIP), capitan(Capitan()), speed(0), max_s
 Ship::Ship(ShipType type_, std::string name_, Capitan const &capitan_, double speed_, double max_speed_, int hp_, int max_hp_,
     int price_) : type(type_), name(std::move(name_)), capitan(capitan_), speed(speed_), max_speed(max_speed_),
     hp(hp_), max_hp(max_hp_), price(price_){
-    if (speed <= 0 || max_speed <= 0 || hp <= 0 || max_hp <= 0 || (max_speed < speed)){
-        throw std::invalid_argument("Invalid arg!");
+    if (speed < 0 || max_speed < 0 || hp < 0 || max_hp < 0 || (max_speed < speed)){
+        throw std::invalid_argument("Invalid arg! Ship constructor (base class)");
     }
 }
 
@@ -81,44 +81,44 @@ Ship &Ship::operator=(const Ship &a) {
 }
 
 // получить попадание -------------------
-void Ship::take_damage(int damage) {
+void Ship::take_damage(int damage)  {
     if (damage < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! damage");
     }
     hp -= damage;
 }
 
-void Ship::set_speed(double speed_) {
+void Ship::set_speed(double speed_){
     if (speed_ < 0 || speed_ > max_speed){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! speed");
     }
     speed = speed_;
 }
 
 void Ship::set_max_speed(double max_speed_) {
     if (max_speed_ < 0 || max_speed_ < speed){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! max speed");
     }
     max_speed = max_speed_;
 }
 
 void Ship::set_hp(int hp_) {
     if (hp_ < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! hp");
     }
     hp = hp_;
 }
 
-void Ship::set_max_hp(int hp_) {
-    if (hp_ <= 0){
-        throw std::invalid_argument("Invalid arg!");
+void Ship::set_max_hp(int hp_){
+    if (hp_ < 0){
+        throw std::invalid_argument("Inv arg! max hp");
     }
     max_hp = hp_;
 }
 
-void Ship::set_price(int price_) {
+void Ship::set_price(int price_){
     if (price_ < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Inv arg! price");
     }
     price = price_;
 }
@@ -135,18 +135,20 @@ TransportShip::TransportShip() noexcept : Ship(), weight(0), max_weight(0), rati
 }
 
 TransportShip::TransportShip(std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
-     int hp_, int max_hp_, int price_, int weight_, int max_weight_)
-     : Ship(TRANSPORT, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_)
-     , weight(weight_), max_weight(max_weight_), ratio(1) {
+    int hp_, int max_hp_, int price_, int weight_, int max_weight_)
+    try : Ship(TRANSPORT, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_)
+    ,weight(weight_), max_weight(max_weight_), ratio(1) {
     if (weight < 0 || max_weight < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Invalid arg! TransportShip constructor");
     }
     set_weight(weight);
+}catch (std::invalid_argument const &err){
+    throw err;
 }
 
 TransportShip::TransportShip(const std::string &name_, int weight_) {
     if (weight_ < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Invalid arg! TransportShip constructor");
     }
     auto data_sh = set_ships();
     for (const std::shared_ptr<Ship>&  i : data_sh){
@@ -169,32 +171,39 @@ TransportShip::TransportShip(const std::string &name_, int weight_) {
 
 // установить вес ------------------------
 void TransportShip::set_weight(int amount) {
-    if (amount > max_weight){
-        throw std::invalid_argument("Weight is too big!");
+    if (amount > max_weight || amount < 0){
+        throw std::invalid_argument("Inv arg! set weight");
     }
     double rat = 1-static_cast<double >(amount)/static_cast<double >(max_weight);
-    double new_speed = get_max_speed()*rat;
-    set_ratio(rat);
-    set_speed(new_speed);
-    weight = amount;
+    try {
+        set_ratio(rat);
+        double new_speed = get_max_speed()*rat;
+        set_speed(new_speed);
+        weight = amount;
+    }catch (std::invalid_argument const &err){
+        throw err;
+    }
 }
 
 // установить макс вес
 void TransportShip::set_max_weight(int weight_){
     if (weight_ < 0 || weight_ < weight){
-        throw std::invalid_argument("Weight is too big!");
+        throw std::invalid_argument("Inv arg! set max weight");
     }
     max_weight = weight_;
 }
 
 // определить макс скорость при выбранной нагрузке -----------------
-double TransportShip::new_max_speed(int weight_) noexcept {
+double TransportShip::new_max_speed(int weight_) {
+    if (weight_ < 0){
+        throw std::invalid_argument("Inv arg! new max speed");
+    }
     return get_max_speed()*(1-static_cast<double >(weight_)/static_cast<double >(max_weight));
 }
 
 void TransportShip::set_ratio(double rat_) {
     if (rat_ < 0 || rat_ > 1){
-        throw std::invalid_argument("Rat can`t be that!");
+        throw std::invalid_argument("Inv arg! set ratio");
     }
     ratio = rat_;
 }
@@ -274,7 +283,7 @@ BattleTransport::BattleTransport(const std::string &name_, const Capitan &capita
 BattleTransport::BattleTransport(const std::string &name_, WeaponName wp1, WeaponName wp2, WeaponName wp3,
                                  WeaponName wp4, int weight_) {
     if (weight_ < 0){
-        throw std::invalid_argument("Invalid arg!");
+        throw std::invalid_argument("Invalid arg! weight");
     }
     auto data_sh = set_ships();
     for (const std::shared_ptr<Ship>&  i : data_sh){
@@ -319,7 +328,7 @@ namespace Battle{
     template <class T>
     void modify_weapon(T& ship, int number, WeaponName weapon){
         if (number > 4 || number <= 0){
-            throw std::invalid_argument("Can`t set new weapon here");
+            throw std::invalid_argument("Inv arg! number");
         }
         std::vector<Weapon> data = set_weapon(); // загружаем массив доступного вооружения
         Weapon new_weapon;
