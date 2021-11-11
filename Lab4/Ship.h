@@ -112,7 +112,7 @@ public:
     virtual Weapon get_weapons(int number) const {return {};};
     virtual std::array<Weapon, 4> get_wp() const noexcept {return {};};
     virtual void modify_weapon(int number, WeaponName weapon){};
-    virtual void set_weight(int number){};
+    virtual void add_weight(int number){};
     //---------------------------------------------------------
 private:
     ShipType type; // тип корабля
@@ -139,12 +139,13 @@ public:
     int get_weight() const noexcept override{return weight;}
     int get_max_weight() const noexcept override{return max_weight;}
     double get_ratio() const noexcept override{return ratio;}
-    void set_weight(int amount) override; // установить вес
+    void add_weight(int amount) override; // добавить вес
     //---------------------------
 
     void set_max_weight(int weight); // установить макс вес
     double new_max_speed(int weight_); // определить макс скорость при выбранной нагрузке
     void set_ratio(double rat_);
+    void set_weight(int amount); // установить вес
 
 private:
     int weight; // масса текущего груза

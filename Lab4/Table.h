@@ -26,8 +26,11 @@ public:
     explicit Table() = default;
     void insert(std::shared_ptr<Ship> ship);
     void erase(std::string const &name);
-    std::shared_ptr<Ship> find(std::string const &name);
-    unsigned long count() noexcept;
+    std::shared_ptr<Ship> find(std::string const &name) const;
+    int count_transport() const noexcept;
+    int count_battle_transport() const noexcept;
+    unsigned long count() const noexcept;
+    auto get_table() const noexcept {return table;}
 };
 
 #endif //LAB4_TABLE_H

@@ -6,7 +6,7 @@
 
 // --------- Конструкторы/деструкторы/сеттеры/геттеры ---------------
 
-Mission::Mission(){
+Mission::Mission() : money(100000), max_weight(200){
     table_pirate = new Table;
     table_convoy = new Table;
     max_convoy = 10;
@@ -15,10 +15,10 @@ Mission::Mission(){
     if (table_pirate->count() > max_pirate){
         throw std::invalid_argument("Too many pirate ships");
     }
-    money = 100000;
     spent_money = 0;
     weight = 0;
-    max_weight = 200;
+    weight_lost = 0;
+    weight_delivered = 0;
 }
 
 Mission::~Mission(){
@@ -27,7 +27,7 @@ Mission::~Mission(){
 }
 
 // если генерируется invalid_argument - продолжаем вставку, но с выкидыванием исключения выше для обработки
-void Mission::set_pirates() {
+void Mission::set_pirates() const {
     try {
         try{
             insert_pirate(DESTROYER, "pirate1", SMALL, SMALL, SMALL, SMALL);
@@ -120,6 +120,9 @@ void Mission::buy_convoy_transport(const std::string &name, int weight_) {
     if (get_convoy_table()->count() + 1 > max_convoy){
         throw std::range_error("Too many convoys!");
     }
+    if (weight_ + weight > max_weight){
+        throw std::invalid_argument("Too big weight");
+    }
     try{
         get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_));
         if (spent_money + get_convoy(name)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
@@ -137,6 +140,9 @@ void Mission::buy_convoy_transport(const std::string &name, int weight_) {
 void Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_)  {
     if (get_convoy_table()->count() + 1 > max_convoy){
         throw std::range_error("Too many convoys!");
+    }
+    if (weight_ + weight > max_weight){
+        throw std::invalid_argument("Too big weight");
     }
     try{
         get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_));
@@ -162,9 +168,12 @@ std::shared_ptr<Ship> Mission::get_convoy(const std::string &name) const {
 }
 
 // уничтожить корабль конвоя
-void Mission::erase_convoy(const std::string &name) const {
+void Mission::erase_convoy(const std::string &name) {
     try{
+        int weight_ = get_convoy(name)->get_weight();
         get_convoy_table()->erase(name);
+        weight_lost += weight_;
+        weight -= weight_;
     }catch (std::invalid_argument const &err){
         throw err;
     }
@@ -207,6 +216,8 @@ void Mission::sell_weapon(const std::string &name_, int number) {
         spent_money += sh->get_price() - x; // уменьшаем цену благодаря разности
     }catch (std::invalid_argument const &err){
         throw err;
+    }catch (std::out_of_range const &err){
+        throw err;
     }
 }
 
@@ -215,8 +226,91 @@ void Mission::sell_convoy(const std::string &name_) {
     try{
         std::shared_ptr<Ship> sp = get_convoy(name_);
         int price_ = static_cast<int>(sp->get_price());
+        int weight_ = sp->get_weight();
         erase_convoy(name_);
         spent_money -= price_; // уменьшаем стоимость на цену корабля
+        weight_lost -= weight_;
+    }catch (std::invalid_argument const &err){
+        throw err;
+    }
+}
+
+// загрузка груза на корабль
+void Mission::upload_weight(const std::string &name_, int weight_) {
+    if (weight_ + weight > max_weight || weight_ < 0){ // отрицательное значение или потенциально слишком большое
+        throw std::invalid_argument("Invalid weight!");
+    }
+    try {
+        std::shared_ptr<Ship> sh = get_convoy(name_);
+        if (sh->get_max_weight() == 0){
+            throw std::invalid_argument("Invalid ship!");
+        }
+        sh->add_weight(weight_);
+        weight += weight_;
+    }catch (std::invalid_argument const &err){
+        throw err;
+    }
+}
+
+// разгрузка корабля
+void Mission::unload_weight(const std::string &name_, int weight_) {
+    if (weight_ < 0 || weight_ > weight){
+        throw std::invalid_argument("Invalid weight!");
+    }
+    try{
+        std::shared_ptr<Ship> sh = get_convoy(name_);
+        if (sh->get_max_weight() == 0){
+            throw std::invalid_argument("Invalid ship!");
+        }
+        if (sh->get_weight() < weight_){
+            throw std::invalid_argument("Invalid weight!");
+        }
+        sh->add_weight(-weight_);
+        weight -= weight_;
+    }catch (std::invalid_argument const &err){
+        throw err;
+    }
+}
+
+// кол-во транспортных кораблей/военного транспорта/военных кораблей
+int Mission::number_convoy_transport() {
+    return table_convoy->count_transport();
+}
+
+int Mission::number_convoy_battle_transport() {
+    return table_convoy->count_battle_transport();
+}
+
+
+// автоматическая загрузка всего груза
+void Mission::upload_automatically() {
+    try {
+        if ((number_convoy_transport() * 200) + (number_convoy_battle_transport() * 50) < get_max_weight()){
+            throw std::invalid_argument("too low ships");
+        }
+        int g = 1;
+        if (number_convoy_transport() != 0){
+            g = number_convoy_transport();
+        }
+        int k = (get_max_weight() / (5 * (number_convoy_transport() + number_convoy_battle_transport()))) * (number_convoy_battle_transport()/g); // 1/5 часть среднего распределения (общее распределение на 4 конвоя 1 военный транспорт)
+        int weight_max_ = 0;
+        if (g != 0){
+            weight_max_ = (get_max_weight() - k * number_convoy_battle_transport())/g;
+        }
+        auto table = table_convoy->get_table();
+        weight = 0;
+        for (auto const &i: table) {
+            if (i.second.ship->get_type() == TRANSPORT || i.second.ship->get_type() == BATTLETRANSPORT) {
+                int x;
+                i.second.ship->get_type() == TRANSPORT ?  x = weight_max_ - i.second.ship->get_weight() : x = k - i.second.ship->get_weight();
+                weight +=  i.second.ship->get_weight(); // Увеличиваю на старое значение, т.к. потом увеличивается только на добавление веса
+                if (x > 0){
+                    upload_weight(i.first, x);
+                } else if (x < 0){
+                    unload_weight(i.first, -x);
+                }
+            }
+        }
     }catch (std::invalid_argument const &err){
         throw err;
     }

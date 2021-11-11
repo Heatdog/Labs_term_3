@@ -30,7 +30,7 @@ void Table::erase(std::string const &name) {
     }
 }
 
-std::shared_ptr<Ship> Table::find(std::string const &name){
+std::shared_ptr<Ship> Table::find(std::string const &name) const{
     auto i = table.find(name);
     if (i == table.end()){
         throw std::invalid_argument("Can`t find element!");
@@ -38,6 +38,26 @@ std::shared_ptr<Ship> Table::find(std::string const &name){
     return i->second.ship;
 }
 
-unsigned long Table::count() noexcept {
+unsigned long Table::count() const noexcept {
     return table.size();
+}
+
+int Table::count_transport() const noexcept{
+    int x = 0;
+    for (auto const &i : table){
+        if (i.second.ship->get_type() == TRANSPORT){
+            x++;
+        }
+    }
+    return x;
+}
+
+int Table::count_battle_transport() const noexcept {
+    int x = 0;
+    for (auto const &i : table){
+        if (i.second.ship->get_type() == BATTLETRANSPORT){
+            x++;
+        }
+    }
+    return x;
 }

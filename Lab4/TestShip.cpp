@@ -257,7 +257,7 @@ TEST(BattleShipTest, Methods){
     EXPECT_EQ(sp2.shoot(10, 10), data3.at(1).get_damage()*data3.at(1).get_rate() + data3.at(2).get_damage()*data3.at(2).get_rate()
     + data3.at(3).get_damage()*data3.at(3).get_rate());
 
-    EXPECT_THROW(sp2.modify_weapon(6, BIG) ,std::invalid_argument);
+    EXPECT_THROW(sp2.modify_weapon(6, BIG) ,std::out_of_range);
 }
 
 
