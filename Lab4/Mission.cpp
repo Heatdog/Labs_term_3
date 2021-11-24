@@ -27,7 +27,7 @@ Mission::~Mission(){
 }
 
 // если генерируется invalid_argument - продолжаем вставку, но с выкидыванием исключения выше для обработки
-void Mission::set_pirates() const {
+void Mission::set_pirates() const { // можно для пиратов сделать id
     try {
         try{
             insert_pirate(DESTROYER, "pirate1", SMALL, SMALL, SMALL, SMALL);
@@ -64,31 +64,31 @@ void Mission::set_pirates() const {
 // ------------- Пираты --------------------
 
 // получить ссылку на корабль пиратов
-std::shared_ptr<Ship> Mission::get_pirate(std::string const &name) const {
+std::shared_ptr<Ship> Mission::get_pirate(unsigned long const &id) const {
     try{
-        return get_pirate_table()->find(name);
+        return get_pirate_table()->find(id);
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // внести в таблицу новый корабль пиратов
-void Mission::insert_pirate(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4) const {
+unsigned long Mission::insert_pirate(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4) const {
     if (get_pirate_table()->count() + 1 > max_pirate){
         throw std::range_error("Too many pirates!");
     }
     try{
         std::shared_ptr<Ship> sp = std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4);
-        get_pirate_table()->insert(sp);
+        return get_pirate_table()->insert(sp);
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // уничтожить корабль пиратов
-void Mission::erase_pirate(const std::string &name) const {
+void Mission::erase_pirate(unsigned long const &id) const {
     try{
-        get_pirate_table()->erase(name);
+        get_pirate_table()->erase(id);
     }catch (std::invalid_argument const &err){
         throw err;
     }
@@ -99,24 +99,25 @@ void Mission::erase_pirate(const std::string &name) const {
 // ------------------ Конвой ------------------
 
 // покупка военного корабля
-void Mission::buy_convoy_battle(ShipType type, const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4){
+unsigned long Mission::buy_convoy_battle(ShipType type, const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4){
     if (get_convoy_table()->count() + 1 > max_convoy){
         throw std::range_error("Too many convoys!");
     }
     try{
-        get_convoy_table()->insert(std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4));
-        if (spent_money + get_convoy(name)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
-            erase_convoy(name);
+        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4));
+        if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
+            erase_convoy(id);
             throw std::overflow_error("Too many money!");
         }
-        spent_money += get_convoy(name)->get_price();
+        spent_money += get_convoy(id)->get_price();
+        return id;
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // покупка транспортного конвоя
-void Mission::buy_convoy_transport(const std::string &name, int weight_) {
+unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_) {
     if (get_convoy_table()->count() + 1 > max_convoy){
         throw std::range_error("Too many convoys!");
     }
@@ -124,20 +125,21 @@ void Mission::buy_convoy_transport(const std::string &name, int weight_) {
         throw std::invalid_argument("Too big weight");
     }
     try{
-        get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_));
-        if (spent_money + get_convoy(name)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
-            erase_convoy(name);
+        unsigned long id = get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_));
+        if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
+            erase_convoy(id);
             throw std::overflow_error("Too many money!");
         }
-        spent_money += get_convoy(name)->get_price();
+        spent_money += get_convoy(id)->get_price();
         weight += weight_; // увеличиваем общую массу груза
+        return id;
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // покупка военного транспорта
-void Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_)  {
+unsigned long Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_)  {
     if (get_convoy_table()->count() + 1 > max_convoy){
         throw std::range_error("Too many convoys!");
     }
@@ -145,33 +147,33 @@ void Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp
         throw std::invalid_argument("Too big weight");
     }
     try{
-        get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_));
-        if (spent_money + get_convoy(name)->get_price() > money) { // вставка удалась, но корабль слишком дорогой
-            erase_convoy(name);
+        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_));
+        if (spent_money + get_convoy(id)->get_price() > money) { // вставка удалась, но корабль слишком дорогой
+            erase_convoy(id);
             throw std::overflow_error("Too many money!");
         }
-        spent_money += get_convoy(name)->get_price();
+        spent_money += get_convoy(id)->get_price();
         weight += weight_; // увеличиваем общую массу груза
-
+        return id;
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // получить указатель на корабль конвоя
-std::shared_ptr<Ship> Mission::get_convoy(const std::string &name) const {
+std::shared_ptr<Ship> Mission::get_convoy(unsigned long const &id) const {
     try {
-        return get_convoy_table()->find(name);
+        return get_convoy_table()->find(id);
     }catch (std::invalid_argument const &err){
         throw err;
     }
 }
 
 // уничтожить корабль конвоя
-void Mission::erase_convoy(const std::string &name) {
+void Mission::erase_convoy(unsigned long const &id) {
     try{
-        int weight_ = get_convoy(name)->get_weight();
-        get_convoy_table()->erase(name);
+        int weight_ = get_convoy(id)->get_weight();
+        get_convoy_table()->erase(id);
         weight_lost += weight_;
         weight -= weight_;
     }catch (std::invalid_argument const &err){
@@ -189,9 +191,9 @@ unsigned long Mission::count_convoy() const noexcept {
 }
 
 // покупка вооружения
-void Mission::buy_weapon(const std::string &name_, WeaponName type_, int number) {
+void Mission::buy_weapon(unsigned long const &id, WeaponName type_, int number) {
     try{
-        std::shared_ptr<Ship> sh = get_convoy(name_);
+        std::shared_ptr<Ship> sh = get_convoy(id);
         Weapon wp = sh->get_weapons(number); // старое вооружение
         int x = sh->get_price(); // получаем цену до модификации
         sh->modify_weapon(number, type_); // модифицируем
@@ -208,9 +210,9 @@ void Mission::buy_weapon(const std::string &name_, WeaponName type_, int number)
 }
 
 // продажа вооружения
-void Mission::sell_weapon(const std::string &name_, int number) {
+void Mission::sell_weapon(unsigned long const &id, int number) {
     try{
-        std::shared_ptr<Ship> sh = get_convoy(name_);
+        std::shared_ptr<Ship> sh = get_convoy(id);
         int x = sh->get_price(); // получаем цену до модификации
         sh->modify_weapon(number, UNDEFINED);
         spent_money += sh->get_price() - x; // уменьшаем цену благодаря разности
@@ -222,12 +224,12 @@ void Mission::sell_weapon(const std::string &name_, int number) {
 }
 
 // продажа корабля конвоя
-void Mission::sell_convoy(const std::string &name_) {
+void Mission::sell_convoy(unsigned long const &id) {
     try{
-        std::shared_ptr<Ship> sp = get_convoy(name_);
+        std::shared_ptr<Ship> sp = get_convoy(id);
         int price_ = static_cast<int>(sp->get_price());
         int weight_ = sp->get_weight();
-        erase_convoy(name_);
+        erase_convoy(id);
         spent_money -= price_; // уменьшаем стоимость на цену корабля
         weight_lost -= weight_;
     }catch (std::invalid_argument const &err){
@@ -236,12 +238,12 @@ void Mission::sell_convoy(const std::string &name_) {
 }
 
 // загрузка груза на корабль
-void Mission::upload_weight(const std::string &name_, int weight_) {
+void Mission::upload_weight(unsigned long const &id, int weight_) {
     if (weight_ + weight > max_weight || weight_ < 0){ // отрицательное значение или потенциально слишком большое
         throw std::invalid_argument("Invalid weight!");
     }
     try {
-        std::shared_ptr<Ship> sh = get_convoy(name_);
+        std::shared_ptr<Ship> sh = get_convoy(id);
         if (sh->get_max_weight() == 0){
             throw std::invalid_argument("Invalid ship!");
         }
@@ -253,12 +255,12 @@ void Mission::upload_weight(const std::string &name_, int weight_) {
 }
 
 // разгрузка корабля
-void Mission::unload_weight(const std::string &name_, int weight_) {
+void Mission::unload_weight(unsigned long const &id, int weight_) {
     if (weight_ < 0 || weight_ > weight){
         throw std::invalid_argument("Invalid weight!");
     }
     try{
-        std::shared_ptr<Ship> sh = get_convoy(name_);
+        std::shared_ptr<Ship> sh = get_convoy(id);
         if (sh->get_max_weight() == 0){
             throw std::invalid_argument("Invalid ship!");
         }
@@ -283,16 +285,19 @@ int Mission::number_convoy_battle_transport() {
 
 
 // автоматическая загрузка всего груза
-void Mission::upload_automatically() {
+void Mission::upload_automatically() { // подгрузка кораблей
+    std::shared_ptr<Ship> transport = get_ship_type_info(TRANSPORT);
+    std::shared_ptr<Ship> battle_transport = get_ship_type_info(BATTLETRANSPORT);
     try {
-        if ((number_convoy_transport() * 200) + (number_convoy_battle_transport() * 50) < get_max_weight()){
+        if ((number_convoy_transport() * transport->get_max_weight()) + (number_convoy_battle_transport() * battle_transport->get_max_weight()) < get_max_weight()){
             throw std::invalid_argument("too low ships");
         }
+        int f = transport->get_max_weight()/battle_transport->get_max_weight() + 1;
         int g = 1;
         if (number_convoy_transport() != 0){
             g = number_convoy_transport();
         }
-        int k = (get_max_weight() / (5 * (number_convoy_transport() + number_convoy_battle_transport()))) * (number_convoy_battle_transport()/g); // 1/5 часть среднего распределения (общее распределение на 4 конвоя 1 военный транспорт)
+        int k = (get_max_weight() / (f * (number_convoy_transport() + number_convoy_battle_transport()))) * (number_convoy_battle_transport()/g); // 1/5 часть среднего распределения (общее распределение на 4 конвоя 1 военный транспорт)
         int weight_max_ = 0;
         if (g != 0){
             weight_max_ = (get_max_weight() - k * number_convoy_battle_transport())/g;

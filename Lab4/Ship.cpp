@@ -402,3 +402,13 @@ std::vector<std::shared_ptr<Ship>> set_ships(){
     store.push_back(std::make_shared<BattleShip>(BATTLESHIP, "battle ship", cap, 12, 12, 9000, 9000, 14000));
     return store;
 }
+
+std::shared_ptr<Ship> get_ship_type_info(ShipType type_) {
+    std::vector<std::shared_ptr<Ship>> data_ = set_ships();
+    for (auto const &i : data_){
+        if (i->get_type() == type_){
+            return i;
+        }
+    }
+    return nullptr;
+}

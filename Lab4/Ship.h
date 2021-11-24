@@ -213,6 +213,7 @@ private:
 // отвечает за магазин вооружения и корпусов ------------------------------
 std::vector<Weapon> set_weapon(); // запись возможного вооружения
 std::vector<std::shared_ptr<Ship>> set_ships();
+std::shared_ptr<Ship> get_ship_type_info(ShipType type_);
 //--------------------------------------------------------------------------
 
 namespace Battle{

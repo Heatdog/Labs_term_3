@@ -20,25 +20,25 @@ public:
     int get_weight_lost() const noexcept {return weight_lost;}
     int get_max_weight() const noexcept {return max_weight;}
     // -------------------------
-    std::shared_ptr<Ship> get_pirate(std::string const &name) const; // получить указатель на корабль пиратов
-    std::shared_ptr<Ship> get_convoy(std::string const &name) const; // получить указатель на корабль конвоя
+    std::shared_ptr<Ship> get_pirate(unsigned long const &id) const; // получить указатель на корабль пиратов
+    std::shared_ptr<Ship> get_convoy(unsigned long const &id) const; // получить указатель на корабль конвоя
     // внести в таблицу новый корабль пиратов
-    void insert_pirate(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4) const;
+    unsigned long insert_pirate(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4) const;
     // купить военный корабль конвоя
-    void buy_convoy_battle(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4);
+    unsigned long buy_convoy_battle(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4);
     // купить транспортный корабль
-    void buy_convoy_transport(std::string const &name, int weight_);
+    unsigned long buy_convoy_transport(std::string const &name, int weight_);
     // купить военный транспорт
-    void buy_convoy_battle_transport(std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_);
-    void sell_convoy(std::string const &name_); // продать корабль конвоя
-    void erase_pirate(std::string const &name) const; // уничтожить пиратский корабль
-    void erase_convoy(std::string const &name); // уничтожить корабль конвоя
+    unsigned long buy_convoy_battle_transport(std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_);
+    void sell_convoy(unsigned long const &id); // продать корабль конвоя
+    void erase_pirate(unsigned long const &id) const; // уничтожить пиратский корабль
+    void erase_convoy(unsigned long const &id); // уничтожить корабль конвоя
     unsigned long count_pirates() const noexcept; // кол-во кораблей пиратов
     unsigned long count_convoy() const noexcept; // кол-во кораблей конвоя
-    void buy_weapon(std::string const &name_, WeaponName type_, int number); // покупка вооружения
-    void sell_weapon(std::string const &name, int number); // продажа вооружения
-    void upload_weight(std::string const &name, int weight_); // загрузка корабля
-    void unload_weight(std::string const &name_, int weight_); // разгрузка корабля
+    void buy_weapon(unsigned long const &id, WeaponName type_, int number); // покупка вооружения
+    void sell_weapon(unsigned long const &id, int number); // продажа вооружения
+    void upload_weight(unsigned long const &id, int weight_); // загрузка корабля
+    void unload_weight(unsigned long const &id, int weight_); // разгрузка корабля
     void upload_automatically(); // автоматическая загрузка
     int number_convoy_transport(); // кол-во транспортных кораблей
     int number_convoy_battle_transport(); // кол-во военного транспорта

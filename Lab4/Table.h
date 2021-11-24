@@ -7,6 +7,7 @@
 
 #include "Ship.h"
 #include <unordered_map>
+#include "UnordedNode.h"
 
 struct Coord{
     int x;
@@ -14,19 +15,24 @@ struct Coord{
 };
 
 struct Element{
+public:
     explicit Element(std::shared_ptr<Ship> ship_) noexcept;
     std::shared_ptr<Ship> ship;
     Coord coord{};
+    unsigned long get_id() const noexcept{return id;}
+private:
+    unsigned long id;
+    static unsigned long current_id;
 };
 
 class Table{
 private:
-    std::unordered_map<std::string, Element> table;
+    Lab4::unordered_map<unsigned long, Element> table; // строки на id
 public:
     explicit Table() = default;
-    void insert(std::shared_ptr<Ship> ship);
-    void erase(std::string const &name);
-    std::shared_ptr<Ship> find(std::string const &name) const;
+    unsigned long insert(std::shared_ptr<Ship> ship);
+    void erase(unsigned long const &id);
+    std::shared_ptr<Ship> find(unsigned long const &id) const;
     int count_transport() const noexcept;
     int count_battle_transport() const noexcept;
     unsigned long count() const noexcept;

@@ -5,24 +5,27 @@
 #include "Table.h"
 
 // ---------- Элемент -----------
+unsigned long Element::current_id = 1;
 
 Element::Element(std::shared_ptr<Ship> ship_) noexcept {
     ship = std::move(ship_);
     coord.x = 0;
     coord.y = 0;
+    id = current_id++;
 }
 
 // ---------- Таблица -------------
 
-void Table::insert(std::shared_ptr<Ship> ship) {
+unsigned long Table::insert(std::shared_ptr<Ship> ship) {
     Element el(std::move(ship));
-    if (!table.emplace(std::make_pair(el.ship->get_name(), el)).second){
+    if (!table.emplace(std::make_pair(el.get_id(), el)).second){
         throw std::invalid_argument("Insertion!");
     }
+    return el.get_id();
 }
 
-void Table::erase(std::string const &name) {
-    unsigned long x = table.erase(name);
+void Table::erase(unsigned long const &id) {
+    unsigned long x = table.erase(id);
     if (x > 1){
         throw std::invalid_argument("Erasing! Too many elements");
     } else if (x == 0){
@@ -30,8 +33,8 @@ void Table::erase(std::string const &name) {
     }
 }
 
-std::shared_ptr<Ship> Table::find(std::string const &name) const{
-    auto i = table.find(name);
+std::shared_ptr<Ship> Table::find(unsigned long const &id) const{
+    auto i = table.find(id);
     if (i == table.end()){
         throw std::invalid_argument("Can`t find element!");
     }
