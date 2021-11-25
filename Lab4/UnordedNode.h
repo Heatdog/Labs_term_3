@@ -5,6 +5,11 @@
 #ifndef LAB4_UNORDEDNODE_H
 #define LAB4_UNORDEDNODE_H
 
+/*!
+ * \file
+ * \brief Заголовочный файл с описанием unordered_map (собственная реализация)
+ */
+
 #include <iostream>
 #include <iterator>
 
@@ -14,20 +19,20 @@ namespace Lab4{
     struct Node{
         typedef std::pair<const Key, Value> Pair;
         explicit Node(Pair data, Node* next_ = nullptr) : next(next_), pair(data), next_list(nullptr), prev_list(nullptr){}
-        Node* next; // след элемент в односвязном списке
-        Pair pair; // пара ключ - значение
-        Node* next_list; // след элемент в двусвязном списке
-        Node* prev_list; // предыдущий
+        Node* next;
+        Pair pair;
+        Node* next_list;
+        Node* prev_list;
     };
 
     // ----------------------- Двусвязный список для связи элементов ----------------
     template<class Key, class Value>
     struct list{
-        Node<Key, Value> *head;
-        Node<Key, Value> *tail;
+        Node<Key, Value> *head; ///< Начало списка
+        Node<Key, Value> *tail; ///< Конец списка
 
         list() : head(nullptr), tail(nullptr){}
-        void push_front(Node<Key, Value> *ptr);
+        void push_front(Node<Key, Value> *ptr) noexcept;
         void erase(Node<Key, Value> *ptr);
         list& operator=(list<Key, Value> const &other){
             if (this != &other){
@@ -40,7 +45,7 @@ namespace Lab4{
 
     // добавить в начало
     template<class Key, class Value>
-    void list<Key, Value>::push_front(Node<Key, Value> *ptr) {
+    void list<Key, Value>::push_front(Node<Key, Value> *ptr) noexcept{
         if (head == nullptr && tail == nullptr){
             head = ptr;
             tail = ptr;

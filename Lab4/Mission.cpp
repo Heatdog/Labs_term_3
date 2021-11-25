@@ -275,11 +275,11 @@ void Mission::unload_weight(unsigned long const &id, int weight_) {
 }
 
 // кол-во транспортных кораблей/военного транспорта/военных кораблей
-int Mission::number_convoy_transport() {
+int Mission::number_convoy_transport() noexcept {
     return table_convoy->count_transport();
 }
 
-int Mission::number_convoy_battle_transport() {
+int Mission::number_convoy_battle_transport() noexcept {
     return table_convoy->count_battle_transport();
 }
 
