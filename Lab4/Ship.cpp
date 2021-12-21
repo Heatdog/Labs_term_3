@@ -43,11 +43,35 @@ Weapon &Weapon::operator=(const Weapon &a) {
 
 // выстрелить -----------------
 int Weapon::shoot() noexcept {
-    if (ammo == 0){
-        return 0;
+    if (rate > ammo){
+        ammo -= rate;
+        return damage*rate;
+    } else{
+        int damage_ = damage*ammo;
+        ammo = 0;
+        return damage_;
     }
-    ammo -= rate;
-    return damage*rate;
+}
+
+int Weapon::shoot_test() const noexcept {
+    if (rate > ammo){
+        return damage*rate;
+    } else{
+        int damage_ = damage*ammo;
+        return damage_;
+    }
+}
+
+void Weapon::print_type() const noexcept {
+    if (name == SMALL){
+        std::cout << "Малокалиберное";
+    } else if (name == MEDIUM){
+        std::cout << "Среднекалиберное";
+    } else if (name == BIG){
+        std::cout << "Крупнокалиберное";
+    } else if (name == UNDEFINED){
+        std::cout << "Не установлено";
+    }
 }
 
 // ---------------- Корабль (базовый класс для всего остального) -------------------------
@@ -125,6 +149,22 @@ void Ship::set_price(int price_){
 
 void Ship::increase_price(int price_) noexcept{
     price += price_;
+}
+
+void Ship::print_type() const noexcept {
+    if (type == TRANSPORT){
+        std::cout << "Транспортный";
+    } else if (type == BATTLETRANSPORT){
+        std::cout << "Военный транспорт";
+    } else if (type == DESTROYER){
+        std::cout << "Эсминец";
+    } else if (type == LCRUISER){
+        std::cout << "Легкий крейсер";
+    } else if (type == HCRUISER){
+        std::cout << "Тяжелый крейсер";
+    } else if (type == BATTLESHIP){
+        std::cout << "Линкор";
+    }
 }
 
 // ---------------------- Транспортный корабль -----------------------
@@ -266,12 +306,6 @@ void BattleShip::modify_weapon(int number, WeaponName weapon) {
 Weapon BattleShip::info_weapon(int number) const {
     return Battle::info_weapon<BattleShip>(*this, number);
 }
-
-// выстрел из всех орудий ------------------------------
-int BattleShip::shoot(int x, int y) noexcept{
-    return Battle::shoot<BattleShip>(*this, x, y);
-}
-
 // ------------------ Военный транспорт ------------------
 
 BattleTransport::BattleTransport() noexcept : TransportShip() {
@@ -329,11 +363,6 @@ Weapon BattleTransport::info_weapon(int number) const {
     return Battle::info_weapon<BattleTransport>(*this, number);
 }
 
-int BattleTransport::shoot(int x, int y) noexcept{
-    return Battle::shoot<BattleTransport>(*this, x, y);
-}
-
-
 // ------------ общие функции для военных кораблей ---------------------
 
 namespace Battle{
@@ -360,19 +389,6 @@ namespace Battle{
             throw std::out_of_range("Can`t set new weapon here");
         }
         return ship.get_weapons(number);
-    }
-
-    template <class T>
-    int shoot(T &ship, int x, int y) noexcept{
-        int sum_damage = 0;
-        double range = sqrt(pow(x, 2) + pow(y, 2));
-        std::array<Weapon, 4> wp = ship.get_wp();
-        for (Weapon &i : wp){
-            if (i.get_range() >= range){
-                sum_damage += i.shoot();
-            }
-        }
-        return sum_damage;
     }
 }
 

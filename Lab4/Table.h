@@ -30,7 +30,7 @@ struct Coord{
 
 struct Element{
 public:
-    explicit Element(std::shared_ptr<Ship> ship_) noexcept;
+    explicit Element(std::shared_ptr<Ship> ship_, int x_, int y_) noexcept;
     std::shared_ptr<Ship> ship;
     Coord coord{};
     unsigned long get_id() const noexcept{return id;}
@@ -45,7 +45,8 @@ private:
 
 class Table{
 private:
-    Lab4::unordered_map<unsigned long, Element> table;
+    std::unordered_map<unsigned long, Element> table;
+    bool find_name(std::string const &name) const noexcept;
 public:
     explicit Table() = default;
 
@@ -55,7 +56,7 @@ public:
    * \return id включенного корабля
    * \throw invalid_argument если уже существует корабль с данным id
    */
-    unsigned long insert(std::shared_ptr<Ship> ship);
+    unsigned long insert(std::shared_ptr<Ship> ship, int x_, int y_);
 
     /*!
    * \brief Удаление из таблицы
@@ -100,6 +101,12 @@ public:
    * \return unordered_map таблица
    */
     auto get_table() const noexcept {return table;}
+
+    unsigned long get_id(std::string const &name_ship) const;
+    double get_speed_table() const noexcept;
+    void push_new_coord(unsigned long id, int x_, int y_);
+    Element find_element(unsigned long id) const;
+    int get_damage(unsigned long const &id, int place) noexcept;
 };
 
 #endif //LAB4_TABLE_H

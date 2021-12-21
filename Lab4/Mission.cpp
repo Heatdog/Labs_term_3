@@ -4,13 +4,70 @@
 
 #include "Mission.h"
 
+Map::Map(int p_x, int p_y, Table* table_convoy_, Table* table_pirate_) noexcept : table_convoy(table_convoy_), table_pirate(table_pirate_){
+    for (int i = 0; i < distance; i++){
+        map[0][i] = "-";
+        map[height-1][i] = "-";
+    }
+    for (int k = 0; k < distance; k++){
+        for (int j = 1; j < height-1; j++){
+            map[j][k] = " ";
+        }
+    }
+    map[height/2][0] = "<";
+    map[height/2][distance-1] = ">";
+    map[p_y][p_x] = "*";
+    pirate_x = p_x;
+    pirate_y = p_y;
+    set_ships_in_map();
+}
+
+void Map::print() const noexcept {
+    for (int i = 0; i < height; i++){
+        for (int j = 0; j < distance; j++){
+            std::cout << map[i][j];
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+void Map::set_ships_in_map() noexcept {
+    auto t_conv = table_convoy->get_table();
+    auto t_pir = table_pirate->get_table();
+    for (auto const &i : t_conv){
+        map[i.second.coord.y][i.second.coord.x] = i.second.ship->get_name();
+    }
+    for (auto const &j : t_pir){
+        map[j.second.coord.y][j.second.coord.x] = j.second.ship->get_name();
+    }
+}
+
+void Map::clear_ships_in_map() noexcept {
+    auto t_conv = table_convoy->get_table();
+    auto t_pir = table_pirate->get_table();
+    for (auto const &i : t_conv){
+        map[i.second.coord.y][i.second.coord.x] = " ";
+    }
+    for (auto const &j : t_pir){
+        map[j.second.coord.y][j.second.coord.x] = " ";
+    }
+}
+
+
 // --------- Конструкторы/деструкторы/сеттеры/геттеры ---------------
 
-Mission::Mission() : money(100000), max_weight(200){
+Mission::Mission() : money(0), max_weight(0){
     table_pirate = new Table;
     table_convoy = new Table;
     max_convoy = 10;
     max_pirate = 10;
+    base.at(0).x = 0;
+    base.at(0).y = Map::get_height()/2;
+    base.at(1).x = Map::get_distance()-1;
+    base.at(1).y = Map::get_height()/2;
+    base_pirate.x = rand()%base.at(1).x;
+    base_pirate.y = rand()%Map::get_height();
     set_pirates();
     if (table_pirate->count() > max_pirate){
         throw std::invalid_argument("Too many pirate ships");
@@ -30,27 +87,27 @@ Mission::~Mission(){
 void Mission::set_pirates() const { // можно для пиратов сделать id
     try {
         try{
-            insert_pirate(DESTROYER, "pirate1", SMALL, SMALL, SMALL, SMALL);
+            insert_pirate(DESTROYER, "1", SMALL, SMALL, SMALL, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
         try{
-            insert_pirate(LCRUISER, "pirate2", SMALL, MEDIUM, MEDIUM, BIG);
+            insert_pirate(LCRUISER, "2", SMALL, MEDIUM, MEDIUM, BIG);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
         try{
-            insert_pirate(HCRUISER, "pirate3", MEDIUM, MEDIUM, MEDIUM, BIG);
+            insert_pirate(HCRUISER, "3", MEDIUM, MEDIUM, MEDIUM, BIG);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
         try{
-            insert_pirate(BATTLESHIP, "pirate4", BIG, BIG, BIG, BIG);
+            insert_pirate(BATTLESHIP, "4", BIG, BIG, BIG, BIG);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
         try{
-            insert_pirate(DESTROYER, "pirate5", SMALL, SMALL, SMALL, SMALL);
+            insert_pirate(DESTROYER, "5", SMALL, SMALL, SMALL, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
@@ -79,7 +136,7 @@ unsigned long Mission::insert_pirate(ShipType type, std::string const &name, Wea
     }
     try{
         std::shared_ptr<Ship> sp = std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4);
-        return get_pirate_table()->insert(sp);
+        return get_pirate_table()->insert(sp, base_pirate.x, base_pirate.y);
     }catch (std::invalid_argument const &err){
         throw err;
     }
@@ -104,7 +161,7 @@ unsigned long Mission::buy_convoy_battle(ShipType type, const std::string &name,
         throw std::range_error("Too many convoys!");
     }
     try{
-        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4));
+        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
             erase_convoy(id);
             throw std::overflow_error("Too many money!");
@@ -125,7 +182,7 @@ unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_
         throw std::invalid_argument("Too big weight");
     }
     try{
-        unsigned long id = get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_));
+        unsigned long id = get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
             erase_convoy(id);
             throw std::overflow_error("Too many money!");
@@ -147,7 +204,7 @@ unsigned long Mission::buy_convoy_battle_transport(const std::string &name, Weap
         throw std::invalid_argument("Too big weight");
     }
     try{
-        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_));
+        unsigned long id = get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money) { // вставка удалась, но корабль слишком дорогой
             erase_convoy(id);
             throw std::overflow_error("Too many money!");
@@ -318,5 +375,65 @@ void Mission::upload_automatically() { // подгрузка кораблей
         }
     }catch (std::invalid_argument const &err){
         throw err;
+    }
+}
+
+
+unsigned long Mission::get_pirate_id(const std::string &name_ship) const {
+    return table_pirate->get_id(name_ship);
+}
+
+unsigned long Mission::get_convoy_id(const std::string &name_ship) const {
+    return table_convoy->get_id(name_ship);
+}
+
+double Mission::get_convoy_speed() const noexcept {
+    return table_convoy->get_speed_table();
+}
+
+void Mission::convoy_finish(unsigned long const &id_) {
+    try{
+        weight = get_convoy(id_)->get_weight();
+        table_convoy->erase(id_);
+        weight_delivered += weight;
+    }catch (std::invalid_argument const &err){
+        std::cout << "Такого корабля в таблице нет!" << std::endl;
+    }
+}
+
+std::vector<std::pair<unsigned long, int>>* Mission::find_to_shoot(const unsigned long &id) const noexcept {
+    auto table_pir = get_pirate_table()->get_table();
+    Element sh = get_convoy_table()->find_element(id);
+    double displacement;
+    int sum_damage = 0;
+    auto data = new std::vector<std::pair<unsigned long, int>>;
+    for (auto const &i : table_pir){
+        displacement = sqrt(pow(sh.coord.x - i.second.coord.x, 2) + pow(sh.coord.y - i.second.coord.y, 2));
+        std::array<Weapon, 4> wp = sh.ship->get_wp();
+        for (int j = 0; j < 4; j++){
+            if (wp[j].get_range() >= displacement){
+                sum_damage += wp[j].shoot_test();
+            }
+        }
+        data->push_back(std::make_pair(i.first, sum_damage)); // закидываем в вектор id пирата + потенциальный урон
+        sum_damage = 0;
+    }
+    return data;
+}
+
+void Mission::shoot(const unsigned long &id_from, const unsigned long &id_to) noexcept {
+    Element convoy = get_convoy_table()->find_element(id_from);
+    Element pirate = get_pirate_table()->find_element(id_to);
+    int sum_damage = 0;
+    std::array<Weapon, 4> wp = convoy.ship->get_wp();
+    double displacement = sqrt(pow(convoy.coord.x - pirate.coord.x, 2) + pow(convoy.coord.y - pirate.coord.y, 2));
+    for (int i = 0; i < 4; i++){
+        if (wp[i].get_range() >= displacement){
+            sum_damage += wp[i].shoot();
+        }
+    }
+    get_pirate(id_to)->take_damage(sum_damage);
+    if (get_pirate(id_to)->get_hp() <= 0){
+        erase_pirate(id_to);
     }
 }

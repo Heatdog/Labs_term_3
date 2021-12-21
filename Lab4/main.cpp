@@ -1,14 +1,14 @@
-#include "Mission.h"
+#include "Console.h"
+
+void game() noexcept{
+    App start;
+    do{
+        start.buy();
+    } while (!start.upload());
+    start.gameplay();
+}
 
 int main() {
-    Mission mission;
-
-    std::cout << mission.get_pirate_table()->count() << std::endl;
-    mission.get_pirate_table()->erase("pirate1");
-    if(mission.get_pirate_table()->find("pirate1") == nullptr){
-        std::cout << "кек" << std::endl;
-    }
-    std::cout << mission.get_pirate_table()->count();
-
+    game();
     return 0;
 }

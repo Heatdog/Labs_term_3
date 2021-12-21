@@ -19,6 +19,28 @@
  * В миссии хранятся 2 таблицы - для пиратов и конвоя. Также в ней содержится информация о бюджете, базах и грузе
  */
 
+class Map{
+private:
+    static int const height = 24;
+    static int const distance = 180;
+    int pirate_x;
+    int pirate_y;
+    std::string map[24][180];
+    Table* const table_convoy;
+    Table* const table_pirate;
+public:
+    static int get_height() noexcept{
+        return height;
+    }
+    static int get_distance() noexcept{
+        return distance;
+    }
+    explicit Map(int p_x, int p_y, Table* table_convoy_, Table* table_pirate_) noexcept;
+    void print() const noexcept;
+    void set_ships_in_map() noexcept;
+    void clear_ships_in_map() noexcept;
+};
+
 class Mission{
 public:
     Mission();
@@ -335,19 +357,40 @@ public:
     /*!
    * @}
    */
+
+    void set_dop(int max_money_, int max_weight_) noexcept{
+        money = max_money_;
+        max_weight = max_weight_;
+    }
+
+    unsigned long get_pirate_id(std::string const &name_ship) const;
+    unsigned long get_convoy_id(std::string const &name_ship) const;
+    double get_convoy_speed() const noexcept;
+    Coord get_pirate_base() const noexcept{
+        return base_pirate;
+    }
+    int get_weight_delivered() const noexcept{
+        return weight_delivered;
+    }
+    void convoy_finish(unsigned long const &id_);
+    Coord get_convoy_finish() const noexcept{
+        return base[1];
+    }
+    std::vector<std::pair<unsigned long, int>> *find_to_shoot(unsigned long const &id) const noexcept;
+    void shoot(unsigned long const &id_from, unsigned long const &id_to) noexcept;
 private:
     Table *table_convoy; // таблица конвоя
     Table *table_pirate; // таблица пиратов
-    int const money; // выделенные деньги
+    int money; // выделенные деньги
     int spent_money; // потраченные деньги
     int weight; // общий вес груза
-    int const max_weight; // вес, который нужно довести
+    int max_weight; // вес, который нужно довести
     int weight_delivered; // доставленный груз
     int weight_lost; // потерянный груз
     int max_convoy; // макс кол-во кораблей конвоя
     int max_pirate; // макс кол-во кораблей пиратов
     std::array<Coord, 2> base; // базы конвоя
-    std::vector<Coord> base_pirate; // базы пиратов
+    Coord base_pirate; // базы пиратов
 
     void set_pirates() const;
 };

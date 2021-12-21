@@ -7,21 +7,33 @@
 // ---------- Элемент -----------
 unsigned long Element::current_id = 1;
 
-Element::Element(std::shared_ptr<Ship> ship_) noexcept {
+Element::Element(std::shared_ptr<Ship> ship_, int x_, int y_) noexcept {
     ship = std::move(ship_);
-    coord.x = 0;
-    coord.y = 0;
+    coord.x = x_;
+    coord.y = y_;
     id = current_id++;
 }
 
 // ---------- Таблица -------------
 
-unsigned long Table::insert(std::shared_ptr<Ship> ship) {
-    Element el(std::move(ship));
-    if (!table.emplace(std::make_pair(el.get_id(), el)).second){
-        throw std::invalid_argument("Insertion!");
+bool Table::find_name(const std::string &name) const noexcept {
+    for (auto const &i : table){
+        if (i.second.ship->get_name() == name){
+            return false;
+        }
     }
-    return el.get_id();
+    return true;
+}
+
+unsigned long Table::insert(std::shared_ptr<Ship> ship, int x_, int y_) {
+    if (find_name(ship->get_name())){
+        Element el(std::move(ship), x_, y_);
+        if (!table.emplace(std::make_pair(el.get_id(), el)).second){
+            throw std::invalid_argument("Insertion!");
+        }
+        return el.get_id();
+    }
+    throw std::runtime_error("Insertion!");
 }
 
 void Table::erase(unsigned long const &id) {
@@ -39,6 +51,14 @@ std::shared_ptr<Ship> Table::find(unsigned long const &id) const{
         throw std::invalid_argument("Can`t find element!");
     }
     return i->second.ship;
+}
+
+Element Table::find_element(unsigned long id) const {
+    auto i = table.find(id);
+    if (i == table.end()){
+        throw std::invalid_argument("Can`t find element!");
+    }
+    return i->second;
 }
 
 unsigned long Table::count() const noexcept {
@@ -63,4 +83,44 @@ int Table::count_battle_transport() const noexcept {
         }
     }
     return x;
+}
+
+unsigned long Table::get_id(std::string const &name_ship) const {
+    for (auto const &i : table){
+        if (i.second.ship->get_name() == name_ship){
+            return i.first;
+        }
+    }
+    throw std::invalid_argument("Can`t find this element!");
+}
+
+double Table::get_speed_table() const noexcept {
+    double velocity;
+    if (count() == 0){
+        return 0;
+    }
+    velocity = table.begin()->second.ship->get_speed();
+    for (auto const &i : table){
+        if (i.second.ship->get_speed() < velocity){
+            velocity = i.second.ship->get_speed();
+        }
+    }
+    return velocity;
+}
+
+void Table::push_new_coord(unsigned long id, int x_, int y_) {
+    auto i = table.find(id);
+    i->second.coord.x = x_;
+    i->second.coord.y = y_;
+}
+
+int Table::get_damage(const unsigned long &id, int place) noexcept {
+    auto sh = find(id);
+    int sum = 0;
+    if (sh->get_weapons(place).get_rate() > sh->get_weapons(place).get_ammo()){
+        sum = sh->get_weapons(place).get_damage() * sh->get_weapons(place).get_ammo();
+    }else{
+        sum = sh->get_weapons(place).get_damage() * sh->get_weapons(place).get_rate();
+    }
+    return sum;
 }

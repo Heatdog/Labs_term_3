@@ -74,6 +74,7 @@ public:
      * \return количество урона
     */
     int shoot() noexcept; // выстрелить
+    int shoot_test() const noexcept;
 
     // ----------------- Геттеры-----------
     /*!
@@ -124,6 +125,7 @@ public:
      * \return цену за оружие
     */
     int get_price() const noexcept{return price;}
+    void print_type() const noexcept;
     //-------------------------------------------
 
 private:
@@ -272,6 +274,7 @@ public:
     */
     void increase_price(int price_) noexcept;
 
+    void print_type() const noexcept;
     //-------- Виртуальные методы для переопределения -------------
     /*!
      * \brief получение текущего веса
@@ -436,7 +439,6 @@ public:
      *  \param[in] y - y-координата
     * \return общий урон орудий, которые достают до данного места
    */
-    int shoot(int x, int y) noexcept;
 private:
     std::array<Weapon, 4> weapons; ///< массив орудий на корабле
 };
@@ -485,7 +487,6 @@ public:
      *  \param[in] y - y-координата
     * \return общий урон орудий, которые достают до данного места
    */
-    int shoot(int x, int y) noexcept; // выстрел из всех орудий
 private:
     std::array<Weapon, 4> weapons; ///< массив орудий на корабле
 };
@@ -503,9 +504,6 @@ namespace Battle{
 
     template <class T>
     Weapon info_weapon(T const &ship, int number);
-
-    template <class T>
-    int shoot(T &ship, int x, int y) noexcept;
 }
 
 #endif //LAB4_SHIP_H
