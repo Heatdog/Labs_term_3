@@ -23,8 +23,6 @@ class Map{
 private:
     static int const height = 24;
     static int const distance = 180;
-    int pirate_x;
-    int pirate_y;
     std::string map[24][180];
     Table* const table_convoy;
     Table* const table_pirate;
@@ -378,6 +376,7 @@ public:
     }
     std::vector<std::pair<unsigned long, int>> *find_to_shoot(unsigned long const &id) const noexcept;
     void shoot(unsigned long const &id_from, unsigned long const &id_to) noexcept;
+    void shoot_pirate(unsigned long const &id_from, unsigned long const &id_to) noexcept;
 private:
     Table *table_convoy; // таблица конвоя
     Table *table_pirate; // таблица пиратов
@@ -387,8 +386,6 @@ private:
     int max_weight; // вес, который нужно довести
     int weight_delivered; // доставленный груз
     int weight_lost; // потерянный груз
-    int max_convoy; // макс кол-во кораблей конвоя
-    int max_pirate; // макс кол-во кораблей пиратов
     std::array<Coord, 2> base; // базы конвоя
     Coord base_pirate; // базы пиратов
 

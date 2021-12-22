@@ -17,8 +17,6 @@ Map::Map(int p_x, int p_y, Table* table_convoy_, Table* table_pirate_) noexcept 
     map[height/2][0] = "<";
     map[height/2][distance-1] = ">";
     map[p_y][p_x] = "*";
-    pirate_x = p_x;
-    pirate_y = p_y;
     set_ships_in_map();
 }
 
@@ -60,8 +58,6 @@ void Map::clear_ships_in_map() noexcept {
 Mission::Mission() : money(0), max_weight(0){
     table_pirate = new Table;
     table_convoy = new Table;
-    max_convoy = 10;
-    max_pirate = 10;
     base.at(0).x = 0;
     base.at(0).y = Map::get_height()/2;
     base.at(1).x = Map::get_distance()-1;
@@ -69,9 +65,6 @@ Mission::Mission() : money(0), max_weight(0){
     base_pirate.x = rand()%base.at(1).x;
     base_pirate.y = rand()%Map::get_height();
     set_pirates();
-    if (table_pirate->count() > max_pirate){
-        throw std::invalid_argument("Too many pirate ships");
-    }
     spent_money = 0;
     weight = 0;
     weight_lost = 0;
@@ -131,9 +124,6 @@ std::shared_ptr<Ship> Mission::get_pirate(unsigned long const &id) const {
 
 // внести в таблицу новый корабль пиратов
 unsigned long Mission::insert_pirate(ShipType type, std::string const &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4) const {
-    if (get_pirate_table()->count() + 1 > max_pirate){
-        throw std::range_error("Too many pirates!");
-    }
     try{
         std::shared_ptr<Ship> sp = std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4);
         return get_pirate_table()->insert(sp, base_pirate.x, base_pirate.y);
@@ -157,9 +147,6 @@ void Mission::erase_pirate(unsigned long const &id) const {
 
 // покупка военного корабля
 unsigned long Mission::buy_convoy_battle(ShipType type, const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4){
-    if (get_convoy_table()->count() + 1 > max_convoy){
-        throw std::range_error("Too many convoys!");
-    }
     try{
         unsigned long id = get_convoy_table()->insert(std::make_shared<BattleShip>(type, name, wp1, wp2, wp3, wp4), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
@@ -175,12 +162,6 @@ unsigned long Mission::buy_convoy_battle(ShipType type, const std::string &name,
 
 // покупка транспортного конвоя
 unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_) {
-    if (get_convoy_table()->count() + 1 > max_convoy){
-        throw std::range_error("Too many convoys!");
-    }
-    if (weight_ + weight > max_weight){
-        throw std::invalid_argument("Too big weight");
-    }
     try{
         unsigned long id = get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
@@ -197,12 +178,6 @@ unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_
 
 // покупка военного транспорта
 unsigned long Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_)  {
-    if (get_convoy_table()->count() + 1 > max_convoy){
-        throw std::range_error("Too many convoys!");
-    }
-    if (weight_ + weight > max_weight){
-        throw std::invalid_argument("Too big weight");
-    }
     try{
         unsigned long id = get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money) { // вставка удалась, но корабль слишком дорогой
@@ -296,7 +271,7 @@ void Mission::sell_convoy(unsigned long const &id) {
 
 // загрузка груза на корабль
 void Mission::upload_weight(unsigned long const &id, int weight_) {
-    if (weight_ + weight > max_weight || weight_ < 0){ // отрицательное значение или потенциально слишком большое
+    if (weight_ < 0){ // отрицательное значение или потенциально слишком большое
         throw std::invalid_argument("Invalid weight!");
     }
     try {
@@ -435,5 +410,22 @@ void Mission::shoot(const unsigned long &id_from, const unsigned long &id_to) no
     get_pirate(id_to)->take_damage(sum_damage);
     if (get_pirate(id_to)->get_hp() <= 0){
         erase_pirate(id_to);
+    }
+}
+
+void Mission::shoot_pirate(const unsigned long &id_from, const unsigned long &id_to) noexcept {
+    Element pirate = get_pirate_table()->find_element(id_from);
+    Element convoy = get_convoy_table()->find_element(id_to);
+    int sum_damage = 0;
+    std::array<Weapon, 4> wp = pirate.ship->get_wp();
+    double displacement = sqrt(pow(convoy.coord.x - pirate.coord.x, 2) + pow(convoy.coord.y - pirate.coord.y, 2));
+    for (int i = 0; i < 4; i++){
+        if (wp[i].get_range() >= displacement){
+            sum_damage += wp[i].shoot();
+        }
+    }
+    get_convoy(id_to)->take_damage(sum_damage);
+    if (get_convoy(id_to)->get_hp() <= 0){
+        erase_convoy(id_to);
     }
 }

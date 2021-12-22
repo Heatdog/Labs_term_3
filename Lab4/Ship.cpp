@@ -210,9 +210,6 @@ TransportShip::TransportShip(const std::string &name_, int weight_) {
 
 // установить вес ------------------------
 void TransportShip::add_weight(int amount) {
-    if (amount + weight > max_weight){
-        throw std::invalid_argument("Inv arg! set weight");
-    }
     try {
         double rat = 1;
         if (amount + weight > 0){

@@ -106,7 +106,6 @@ public:
     double get_speed_table() const noexcept;
     void push_new_coord(unsigned long id, int x_, int y_);
     Element find_element(unsigned long id) const;
-    int get_damage(unsigned long const &id, int place) noexcept;
 };
 
 #endif //LAB4_TABLE_H

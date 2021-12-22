@@ -113,14 +113,3 @@ void Table::push_new_coord(unsigned long id, int x_, int y_) {
     i->second.coord.x = x_;
     i->second.coord.y = y_;
 }
-
-int Table::get_damage(const unsigned long &id, int place) noexcept {
-    auto sh = find(id);
-    int sum = 0;
-    if (sh->get_weapons(place).get_rate() > sh->get_weapons(place).get_ammo()){
-        sum = sh->get_weapons(place).get_damage() * sh->get_weapons(place).get_ammo();
-    }else{
-        sum = sh->get_weapons(place).get_damage() * sh->get_weapons(place).get_rate();
-    }
-    return sum;
-}

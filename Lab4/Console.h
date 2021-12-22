@@ -29,7 +29,8 @@ private:
     void displace(int x_, int y_) noexcept;
     void shoot() noexcept;
     void bot_turn() noexcept;
-    void displace_bot(int x_, int y_, int velocity) noexcept;
+    void displace_bot(int x_, int y_, unsigned long const &id) noexcept;
+    void shoot_bot(unsigned long const &id) noexcept;
 public:
     explicit App() noexcept; // выбор уровня
     void buy() noexcept; // покупка кораблей и вооружения
