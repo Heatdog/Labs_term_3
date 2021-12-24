@@ -11,6 +11,7 @@
 #define LAB4_MISSION_H
 
 #include "Table.h"
+#include <random>
 
 /*!
  * \brief Класс миссии, основной класс для взаимодействия между консольным приложением и базами данных
@@ -351,7 +352,7 @@ public:
      * \throw invalid_argument если недостаточно кораблей для загрузки всего груза
    * \return none
    */
-    void upload_automatically(); // автоматическая загрузка
+    void upload_automatically(int weight_); // автоматическая загрузка
     /*!
    * @}
    */

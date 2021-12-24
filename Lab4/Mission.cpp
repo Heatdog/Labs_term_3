@@ -33,12 +33,12 @@ void Map::print() const noexcept {
 void Map::set_ships_in_map() noexcept {
     auto t_conv = table_convoy->get_table();
     auto t_pir = table_pirate->get_table();
-    for (auto const &i : t_conv){
-        map[i.second.coord.y][i.second.coord.x] = i.second.ship->get_name();
-    }
-    for (auto const &j : t_pir){
-        map[j.second.coord.y][j.second.coord.x] = j.second.ship->get_name();
-    }
+        for (auto const &i: t_conv) {
+            map[i.second.coord.y][i.second.coord.x] = i.second.ship->get_name();
+        }
+        for (auto const &j: t_pir) {
+            map[j.second.coord.y][j.second.coord.x] = j.second.ship->get_name();
+        }
 }
 
 void Map::clear_ships_in_map() noexcept {
@@ -56,14 +56,17 @@ void Map::clear_ships_in_map() noexcept {
 // --------- Конструкторы/деструкторы/сеттеры/геттеры ---------------
 
 Mission::Mission() : money(0), max_weight(0){
+    std::random_device rd;
+    std::mt19937 mersenne(rd());
+
     table_pirate = new Table;
     table_convoy = new Table;
     base.at(0).x = 0;
     base.at(0).y = Map::get_height()/2;
     base.at(1).x = Map::get_distance()-1;
     base.at(1).y = Map::get_height()/2;
-    base_pirate.x = rand()%base.at(1).x;
-    base_pirate.y = rand()%Map::get_height();
+    base_pirate.x = static_cast<int>(mersenne()%(base.at(1).x-50) + 50);
+    base_pirate.y = static_cast<int>(mersenne()%Map::get_height());
     set_pirates();
     spent_money = 0;
     weight = 0;
@@ -95,12 +98,22 @@ void Mission::set_pirates() const { // можно для пиратов сдел
             throw err;
         }
         try{
-            insert_pirate(BATTLESHIP, "4", BIG, BIG, BIG, BIG);
+            insert_pirate(LCRUISER, "4", MEDIUM, MEDIUM, MEDIUM, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
         try{
             insert_pirate(DESTROYER, "5", SMALL, SMALL, SMALL, SMALL);
+        }catch (std::invalid_argument const &err) {
+            throw err;
+        }
+        try{
+            insert_pirate(BATTLESHIP, "6", BIG, BIG, MEDIUM, SMALL);
+        }catch (std::invalid_argument const &err) {
+            throw err;
+        }
+        try{
+            insert_pirate(DESTROYER, "7", SMALL, SMALL, SMALL, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
         }
@@ -162,6 +175,12 @@ unsigned long Mission::buy_convoy_battle(ShipType type, const std::string &name,
 
 // покупка транспортного конвоя
 unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_) {
+    if (weight_ < 0){
+        throw std::length_error("Введено отрицательное число!");
+    }
+    if (weight + weight_ > max_weight){
+        throw std::out_of_range("Слишком большой груз!");
+    }
     try{
         unsigned long id = get_convoy_table()->insert(std::make_shared<TransportShip>(name, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money){ // вставка удалась, но корабль слишком дорогой
@@ -178,6 +197,12 @@ unsigned long Mission::buy_convoy_transport(const std::string &name, int weight_
 
 // покупка военного транспорта
 unsigned long Mission::buy_convoy_battle_transport(const std::string &name, WeaponName wp1, WeaponName wp2, WeaponName wp3, WeaponName wp4, int weight_)  {
+    if (weight_ < 0){
+        throw std::length_error("Введено отрицательное число!");
+    }
+    if (weight + weight_ > max_weight){
+        throw std::out_of_range("Слишком большой груз!");
+    }
     try{
         unsigned long id = get_convoy_table()->insert(std::make_shared<BattleTransport>(name, wp1, wp2, wp3, wp4, weight_), base[0].x, base[0].y);
         if (spent_money + get_convoy(id)->get_price() > money) { // вставка удалась, но корабль слишком дорогой
@@ -317,11 +342,11 @@ int Mission::number_convoy_battle_transport() noexcept {
 
 
 // автоматическая загрузка всего груза
-void Mission::upload_automatically() { // подгрузка кораблей
+void Mission::upload_automatically(int weight_) { // подгрузка кораблей
     std::shared_ptr<Ship> transport = get_ship_type_info(TRANSPORT);
     std::shared_ptr<Ship> battle_transport = get_ship_type_info(BATTLETRANSPORT);
     try {
-        if ((number_convoy_transport() * transport->get_max_weight()) + (number_convoy_battle_transport() * battle_transport->get_max_weight()) < get_max_weight()){
+        if ((number_convoy_transport() * transport->get_max_weight()) + (number_convoy_battle_transport() * battle_transport->get_max_weight()) < weight_){
             throw std::invalid_argument("too low ships");
         }
         int f = transport->get_max_weight()/battle_transport->get_max_weight() + 1;
@@ -329,10 +354,10 @@ void Mission::upload_automatically() { // подгрузка кораблей
         if (number_convoy_transport() != 0){
             g = number_convoy_transport();
         }
-        int k = (get_max_weight() / (f * (number_convoy_transport() + number_convoy_battle_transport()))) * (number_convoy_battle_transport()/g); // 1/5 часть среднего распределения (общее распределение на 4 конвоя 1 военный транспорт)
+        int k = (weight_/ (f * (number_convoy_transport() + number_convoy_battle_transport()))) * (number_convoy_battle_transport()/g); // 1/5 часть среднего распределения (общее распределение на 4 конвоя 1 военный транспорт)
         int weight_max_ = 0;
         if (g != 0){
-            weight_max_ = (get_max_weight() - k * number_convoy_battle_transport())/g;
+            weight_max_ = (weight_ - k * number_convoy_battle_transport())/g;
         }
         auto table = table_convoy->get_table();
         weight = 0;

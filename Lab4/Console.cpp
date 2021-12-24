@@ -42,7 +42,9 @@ void App::buy() noexcept{
     int result;
     int ptr;
     std::cout << "Сейчас вы можете купить и продать корабли и вооружение перед заданием" << std::endl;
-    std::string menu[] = {"0) Закончить и перейти к распределению груза", "1) Купить корабль", "2) Купить вооружение", "3) Продать корабль", "4) Продать вооружение", "5) Вывести список кораблей"};
+    std::string menu[] = {"Введите любое число, чтобы закончить и перейти к распределению груза", "Нажмите 1, чтобы купить корабль",
+                          "Нажмите 2, чтобы купить вооружение", "Нажмите 3, чтобы продать корабль", "Нажмите 4, чтобы продать вооружение",
+                          "Нажмите 5, чтобы вывести список кораблей"};
     do{
         std::cout << "Текущее количество денег: " << mission.get_money() - mission.get_spent_money() << std::endl;
         if (mission.get_max_weight() - mission.get_weight() > 0){
@@ -57,9 +59,7 @@ void App::buy() noexcept{
         }
         std::cout << "Введите: " << std::endl;
         result = enter_int();
-        if (result == 0){
-            break;
-        } else if (result == 1){
+        if (result == 1){
             buy_convoy();
         } else if (result == 2){
             buy_weapon();
@@ -67,15 +67,19 @@ void App::buy() noexcept{
             sell_convoy();
         } else if (result == 4){
             sell_weapon();
-        } else{
+        } else if (result == 5){
             print_all_convoy();
+        } else{
+            break;
         }
     } while (true);
 }
 
 void App::buy_convoy() noexcept{
-    std::string ships[] = {"0) Выход", "1) Транспортный корабль", "2) Военный транспорт", "3) Эсминец",
-                           "4) Легкий крейсер", "5) Тяжелый крейсер", "6) Линкор"};
+    std::string ships[] = {"Введите любое число, чтобы выйти из режима покупки корабля", "Нажмите 1, чтобы купить транспортный корабль",
+                           "Нажмите 2, чтобы купить военный транспорт", "Нажмите 3, чтобы купить эсминец",
+                           "Нажмите 4, чтобы купить легкий крейсер", "Нажмите 5, чтобы купить тяжелый крейсер",
+                           "Нажмите 6, чтобы купить линкор"};
     int result;
     int choose;
     int weight;
@@ -127,6 +131,10 @@ void App::buy_convoy() noexcept{
                 std::cout << "Корабль не был куплен! Корабль слишком дорогой!" << std::endl;
             }catch (std::runtime_error const &err4){
                 std::cout << "Корабль не был куплен! Имя уже занято" << std::endl;
+            }catch (std::out_of_range const &err3){
+                std::cout << "Корабль не был куплен! Слишком большой груз!" << std::endl;
+            }catch (std::length_error const &err5){
+                std::cout << "Введено отрицательное значение веса!" << std::endl;
             }
         } else if (result == 2){
             try{
@@ -137,6 +145,10 @@ void App::buy_convoy() noexcept{
                 std::cout << "Корабль не был куплен! Корабль слишком дорогой!" << std::endl;
             }catch (std::runtime_error const &err4){
                 std::cout << "Корабль не был куплен! Имя уже занято" << std::endl;
+            }catch (std::out_of_range const &err3){
+                std::cout << "Корабль не был куплен! Слишком большой груз!" << std::endl;
+            }catch (std::length_error const &err5){
+                std::cout << "Введено отрицательное значение веса!" << std::endl;
             }
         }else if (result > 2 && result < 7){
             ShipType type_;
@@ -231,9 +243,7 @@ WeaponName App::select_weapon() noexcept {
     }
     std::cout << "Введите номер вооружение, которое хотите купить" << std::endl;
     result = enter_int();
-    if (result == 0){
-        return UNDEFINED;
-    } else if (result == 1){
+    if (result == 1){
         print_info_weapon(SMALL);
         std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
             choose = enter_int();
@@ -246,13 +256,15 @@ WeaponName App::select_weapon() noexcept {
         if (choose == 1) {
             return MEDIUM;
         }
-    } else{
+    } else if (result == 3){
         print_info_weapon(BIG);
         std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
         choose = enter_int();
         if (choose == 1) {
             return BIG;
         }
+    } else{
+        return UNDEFINED;
     }
     return UNDEFINED;
 }
@@ -295,10 +307,11 @@ void App::sell_weapon() noexcept {
 bool App::upload() noexcept {
     int result, weight, ptr;
     std::string name;
+    int weight_aut;
     unsigned long id;
     std::cout << "На этом этапе вы можете загрузить и разгрузить груз по кораблям" << std::endl;
     do {
-        std::cout << "Нажмите 0, если хотите закончить и начать вылазку" << std::endl;
+        std::cout << "Введите любое число, если хотите закончить и начать вылазку" << std::endl;
         std::cout << "Нажмите 1, если хотите автоматической загрузки с максимальной скоростью конвоя" << std::endl;
         std::cout << "Нажмите 2, если хотите вручную загрузить корабли" << std::endl;
         std::cout << "Нажмите 3, если хотите разгрузить выбранный корабль" << std::endl;
@@ -313,17 +326,17 @@ bool App::upload() noexcept {
         std::cout << "Общий вес груза : " << mission.get_weight() << std::endl;
         std::cout << "Текущая скорость конвоя: " << mission.get_convoy_speed() << std::endl;
         result = enter_int();
-        if (result == 0){
-            if (mission.get_max_weight() - mission.get_weight() > 0){
-                std::cout << "Вы не полностью распределили груз!" << std::endl;
-            } else{
-                break;
-            }
-        }else if (result == 1) {
-            try {
-                mission.upload_automatically();
-            } catch (std::invalid_argument const &err) {
-                std::cout << "Слишком мало кораблей! Докупите еще" << std::endl;
+        if (result == 1) {
+            std::cout << "Введите вес" << std::endl;
+            weight_aut = enter_int();
+            if (weight_aut < 0){
+                std::cout << "Вы ввели отрицательное число!" << std::endl;
+            } else {
+                try {
+                    mission.upload_automatically(weight_aut);
+                } catch (std::invalid_argument const &err) {
+                    std::cout << "Слишком мало кораблей! Докупите еще" << std::endl;
+                }
             }
         } else if (result == 2) {
             std::cout << "Введите название транспортного корабля" << std::endl;
@@ -362,7 +375,11 @@ bool App::upload() noexcept {
         } else if (result == 4){
             print_all_convoy();
         }else{
-            break;
+            if (mission.get_max_weight() - mission.get_weight() > 0 && result != 5){
+                std::cout << "Вы не полностью распределили груз!" << std::endl;
+            } else{
+                break;
+            }
         }
     } while (true);
     if (result == 5){
@@ -372,10 +389,10 @@ bool App::upload() noexcept {
 }
 
 void App::print_all_convoy() const noexcept {
-    auto table = mission.get_convoy_table()->get_table();
-    if (table.empty()){
+    if (mission.count_convoy() == 0){
         std::cout << "Список кораблей пуст!" << std::endl;
     } else {
+        auto table = mission.get_convoy_table()->get_table();
         for (auto const &i: table) {
             std::cout << "Название: " << i.second.ship->get_name() << "\t Тип корабля: ";
             i.second.ship->print_type();
@@ -388,7 +405,7 @@ void App::print_all_convoy() const noexcept {
             if (i.second.ship->get_type() != TRANSPORT) {
                 for (int k = 0; k < 4; k++) {
                     std::cout << "\t" << k + 1 << " орудие: ";
-                    i.second.ship->get_weapons(k+1).print_type();
+                    i.second.ship->get_weapons(k + 1).print_type();
                 }
             }
             std::cout << std::endl;
@@ -398,11 +415,10 @@ void App::print_all_convoy() const noexcept {
 }
 
 void App::gameplay() noexcept {
-    std::string menu[] = {"1) Вправо", "2) Влево", "3) Вверх", "4) Вниз", "5) Выстрелить"};
+    std::string menu[] = {"1) Вправо", "2) Влево", "3) Вверх", "4) Вниз"};
     int result;
     Map map(mission.get_pirate_base().x, mission.get_pirate_base().y, mission.get_convoy_table(), mission.get_pirate_table());
     map.print();
-    // сразу управлять можно, имея 5 вариаций - вперед, назад, вправо, влево, выстрелять
     do{
         std::cout << "Текущее состояние конвоя" << std::endl;
         print_all_convoy();
@@ -414,92 +430,105 @@ void App::gameplay() noexcept {
         map.clear_ships_in_map();
         if (result == 1){
             displace(1, 0);
+            shoot();
         } else if (result == 2){
             displace(-1, 0);
+            shoot();
         } else if (result == 3){
             displace(0, -1);
+            shoot();
         }else if (result == 4){
             displace(0, 1);
-        } else if (result == 5){
             shoot();
-            displace(1, 0);
         }
         bot_turn();
         map.set_ships_in_map();
         map.print();
-        if (mission.get_weight_delivered() >= mission.get_max_weight()){
+        if (mission.get_weight_delivered() >= mission.get_max_weight() || mission.count_pirates() == 0){
             std::cout << "Вы выиграли!!!" << std::endl;
+            if (mission.count_pirates() == 0){
+                std::cout << "Все корабли пиратов уничтожены!" << std::endl;
+            } else{
+                std::cout << "Вы привезли " << mission.get_weight_delivered() << " груза" << std::endl;
+            }
             break;
         }
-        if (mission.get_weight_lost() >= mission.get_max_weight()){
+        if (mission.get_weight() < mission.get_max_weight()){
             std::cout << "Вы проиграли!" << std::endl;
-            std::cout << "Выжившие корабли" << std::endl;
-            print_all_convoy();
             break;
         }
-
     } while (true);
 }
 
 void App::displace(int x_, int y_) noexcept {
-    int velocity = static_cast<int>(mission.get_convoy_speed()); // из-за размерности карты
-    auto table = mission.get_convoy_table()->get_table();
-    auto table_ms = mission.get_convoy_table();
-    for (auto &i : table){
-        table_ms->push_new_coord(i.first, i.second.coord.x + x_ * velocity, i.second.coord.y + (y_ * velocity)/3);
-        i.second.coord.x += x_ * velocity;
-        i.second.coord.y += (y_ * velocity)/3;
-        if (i.second.coord.x < 0){
-            table_ms->push_new_coord(i.first, 0, i.second.coord.y);
-        }
-        if (i.second.coord.x > Map::get_distance()-1){
-            table_ms->push_new_coord(i.first, Map::get_distance()-1, i.second.coord.y);
-        }
-        if (i.second.coord.y < 1){
-            table_ms->push_new_coord(i.first, i.second.coord.x, 1);
-        }
-        if (i.second.coord.y > Map::get_height()-1){
-            table_ms->push_new_coord(i.first, i.second.coord.x, Map::get_height()-2);
-        }
-        if (i.second.coord.x >= mission.get_convoy_finish().x-1 && i.second.coord.y < mission.get_convoy_finish().y + 2 && i.second.coord.y > mission.get_convoy_finish().y - 2){
-            mission.convoy_finish(i.first);
+    if (mission.count_convoy() != 0) {
+        int velocity = static_cast<int>(mission.get_convoy_speed()); // из-за размерности карты
+        auto table = mission.get_convoy_table()->get_table();
+        auto table_ms = mission.get_convoy_table();
+        for (auto &i: table) {
+            table_ms->push_new_coord(i.first, i.second.coord.x + x_ * velocity, i.second.coord.y + (y_ * velocity) / 3);
+            i.second.coord.x += x_ * velocity;
+            i.second.coord.y += (y_ * velocity) / 3;
+            if (i.second.coord.x < 0) {
+                table_ms->push_new_coord(i.first, 0, i.second.coord.y);
+            }
+            if (i.second.coord.x > Map::get_distance() - 1) {
+                table_ms->push_new_coord(i.first, Map::get_distance() - 1, i.second.coord.y);
+            }
+            if (i.second.coord.y < 1) {
+                table_ms->push_new_coord(i.first, i.second.coord.x, 1);
+            }
+            if (i.second.coord.y > Map::get_height() - 1) {
+                table_ms->push_new_coord(i.first, i.second.coord.x, Map::get_height() - 2);
+            }
+            if (i.second.coord.x >= mission.get_convoy_finish().x - 5 &&
+                i.second.coord.y <= mission.get_convoy_finish().y + 5 &&
+                i.second.coord.y >= mission.get_convoy_finish().y - 5) {
+                mission.convoy_finish(i.first);
+            }
         }
     }
 }
 
 void App::shoot() noexcept {
-    auto table = mission.get_convoy_table()->get_table();
-    unsigned long result;
-    std::string name;
-    bool flag = false;
-    std::vector<std::pair<unsigned long , int>>* data;
-    for (auto &i : table){
-        std::cout << "Сейчас стреляет корабль " << i.second.ship->get_name() << std::endl;
-        std::cout << "Доступна стрельба по кораблям пиратов: " << std::endl;
-        data = mission.find_to_shoot(i.first);
-        for (auto const &j : *data){
-            auto pirate = mission.get_pirate(j.first);
-            if (j.second != 0){
-                std::cout << "Имя: " << pirate->get_name() << "\t Тип: ";
-                pirate->print_type();
-                std::cout << "\t Текущее здоровье: " << pirate->get_hp() << "\t Урон по кораблю: " << j.second << std::endl;
-                flag = true;
+    if (mission.count_convoy() != 0) {
+        auto table = mission.get_convoy_table()->get_table();
+        unsigned long result;
+        std::string name;
+        bool flag = false;
+        int count = 0;
+        std::vector<std::pair<unsigned long, int>> *data;
+        for (auto &i: table) {
+            data = mission.find_to_shoot(i.first);
+            for (auto const &j: *data) {
+                auto pirate = mission.get_pirate(j.first);
+                if (j.second != 0) {
+                    if (count == 0) {
+                        std::cout << "Сейчас стреляет корабль " << i.second.ship->get_name() << std::endl;
+                        std::cout << "Доступна стрельба по кораблям пиратов: " << std::endl;
+                    }
+                    std::cout << "Имя: " << pirate->get_name() << "\t Тип: ";
+                    pirate->print_type();
+                    std::cout << "\t Текущее здоровье: " << pirate->get_hp() << "\t Урон по кораблю: " << j.second
+                              << std::endl;
+                    flag = true;
+                    count++;
+                }
             }
-        }
-        if (flag){
-            std::cout << "Выберете корабль, по которому будете стрелять" << std::endl;
-            std::cin >> name;
-            try{
-                result = mission.get_pirate_id(name);
-                mission.shoot(i.first, result);
-            }catch (std::invalid_argument const &err){
-                std::cout << "Такого корабля нет!" << std::endl;
+            count = 0;
+            if (flag) {
+                std::cout << "Выберете корабль, по которому будете стрелять" << std::endl;
+                std::cin >> name;
+                try {
+                    result = mission.get_pirate_id(name);
+                    mission.shoot(i.first, result);
+                } catch (std::invalid_argument const &err) {
+                    std::cout << "Такого корабля нет!" << std::endl;
+                }
             }
-        } else{
-            std::cout << "Ни один корабль пиратов не находится в досягаемости!" << std::endl;
+            flag = false;
+            delete data;
         }
-        flag = false;
-        delete data;
     }
 }
 
