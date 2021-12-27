@@ -4,29 +4,38 @@
 
 #include "Console.h"
 
-App::App() noexcept {
-    int lev;
-    std::string const error = "Ошибка ввода!";
-    std::cout << "Добро пожаловать в игру про военный коновой!/n Выберите уровень сложности:\n1) Легкий\n2) Средний\n3) Сложный\n";
-    do{
-    lev = enter_int();
-    if (lev < 1 || lev > 3){
-        std::cin.clear();
-        std::cin.ignore(32767, '\n');
-        std::cout << error << std::endl;
+Map_Window::Map_Window() noexcept {
+    image.loadFromFile("../Images/WaterImage.png");
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
+}
+
+std::string string_weapon(WeaponName wp){
+    if (wp == SMALL){
+        return "small";
+    } else if (wp == MEDIUM){
+        return "medium";
+    } else if (wp == BIG){
+        return "big";
     } else{
-        if (lev == 1){
-            level = L_EASY;
-        }
-        if (lev == 2){
-            level = L_MEDIUM;
-        }
-        if (lev == 3){
-            level = L_HARD;
-        }
-        break;
+        return "undefined";
     }
-    } while (true);
+}
+
+std::string string_ship(ShipType type){
+    if (type == DESTROYER){
+        return "destroyer";
+    } else if (type == LCRUISER){
+        return "light cruiser";
+    } else if (type == HCRUISER){
+        return "heavy cruiser";
+    } else if (type == BATTLESHIP){
+        return "battleship";
+    }
+}
+
+App::App(Level level_) noexcept {
+    level = level_;
     if (level == L_EASY){
         mission.set_dop(100000, 100);
     }
@@ -38,31 +47,31 @@ App::App() noexcept {
     }
 }
 
-void App::buy() noexcept{
+void App::buy(sf::RenderWindow* window) noexcept{
     int result;
     int ptr;
-    std::cout << "Сейчас вы можете купить и продать корабли и вооружение перед заданием" << std::endl;
-    std::string menu[] = {"Введите любое число, чтобы закончить и перейти к распределению груза", "Нажмите 1, чтобы купить корабль",
-                          "Нажмите 2, чтобы купить вооружение", "Нажмите 3, чтобы продать корабль", "Нажмите 4, чтобы продать вооружение",
-                          "Нажмите 5, чтобы вывести список кораблей"};
+    std::cout << "Now you can buy ships and weapons" << std::endl;
+    std::string menu[] = {"Enter any number to go to next step", "Enter 1, to buy ship",
+                          "Enter 2, to buy weapon", "Enter 3, to sell ship", "Enter 4, to sell weapon",
+                          "Enter 5, to print list of ships"};
     do{
-        std::cout << "Текущее количество денег: " << mission.get_money() - mission.get_spent_money() << std::endl;
+        std::cout << "Amount of money: " << mission.get_money() - mission.get_spent_money() << std::endl;
         if (mission.get_max_weight() - mission.get_weight() > 0){
             ptr = mission.get_max_weight() - mission.get_weight();
         } else{
             ptr = 0;
         }
-        std::cout << "Груз необходимый для распределения: " << ptr << std::endl;
-        std::cout << "Общее количество загруженного груза: " << mission.get_weight() << std::endl;
+        std::cout << "Cargo, needed to upload: " << ptr << std::endl;
+        std::cout << "Amount of uploaded cargo: " << mission.get_weight() << std::endl;
         for (std::string const &i : menu){
             std::cout << i << std::endl;
         }
-        std::cout << "Введите: " << std::endl;
+        std::cout << "Enter: " << std::endl;
         result = enter_int();
         if (result == 1){
-            buy_convoy();
+            buy_convoy(window);
         } else if (result == 2){
-            buy_weapon();
+            buy_weapon(window);
         } else if (result == 3){
             sell_convoy();
         } else if (result == 4){
@@ -75,128 +84,499 @@ void App::buy() noexcept{
     } while (true);
 }
 
-void App::buy_convoy() noexcept{
-    std::string ships[] = {"Введите любое число, чтобы выйти из режима покупки корабля", "Нажмите 1, чтобы купить транспортный корабль",
-                           "Нажмите 2, чтобы купить военный транспорт", "Нажмите 3, чтобы купить эсминец",
-                           "Нажмите 4, чтобы купить легкий крейсер", "Нажмите 5, чтобы купить тяжелый крейсер",
-                           "Нажмите 6, чтобы купить линкор"};
+void App::buy_convoy(sf::RenderWindow* window) noexcept{
+    std::string info;
+    Map_Window fon;
+    sf::Font font;
     int result;
     int choose;
+    bool flag = true;
     int weight;
     std::string name;
     std::array<WeaponName, 4> list_of_weapons = {UNDEFINED, UNDEFINED, UNDEFINED, UNDEFINED};
-    std::cout << "Введите: " << std::endl;
-    std::cout << "Выберете корабль для покупки" << std::endl;
-    for (std::string const &i: ships) {
-        std::cout << i << std::endl;
+
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("1) Buy transport ship \n 2) Buy battle transport \n 3) Buy destroyer \n 4) Buy light cruiser \n 5) Buy heavy cruiser \n 6) Buy battleship", font, 50);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+            result = 1;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+            result = 2;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+            result = 3;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+            result = 4;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
+            result = 5;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
+            result = 6;
+            break;
+        }
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
     }
-    std::cout << "Введите: " << std::endl;
-    result = enter_int();
-    if (result == 1){
-        print_info_ship(TRANSPORT);
-    } else if (result == 2){
-        print_info_ship(BATTLETRANSPORT);
-    }else if (result == 3){
-        print_info_ship(DESTROYER);
-    }else if (result == 4){
-        print_info_ship(LCRUISER);
-    } else if (result == 5){
-        print_info_ship(HCRUISER);
-    } else if (result == 6){
-        print_info_ship(BATTLESHIP);
-    } else{
-        return;
-    }
-    std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
-    choose = enter_int();
-    if (choose == 1) {
-        std::cout << "Ведите название корабля" << std::endl;
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+
+        text.setString("Enter all properties of ship in console");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
+
+        std::cout << "Enter name of ship" << std::endl;
         std::cin >> name;
-        if (result == 1 || result == 2){
-            std::cout << "Введите груз" << std::endl;
+        if (result == 1 || result == 2) {
+            std::cout << "Enter cargo" << std::endl;
             weight = enter_int();
         }
-        if (result > 1 && result < 7){
-            std::cout << "Выберете вооружение на корабль" << std::endl;
-            for (int i = 0; i < 4; i++){
-                list_of_weapons[i] = select_weapon();
+        if (result > 1 && result < 7) {
+            text.setString(info + "\n Enter weapons");
+            for (int i = 0; i < 4; i++) {
+                list_of_weapons[i] = select_weapon(window, i);
             }
         }
-        if (result == 1){
-            try{
-                mission.buy_convoy_transport(name, weight);
-            }catch (std::range_error const &err1){
-                std::cout << "Корабль не был куплен! Слишком много кораблей!" << std::endl;
-            }catch (std::overflow_error const &err3){
-                std::cout << "Корабль не был куплен! Корабль слишком дорогой!" << std::endl;
-            }catch (std::runtime_error const &err4){
-                std::cout << "Корабль не был куплен! Имя уже занято" << std::endl;
-            }catch (std::out_of_range const &err3){
-                std::cout << "Корабль не был куплен! Слишком большой груз!" << std::endl;
-            }catch (std::length_error const &err5){
-                std::cout << "Введено отрицательное значение веса!" << std::endl;
+        break;
+    }
+    if (result == 1){
+        try{
+            mission.buy_convoy_transport(name, weight);
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                auto sh = mission.get_convoy(mission.get_convoy_id(name));
+                text.setString("The ship was successfully included in the convoy! \n Name: " + sh->get_name()
+                + "\n Type: Transport \n Max cargo: " + std::to_string(sh->get_weight()) + "\n Max velocity: " +
+                                       std::to_string(sh->get_speed()));
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
             }
-        } else if (result == 2){
-            try{
-                mission.buy_convoy_battle_transport(name, list_of_weapons[0], list_of_weapons[1], list_of_weapons[2], list_of_weapons[3], weight);
-            }catch (std::range_error const &err1){
-                std::cout << "Корабль не был куплен! Слишком много кораблей!" << std::endl;
-            }catch (std::overflow_error const &err3){
-                std::cout << "Корабль не был куплен! Корабль слишком дорогой!" << std::endl;
-            }catch (std::runtime_error const &err4){
-                std::cout << "Корабль не был куплен! Имя уже занято" << std::endl;
-            }catch (std::out_of_range const &err3){
-                std::cout << "Корабль не был куплен! Слишком большой груз!" << std::endl;
-            }catch (std::length_error const &err5){
-                std::cout << "Введено отрицательное значение веса!" << std::endl;
+        }catch (std::range_error const &err1){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Too many ships");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
             }
-        }else if (result > 2 && result < 7){
-            ShipType type_;
-            if (result == 3){
-                type_ = DESTROYER;
-            }else if (result == 4){
-                type_ = LCRUISER;
-            } else if (result == 5){
-                type_ = HCRUISER;
-            } else{
-                type_ = BATTLESHIP;
+        }catch (std::overflow_error const &err3){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Ship too expensive");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
             }
-            try{
-                mission.buy_convoy_battle(type_, name, list_of_weapons[0], list_of_weapons[1], list_of_weapons[2], list_of_weapons[3]);
-            }catch (std::range_error const &err1) {
-                std::cout << "Корабль не был куплен! Слишком много кораблей!" << std::endl;
-            }catch (std::overflow_error const &err3){
-                std::cout << "Корабль не был куплен! Корабль слишком дорогой!" << std::endl;
-            }catch (std::runtime_error const &err4){
-                std::cout << "Корабль не был куплен! Имя уже занято" << std::endl;
+        }catch (std::runtime_error const &err4){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Name has already selected" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::out_of_range const &err3){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Cargo is too big!" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::length_error const &err5){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! You enter negative number!" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }
+    } else if (result == 2){
+        try{
+            mission.buy_convoy_battle_transport(name, list_of_weapons[0], list_of_weapons[1], list_of_weapons[2], list_of_weapons[3], weight);
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                auto sh = mission.get_convoy(mission.get_convoy_id(name));
+                text.setString("The ship was successfully included in the convoy! \n Name: " + sh->get_name()
+                               + "\n Type: Battle transport \n Max cargo: " + std::to_string(sh->get_weight()) + "\n Max velocity: " +
+                               std::to_string(sh->get_speed()) + "\n First weapon: " + string_weapon(sh->get_weapons(1).get_name())
+                               + "\n Second weapon: " + string_weapon(sh->get_weapons(2).get_name()) +
+                               "\n Third weapon: " + string_weapon(sh->get_weapons(3).get_name()) +
+                               "\n Fourth weapon: " + string_weapon(sh->get_weapons(4).get_name()));
+
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::range_error const &err1){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Too many ships");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::overflow_error const &err3){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Ship too expensive");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::runtime_error const &err4){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Name has already selected" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::out_of_range const &err3){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Cargo is too big!" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::length_error const &err5){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! You enter negative number!" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }
+    }else if (result > 2 && result < 7){
+        ShipType type_;
+        if (result == 3){
+            type_ = DESTROYER;
+        }else if (result == 4){
+            type_ = LCRUISER;
+        } else if (result == 5){
+            type_ = HCRUISER;
+        } else{
+            type_ = BATTLESHIP;
+        }
+        try{
+            mission.buy_convoy_battle(type_, name, list_of_weapons[0], list_of_weapons[1], list_of_weapons[2], list_of_weapons[3]);
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                auto sh = mission.get_convoy(mission.get_convoy_id(name));
+                text.setString("The ship was successfully included in the convoy! \n Name: " + sh->get_name()
+                               + "\n Type: " + string_ship(sh->get_type()) + "\n Max cargo: " + std::to_string(sh->get_weight()) + "\n Max velocity: " +
+                               std::to_string(sh->get_speed()) + "\n First weapon: " + string_weapon(sh->get_weapons(1).get_name())
+                               + "\n Second weapon: " + string_weapon(sh->get_weapons(2).get_name()) +
+                               "\n Third weapon: " + string_weapon(sh->get_weapons(3).get_name()) +
+                               "\n Fourth weapon: " + string_weapon(sh->get_weapons(4).get_name()));
+
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::range_error const &err1) {
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Too many ships");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::overflow_error const &err3){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Ship too expensive");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+            }
+        }catch (std::runtime_error const &err4){
+            while (window->isOpen()){
+                sf::Event event;
+                while (window->pollEvent(event)) {
+                    if (event.type == sf::Event::Closed)
+                        window->close();
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                        window->close();
+                    }
+                }
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                    break;
+                }
+                text.setString("Ship wasn't bought! Name has already selected" );
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
             }
         }
     }
 }
 
-void App::print_info_ship(ShipType type_) noexcept {
+std::string App::print_info_ship(ShipType type_, std::string& wd) noexcept {
     auto sh = get_ship_type_info(type_);
-    std::cout << "Цена корабля: " << sh->get_price() << std::endl;
-    std::cout << "Максимально перевозимый груз: " << sh->get_max_weight() << std::endl;
-    std::cout << "Максимальная скорость корабля: " << sh->get_max_speed() << std::endl;
-    std::cout << "Количество здоровья: " << sh->get_max_hp() << std::endl;
+    wd = "Price of ship: " + std::to_string(sh->get_price()) + "\n Max cargo: " + std::to_string(sh->get_max_weight()) + "\n Max velocity: " +
+            std::to_string(sh->get_max_speed()) + "\n HP: " + std::to_string(sh->get_max_hp());
+    return wd;
 }
 
-void App::print_info_weapon(WeaponName type_) noexcept {
+std::string App::print_info_weapon(WeaponName type_, std::string& wd) noexcept {
     auto data = set_weapon();
     for (auto const &i : data){
         if (i.get_name() == type_){
-            std::cout << "Цена вооружения: " << i.get_price() << std::endl;
-            std::cout << "Урон за выстрел: " << i.get_damage() << std::endl;
-            std::cout << "Скорострельность: " << i.get_rate() << std::endl;
-            std::cout << "Боезапас: " << i.get_max_ammo() << std::endl;
+            std::cout << "price of weapon: " << i.get_price() << std::endl;
+            std::cout << "Damage: " << i.get_damage() << std::endl;
+            std::cout << "Rate: " << i.get_rate() << std::endl;
+            std::cout << "Ammo: " << i.get_max_ammo() << std::endl;
         }
     }
 }
 
 int App::enter_int() noexcept {
     int result = 0;
-    std::string const error = "Ошибка ввода!";
+    std::string const error = "Error!";
     do{
         if (!(std::cin >> result)) {
             std::cin.clear();
@@ -209,75 +589,82 @@ int App::enter_int() noexcept {
     return result;
 }
 
-void App::buy_weapon() noexcept {
+void App::buy_weapon(sf::RenderWindow* window) noexcept {
     std::string name;
     int result;
     unsigned long id;
-    std::cout << "Введите имя корабля для установки вооружения" << std::endl;
+    std::cout << "Enter name of ship" << std::endl;
     std::cin >> name;
     try{
         id = mission.get_convoy_id(name);
     }catch (std::invalid_argument const &err){
-        std::cout << "Корабля с таким именем нет!" << std::endl;
+        std::cout << "We can`t find this ship!" << std::endl;
         return;
     }
-    WeaponName wp = select_weapon();
-    std::cout << "Введите место установки (от 1 до 4): ";
+    WeaponName wp = select_weapon(window, 0);
+    std::cout << "Enter place (from 1 to 4): ";
     result = enter_int();
     try{
         mission.buy_weapon(id, wp, result);
     }catch (std::overflow_error const &err1){
-        std::cout << "Орудие не было установлено! Недостаточно денег" << std::endl;
+        std::cout << "The gun was not installed! Not enough money" << std::endl;
     }catch (std::out_of_range const &err2){
-        std::cout << "Орудие не было установлено! Неправильно указано место установки" << std::endl;
+        std::cout << "The gun was not installed! Place!" << std::endl;
     }catch (std::invalid_argument const &err3){
-        std::cout << "Орудие не было установлено! Корабль не был найден" << std::endl;
+        std::cout << "The gun was not installed! Can`t find" << std::endl;
     }
 }
 
-WeaponName App::select_weapon() noexcept {
-    std::string weapon[] = {"0) Не устанавливать", "1) Малокалиберная пушка", "2) Среднекалиберная пушка", "3) Крупнокалиберная пушка"};
-    int result, choose;
-    for (std::string const &i : weapon){
-        std::cout << i << std::endl;
-    }
-    std::cout << "Введите номер вооружение, которое хотите купить" << std::endl;
-    result = enter_int();
-    if (result == 1){
-        print_info_weapon(SMALL);
-        std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
-            choose = enter_int();
-            if (choose == 1) {return SMALL;
+WeaponName App::select_weapon(sf::RenderWindow* window, int i) noexcept {
+    Map_Window fon;
+    sf::Font font;
+    int result;
+    std::string name;
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("install on position " + std::to_string(i+1)+ "\n 0) Not install \n 1) Small - caliber cannon  "
+                  "\n 2) Middle - caliber cannon \n 3) Large - caliber gun", font, 50);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
             }
-    } else if (result == 2){
-        print_info_weapon(MEDIUM);
-        std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
-        choose = enter_int();
-        if (choose == 1) {
+        }
+
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+
+        window->display();
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)){
+            return SMALL;
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
             return MEDIUM;
         }
-    } else if (result == 3){
-        print_info_weapon(BIG);
-        std::cout << "Вы уверены в покупке? \n 1) Да \n 2) Нет" << std::endl;
-        choose = enter_int();
-        if (choose == 1) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)){
             return BIG;
         }
-    } else{
-        return UNDEFINED;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)){
+            return UNDEFINED;
+        }
     }
-    return UNDEFINED;
 }
 
 void App::sell_convoy() noexcept {
     std::string name;
     unsigned long id;
-    std::cout << "Введите название корабля" << std::endl;
+    std::cout << "Enter name" << std::endl;
     std::cin >> name;
     try{
         id = mission.get_convoy_id(name);
     }catch (std::invalid_argument const &err){
-        std::cout << "Корабль с данным именем не был найден!" << std::endl;
+        std::cout << "Can`t find ship!" << std::endl;
         return;
     }
     mission.sell_convoy(id);
@@ -309,74 +696,74 @@ bool App::upload() noexcept {
     std::string name;
     int weight_aut;
     unsigned long id;
-    std::cout << "На этом этапе вы можете загрузить и разгрузить груз по кораблям" << std::endl;
+    std::cout << "Here you can upload and unload weapons" << std::endl;
     do {
-        std::cout << "Введите любое число, если хотите закончить и начать вылазку" << std::endl;
-        std::cout << "Нажмите 1, если хотите автоматической загрузки с максимальной скоростью конвоя" << std::endl;
-        std::cout << "Нажмите 2, если хотите вручную загрузить корабли" << std::endl;
-        std::cout << "Нажмите 3, если хотите разгрузить выбранный корабль" << std::endl;
-        std::cout << "Нажмите 4, чтобы вывести список кораблей" << std::endl;
-        std::cout << "Нажмите 5, если хотите вернуться в магазин" << std::endl;
+        std::cout << "Enter any button to go to next step" << std::endl;
+        std::cout << "Enter 1, for automatic loading" << std::endl;
+        std::cout << "Press 2 if you want to manually load the ships" << std::endl;
+        std::cout << "Press 3 if you want to unload the selected ship" << std::endl;
+        std::cout << "Press 4 to display a list of ships" << std::endl;
+        std::cout << "Press 5 if you want to return to the store" << std::endl;
         if (mission.get_max_weight() - mission.get_weight() > 0){
             ptr = mission.get_max_weight() - mission.get_weight();
         } else{
             ptr = 0;
         }
-        std::cout << "Осталось распределить: " << ptr << std::endl;
-        std::cout << "Общий вес груза : " << mission.get_weight() << std::endl;
-        std::cout << "Текущая скорость конвоя: " << mission.get_convoy_speed() << std::endl;
+        std::cout << "It remains to distribute: " << ptr << std::endl;
+        std::cout << "Total weight of the cargo: " << mission.get_weight() << std::endl;
+        std::cout << "Current speed of the convoy: " << mission.get_convoy_speed() << std::endl;
         result = enter_int();
         if (result == 1) {
-            std::cout << "Введите вес" << std::endl;
+            std::cout << "Enter the weight" << std::endl;
             weight_aut = enter_int();
             if (weight_aut < 0){
-                std::cout << "Вы ввели отрицательное число!" << std::endl;
+                std::cout << "You entered a negative number!" << std::endl;
             } else {
                 try {
                     mission.upload_automatically(weight_aut);
                 } catch (std::invalid_argument const &err) {
-                    std::cout << "Слишком мало кораблей! Докупите еще" << std::endl;
+                    std::cout << "Too few ships! Buy more" << std::endl;
                 }
             }
         } else if (result == 2) {
-            std::cout << "Введите название транспортного корабля" << std::endl;
+            std::cout << "Enter the name of the transport ship" << std::endl;
             std::cin >> name;
             try{
                 id = mission.get_convoy_id(name);
             }catch (std::invalid_argument const &err1){
-                std::cout << "Данный корабль не был найден" << std::endl;
+                std::cout << "This ship was not found" << std::endl;
                 continue;
             }
-            std::cout << "Доступное количество загружаемого груза на данный корабль: " << mission.get_convoy(id)->get_max_weight() - mission.get_convoy(id)->get_weight() << std::endl;
-            std::cout << "Введите количество загружаемого груза" << std::endl;
+            std::cout << "The available amount of loaded cargo on this ship: " << mission.get_convoy(id)->get_max_weight() - mission.get_convoy(id)->get_weight() << std::endl;
+            std::cout << "Enter the quantity of the loaded cargo" << std::endl;
             weight = enter_int();
             try {
                 mission.upload_weight(id, weight);
             }catch (std::invalid_argument const &err1){
-                std::cout << "Слишком большое значение веса или отрицательное значение веса" << std::endl;
+                std::cout << "Too much weight value or negative weight value" << std::endl;
             }
         } else if (result == 3){
-            std::cout << "Введите название транспортного корабля" << std::endl;
+            std::cout << "Enter the name of the transport ship" << std::endl;
             std::cin >> name;
             try{
                 id = mission.get_convoy_id(name);
             }catch (std::invalid_argument const &err1){
-                std::cout << "Данный корабль не был найден" << std::endl;
+                std::cout << "This ship was not found" << std::endl;
                 continue;
             }
-            std::cout << "Текущий груз на данном корабле: " << mission.get_convoy(id)->get_weight() << std::endl;
-            std::cout << "Введите кол-во груза, которое вы хотите разгрузить" << std::endl;
+            std::cout << "Current cargo on this ship: " << mission.get_convoy(id)->get_weight() << std::endl;
+            std::cout << "Enter the quantity of cargo you want to unload" << std::endl;
             weight = enter_int();
             try{
                 mission.unload_weight(id, weight);
             }catch (std::invalid_argument const &err){
-                std::cout << "Неправильно указан формат веса или ввели слишком большое значение" << std::endl;
+                std::cout << "The weight format is incorrectly specified or the value is too large" << std::endl;
             }
         } else if (result == 4){
             print_all_convoy();
         }else{
             if (mission.get_max_weight() - mission.get_weight() > 0 && result != 5){
-                std::cout << "Вы не полностью распределили груз!" << std::endl;
+                std::cout << "You have not fully distributed the cargo!" << std::endl;
             } else{
                 break;
             }
@@ -390,21 +777,21 @@ bool App::upload() noexcept {
 
 void App::print_all_convoy() const noexcept {
     if (mission.count_convoy() == 0){
-        std::cout << "Список кораблей пуст!" << std::endl;
+        std::cout << "List of ships let!" << std::endl;
     } else {
         auto table = mission.get_convoy_table()->get_table();
         for (auto const &i: table) {
-            std::cout << "Название: " << i.second.ship->get_name() << "\t Тип корабля: ";
+            std::cout << "Name: " << i.second.ship->get_name() << "\t Type of ship: ";
             i.second.ship->print_type();
-            std::cout << "\t Скорость: " << i.second.ship->get_speed();
-            std::cout << "\t Здоровье: " << i.second.ship->get_hp();
+            std::cout << "\t Speed: " << i.second.ship->get_speed();
+            std::cout << "\t HP: " << i.second.ship->get_hp();
             if (i.second.ship->get_type() == TRANSPORT || i.second.ship->get_type() == BATTLETRANSPORT) {
-                std::cout << "\t Вес: " << i.second.ship->get_weight() << "\t Макс вес: "
+                std::cout << "\t Weight: " << i.second.ship->get_weight() << "\t Max weight: "
                           << i.second.ship->get_max_weight();
             }
             if (i.second.ship->get_type() != TRANSPORT) {
                 for (int k = 0; k < 4; k++) {
-                    std::cout << "\t" << k + 1 << " орудие: ";
+                    std::cout << "\t" << k + 1 << " cannon: ";
                     i.second.ship->get_weapons(k + 1).print_type();
                 }
             }
@@ -415,29 +802,28 @@ void App::print_all_convoy() const noexcept {
 }
 
 void App::gameplay() noexcept {
-    std::string menu[] = {"1) Вправо", "2) Влево", "3) Вверх", "4) Вниз"};
+    std::string menu[] = {"1) Right", "2) Left", "3) Up", "4) Down"};
     int result;
     Map map(mission.get_pirate_base().x, mission.get_pirate_base().y, mission.get_convoy_table(), mission.get_pirate_table());
     map.print();
     do{
         std::cout << "Текущее состояние конвоя" << std::endl;
         print_all_convoy();
-        std::cout << "Выберете действие для конвоя" << std::endl;
+        std::cout << "Choose action" << std::endl;
         for (std::string const &k : menu){
             std::cout << k << std::endl;
         }
-        result = enter_int();
         map.clear_ships_in_map();
-        if (result == 1){
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
             displace(1, 0);
             shoot();
-        } else if (result == 2){
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
             displace(-1, 0);
             shoot();
-        } else if (result == 3){
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
             displace(0, -1);
             shoot();
-        }else if (result == 4){
+        }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
             displace(0, 1);
             shoot();
         }
@@ -481,10 +867,10 @@ void App::displace(int x_, int y_) noexcept {
             if (i.second.coord.y > Map::get_height() - 1) {
                 table_ms->push_new_coord(i.first, i.second.coord.x, Map::get_height() - 2);
             }
-            if (i.second.coord.x >= mission.get_convoy_finish().x - 5 &&
-                i.second.coord.y <= mission.get_convoy_finish().y + 5 &&
-                i.second.coord.y >= mission.get_convoy_finish().y - 5) {
+            if (i.second.coord.x >= mission.get_convoy_finish().x - 5 && i.second.coord.y <= mission.get_convoy_finish().y + 5 && i.second.coord.y >= mission.get_convoy_finish().y - 5) {
                 mission.convoy_finish(i.first);
+            } else{
+                i.second.ship->sprite.setPosition(static_cast<float>(i.second.coord.x), static_cast<float>(i.second.coord.y));
             }
         }
     }

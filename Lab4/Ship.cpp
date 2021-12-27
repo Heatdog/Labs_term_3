@@ -100,6 +100,10 @@ Ship &Ship::operator=(const Ship &a) {
         hp = a.hp;
         max_hp = a.max_hp;
         price = a.price;
+        file = a.file;
+        image = a.image;
+        texture = a.texture;
+        sprite = a.sprite;
     }
     return *this;
 }
@@ -172,6 +176,10 @@ void Ship::print_type() const noexcept {
 TransportShip::TransportShip() noexcept : Ship(), weight(0), max_weight(0), ratio(1) {
     set_type(TRANSPORT);
     set_name("transport");
+    file = "TransportImage.png";
+    image.loadFromFile("../Images/TransportImage.png");
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
 }
 
 TransportShip::TransportShip(std::string const &name_, Capitan const &capitan_, double speed_, double max_speed_,
@@ -182,6 +190,10 @@ TransportShip::TransportShip(std::string const &name_, Capitan const &capitan_, 
         throw std::invalid_argument("Invalid arg! TransportShip constructor");
     }
     set_weight(weight_);
+    file = "TransportImage.png";
+    image.loadFromFile("../Images/TransportImage.png");
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
 }catch (std::invalid_argument const &err){
     throw err;
 }
@@ -203,6 +215,10 @@ TransportShip::TransportShip(const std::string &name_, int weight_) {
             set_price(i->get_price());
             set_max_weight(i->get_max_weight());
             set_weight(weight_);
+            file = "TransportImage.png";
+            image.loadFromFile("../Images/TransportImage.png");
+            texture.loadFromImage(image);
+            sprite.setTexture(texture);
             break;
         }
     }
@@ -262,15 +278,49 @@ void TransportShip::set_ratio(double rat_) {
 BattleShip::BattleShip() noexcept : Ship() {
     set_type(BATTLESHIP);
     set_name("battleship");
+    file = "BattleImage.png";
+    image.loadFromFile("../Images/BattleImage.png");
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
 }
 
 BattleShip::BattleShip(ShipType type, const std::string &name_, const Capitan &capitan_, double speed_, double max_speed_,
      int hp_, int max_hp_, int price_, std::array<Weapon, 4> weapons_)
-     : Ship(type, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_), weapons(std::move(weapons_)){}
+     : Ship(type, name_, capitan_, speed_, max_speed_, hp_, max_hp_, price_), weapons(std::move(weapons_)){
+        if (type == DESTROYER){
+            file = "DestroyerImage.png";
+        }else if (type == LCRUISER){
+            file = "LightCrImage.png";
+        } else if (type == HCRUISER){
+            file = "HeavyCrImage.png";
+        } else if (type == BATTLESHIP){
+            file = "BattleImage.png";
+        } else if (type == BATTLETRANSPORT){
+            file = "BattleTransportImage.png";
+        }
+        image.loadFromFile("../Images/" + file);
+        texture.loadFromImage(image);
+        sprite.setTexture(texture);
+    }
 
 BattleShip::BattleShip(ShipType type, const std::string &name_, const Capitan &capitan_, double speed_,
      double max_speed_, int hp_, int max_hp_, int price_) : Ship(type, name_, capitan_, speed_,
-     max_speed_, hp_, max_hp_, price_) {}
+     max_speed_, hp_, max_hp_, price_) {
+    if (type == DESTROYER){
+        file = "DestroyerImage.png";
+    }else if (type == LCRUISER){
+        file = "LightCrImage.png";
+    } else if (type == HCRUISER){
+        file = "HeavyCrImage.png";
+    } else if (type == BATTLESHIP){
+        file = "BattleImage.png";
+    } else if (type == BATTLETRANSPORT){
+        file = "BattleTransportImage.png";
+    }
+    image.loadFromFile("../Images/" + file);
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
+    }
 
 BattleShip::BattleShip(ShipType type_, const std::string &name_, WeaponName wp1, WeaponName wp2, WeaponName wp3,
     WeaponName wp4) {
@@ -289,6 +339,20 @@ BattleShip::BattleShip(ShipType type_, const std::string &name_, WeaponName wp1,
             modify_weapon(2, wp2);
             modify_weapon(3, wp3);
             modify_weapon(4, wp4);
+            if (get_type() == DESTROYER){
+                file = "DestroyerImage.png";
+            }else if (get_type() == LCRUISER){
+                file = "LightCrImage.png";
+            } else if (get_type() == HCRUISER){
+                file = "HeavyCrImage.png";
+            } else if (get_type() == BATTLESHIP){
+                file = "BattleImage.png";
+            } else if (get_type() == BATTLETRANSPORT){
+                file = "BattleTransportImage.png";
+            }
+            image.loadFromFile("../Images/" + file);
+            texture.loadFromImage(image);
+            sprite.setTexture(texture);
             break;
         }
     }

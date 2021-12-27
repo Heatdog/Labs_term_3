@@ -16,6 +16,7 @@
 #include <iostream>
 #include <cmath>
 #include <memory>
+#include <SFML/Graphics.hpp>
 
 //! Набор возможных типов вооружения
 enum WeaponName{
@@ -329,6 +330,10 @@ public:
    */
     virtual void add_weight(int number){};
     //---------------------------------------------------------
+    std::string file;
+    sf::Image image;
+    sf::Texture texture;
+    sf::Sprite sprite;
 private:
     ShipType type; ///< тип корабля
     std::string name; ///< имя

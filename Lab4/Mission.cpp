@@ -5,6 +5,10 @@
 #include "Mission.h"
 
 Map::Map(int p_x, int p_y, Table* table_convoy_, Table* table_pirate_) noexcept : table_convoy(table_convoy_), table_pirate(table_pirate_){
+    image.loadFromFile("../Images/WaterImage.png");
+    texture.loadFromImage(image);
+    sprite.setTexture(texture);
+
     for (int i = 0; i < distance; i++){
         map[0][i] = "-";
         map[height-1][i] = "-";
@@ -104,16 +108,6 @@ void Mission::set_pirates() const { // можно для пиратов сдел
         }
         try{
             insert_pirate(DESTROYER, "5", SMALL, SMALL, SMALL, SMALL);
-        }catch (std::invalid_argument const &err) {
-            throw err;
-        }
-        try{
-            insert_pirate(BATTLESHIP, "6", BIG, BIG, MEDIUM, SMALL);
-        }catch (std::invalid_argument const &err) {
-            throw err;
-        }
-        try{
-            insert_pirate(DESTROYER, "7", SMALL, SMALL, SMALL, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
         }

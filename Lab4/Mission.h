@@ -22,9 +22,9 @@
 
 class Map{
 private:
-    static int const height = 24;
-    static int const distance = 180;
-    std::string map[24][180];
+    static int const height = 25;
+    static int const distance = 40;
+    std::string map[25][40];
     Table* const table_convoy;
     Table* const table_pirate;
 public:
@@ -38,6 +38,10 @@ public:
     void print() const noexcept;
     void set_ships_in_map() noexcept;
     void clear_ships_in_map() noexcept;
+
+    sf::Image image;
+    sf::Texture texture;
+    sf::Sprite sprite;
 };
 
 class Mission{

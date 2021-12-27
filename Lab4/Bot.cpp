@@ -48,6 +48,7 @@ void App::displace_bot(int x_, int y_, unsigned long const &id) noexcept {
     if (el.coord.y > Map::get_height()-1){
         table->push_new_coord(id, el.coord.x, Map::get_height()-2);
     }
+    el.ship->sprite.setPosition(static_cast<float>(el.coord.x), static_cast<float>(el.coord.y));
 }
 
 void App::shoot_bot(const unsigned long &id) noexcept {
