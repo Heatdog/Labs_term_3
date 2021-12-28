@@ -22,9 +22,9 @@
 
 class Map{
 private:
-    static int const height = 25;
-    static int const distance = 40;
-    std::string map[25][40];
+    static int const height = 80;
+    static int const distance = 120;
+    std::string map[80][120];
     Table* const table_convoy;
     Table* const table_pirate;
 public:

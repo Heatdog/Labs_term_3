@@ -31,6 +31,10 @@ std::string string_ship(ShipType type){
         return "heavy cruiser";
     } else if (type == BATTLESHIP){
         return "battleship";
+    } else if (type == TRANSPORT){
+        return "transport";
+    } else if (type == BATTLETRANSPORT){
+        return "battle transport";
     }
 }
 
@@ -73,11 +77,11 @@ void App::buy(sf::RenderWindow* window) noexcept{
         } else if (result == 2){
             buy_weapon(window);
         } else if (result == 3){
-            sell_convoy();
+            sell_convoy(window);
         } else if (result == 4){
-            sell_weapon();
+            sell_weapon(window);
         } else if (result == 5){
-            print_all_convoy();
+            print_all_convoy(window);
         } else{
             break;
         }
@@ -177,7 +181,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 auto sh = mission.get_convoy(mission.get_convoy_id(name));
@@ -202,7 +206,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Too many ships");
@@ -224,7 +228,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Ship too expensive");
@@ -246,7 +250,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Name has already selected" );
@@ -268,7 +272,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Cargo is too big!" );
@@ -290,7 +294,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! You enter negative number!" );
@@ -315,7 +319,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 auto sh = mission.get_convoy(mission.get_convoy_id(name));
@@ -344,7 +348,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Too many ships");
@@ -366,7 +370,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Ship too expensive");
@@ -388,7 +392,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Name has already selected" );
@@ -410,7 +414,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Cargo is too big!" );
@@ -432,7 +436,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! You enter negative number!" );
@@ -467,7 +471,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 auto sh = mission.get_convoy(mission.get_convoy_id(name));
@@ -496,7 +500,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Too many ships");
@@ -518,7 +522,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Ship too expensive");
@@ -540,7 +544,7 @@ void App::buy_convoy(sf::RenderWindow* window) noexcept{
                     }
                 }
 
-                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
                     break;
                 }
                 text.setString("Ship wasn't bought! Name has already selected" );
@@ -590,28 +594,202 @@ int App::enter_int() noexcept {
 }
 
 void App::buy_weapon(sf::RenderWindow* window) noexcept {
+    Map_Window fon;
+    sf::Font font;
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("Enter name of ship in console", font, 50);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
     std::string name;
     int result;
     unsigned long id;
-    std::cout << "Enter name of ship" << std::endl;
-    std::cin >> name;
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
+
+        std::cout << "Enter name" << std::endl;
+        std::cin >> name;
+        break;
+    }
     try{
         id = mission.get_convoy_id(name);
     }catch (std::invalid_argument const &err){
-        std::cout << "We can`t find this ship!" << std::endl;
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            text.setString("We can`t find this ship!" );
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
         return;
     }
-    WeaponName wp = select_weapon(window, 0);
-    std::cout << "Enter place (from 1 to 4): ";
-    result = enter_int();
+    if (mission.get_convoy(id)->get_type() == TRANSPORT){
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            text.setString("We can`t insert weapon on this ship!" );
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
+        return;
+    }
+    WeaponName wp;
+    bool flag = true;
     try{
-        mission.buy_weapon(id, wp, result);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+
+            if (flag) {
+                text.setString("Enter place \n 1 \n 2 \n 3 \n 4");
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    wp = select_weapon(window, 0);
+                    mission.buy_weapon(id, wp, 1);
+                    flag = false;
+                } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                    wp = select_weapon(window, 1);
+                    mission.buy_weapon(id, wp, 2);
+                    flag = false;
+                }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+                    wp = select_weapon(window, 2);
+                    mission.buy_weapon(id, wp, 3);
+                    flag = false;
+                }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+                    wp = select_weapon(window, 3);
+                    mission.buy_weapon(id, wp, 4);
+                    flag = false;
+                }
+            } else{
+                auto sh = mission.get_convoy(id);
+                text.setString("The weapon was successfully installed on the ship! \n Name: " + sh->get_name()
+                               + "\n Type: " + string_ship(sh->get_type()) + "\n First weapon: " + string_weapon(sh->get_weapons(1).get_name())
+                               + "\n Second weapon: " + string_weapon(sh->get_weapons(2).get_name()) +
+                               "\n Third weapon: " + string_weapon(sh->get_weapons(3).get_name()) +
+                               "\n Fourth weapon: " + string_weapon(sh->get_weapons(4).get_name()));
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+            }
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }catch (std::overflow_error const &err1){
-        std::cout << "The gun was not installed! Not enough money" << std::endl;
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                break;
+            }
+            text.setString("The gun was not installed! Not enough money");
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }catch (std::out_of_range const &err2){
-        std::cout << "The gun was not installed! Place!" << std::endl;
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                break;
+            }
+            text.setString("The gun was not installed! Place!");
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }catch (std::invalid_argument const &err3){
-        std::cout << "The gun was not installed! Can`t find" << std::endl;
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Enter)){
+                break;
+            }
+            text.setString("The gun was not installed! Can`t find");
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }
 }
 
@@ -656,194 +834,823 @@ WeaponName App::select_weapon(sf::RenderWindow* window, int i) noexcept {
     }
 }
 
-void App::sell_convoy() noexcept {
+void App::sell_convoy(sf::RenderWindow* window) noexcept {
+    Map_Window fon;
+    sf::Font font;
+
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("Enter name in console", font, 50);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
     std::string name;
     unsigned long id;
-    std::cout << "Enter name" << std::endl;
-    std::cin >> name;
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
+
+        std::cout << "Enter name" << std::endl;
+        std::cin >> name;
+        break;
+    }
     try{
         id = mission.get_convoy_id(name);
+        text.setString("Convoy successfully removed!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
+
     }catch (std::invalid_argument const &err){
-        std::cout << "Can`t find ship!" << std::endl;
+        text.setString("Can`t find ship!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
         return;
     }
     mission.sell_convoy(id);
 }
 
-void App::sell_weapon() noexcept {
+void App::sell_weapon(sf::RenderWindow* window) noexcept {
+    Map_Window fon;
+    sf::Font font;
     std::string name;
     unsigned long id;
     int place;
-    std::cout << "Введите название корабля" << std::endl;
-    std::cin >> name;
+
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("Enter name of ship in console", font, 50);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
+
+        std::cout << "Enter name of ship" << std::endl;
+        std::cin >> name;
+        break;
+    }
     try{
         id = mission.get_convoy_id(name);
+        auto sh = mission.get_convoy(id);
+        text.setString("Convoy successfully found!\n First weapon: " + string_weapon(sh->get_wp().at(0).get_name())
+        + "\n Second weapon: " + string_weapon(sh->get_wp().at(1).get_name()) + "\n Third weapon: " + string_weapon(sh->get_wp().at(2).get_name())
+        + "\n Fourth weapon: " + string_weapon(sh->get_wp().at(3).get_name()));
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }catch (std::invalid_argument const &err){
-        std::cout << "Корабль с данным именем не был найден!" << std::endl;
+        text.setString("Can`t find ship!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
         return;
     }
-    std::cout << "Введите место удаления оружия (1-4)" << std::endl;
-    place = enter_int();
+    text.setString("Enter place of erasing weapon: \n 1 \n 2 \n 3 \n 4");
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+    while (window->isOpen()){
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
+            }
+        }
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)){
+            place = 1;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
+            place = 2;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)){
+            place = 3;
+            break;
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)){
+            place = 4;
+            break;
+        }
+        window->clear();
+        window->draw(fon.sprite);
+        window->draw(text);
+        window->display();
+    }
     try {
         mission.sell_weapon(id, place);
+        text.setString("Weapon successfully removed!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
+
     }catch (std::out_of_range const &err){
-        std::cout << "Неправильно указано место удаления" << std::endl;
+        text.setString("Dismiss in place of weapon!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+        }
     }
 }
 
-bool App::upload() noexcept {
+bool App::upload(sf::RenderWindow* window) noexcept {
     int result, weight, ptr;
     std::string name;
     int weight_aut;
     unsigned long id;
-    std::cout << "Here you can upload and unload weapons" << std::endl;
-    do {
-        std::cout << "Enter any button to go to next step" << std::endl;
-        std::cout << "Enter 1, for automatic loading" << std::endl;
-        std::cout << "Press 2 if you want to manually load the ships" << std::endl;
-        std::cout << "Press 3 if you want to unload the selected ship" << std::endl;
-        std::cout << "Press 4 to display a list of ships" << std::endl;
-        std::cout << "Press 5 if you want to return to the store" << std::endl;
-        if (mission.get_max_weight() - mission.get_weight() > 0){
-            ptr = mission.get_max_weight() - mission.get_weight();
-        } else{
-            ptr = 0;
-        }
-        std::cout << "It remains to distribute: " << ptr << std::endl;
-        std::cout << "Total weight of the cargo: " << mission.get_weight() << std::endl;
-        std::cout << "Current speed of the convoy: " << mission.get_convoy_speed() << std::endl;
-        result = enter_int();
-        if (result == 1) {
-            std::cout << "Enter the weight" << std::endl;
-            weight_aut = enter_int();
-            if (weight_aut < 0){
-                std::cout << "You entered a negative number!" << std::endl;
-            } else {
-                try {
-                    mission.upload_automatically(weight_aut);
-                } catch (std::invalid_argument const &err) {
-                    std::cout << "Too few ships! Buy more" << std::endl;
+
+    Map_Window fon;
+    sf::Font font;
+    std::string rt = "Here you can upload and unload ships \n 0) Go to next step \n 1) Automatic loading "
+                     "\n 2) Manually load the ships \n 3) Unload the selected ship \n 4) Display a list of ships";
+    std::string wd;
+
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text(wd, font, 50);
+
+
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
                 }
             }
-        } else if (result == 2) {
-            std::cout << "Enter the name of the transport ship" << std::endl;
-            std::cin >> name;
-            try{
-                id = mission.get_convoy_id(name);
-            }catch (std::invalid_argument const &err1){
-                std::cout << "This ship was not found" << std::endl;
-                continue;
-            }
-            std::cout << "The available amount of loaded cargo on this ship: " << mission.get_convoy(id)->get_max_weight() - mission.get_convoy(id)->get_weight() << std::endl;
-            std::cout << "Enter the quantity of the loaded cargo" << std::endl;
-            weight = enter_int();
-            try {
-                mission.upload_weight(id, weight);
-            }catch (std::invalid_argument const &err1){
-                std::cout << "Too much weight value or negative weight value" << std::endl;
-            }
-        } else if (result == 3){
-            std::cout << "Enter the name of the transport ship" << std::endl;
-            std::cin >> name;
-            try{
-                id = mission.get_convoy_id(name);
-            }catch (std::invalid_argument const &err1){
-                std::cout << "This ship was not found" << std::endl;
-                continue;
-            }
-            std::cout << "Current cargo on this ship: " << mission.get_convoy(id)->get_weight() << std::endl;
-            std::cout << "Enter the quantity of cargo you want to unload" << std::endl;
-            weight = enter_int();
-            try{
-                mission.unload_weight(id, weight);
-            }catch (std::invalid_argument const &err){
-                std::cout << "The weight format is incorrectly specified or the value is too large" << std::endl;
-            }
-        } else if (result == 4){
-            print_all_convoy();
-        }else{
-            if (mission.get_max_weight() - mission.get_weight() > 0 && result != 5){
-                std::cout << "You have not fully distributed the cargo!" << std::endl;
+            if (mission.get_max_weight() - mission.get_weight() > 0){
+                ptr = mission.get_max_weight() - mission.get_weight();
             } else{
+                ptr = 0;
+            }
+            wd += rt;
+            wd += "\n It remains to distribute: " + std::to_string(ptr) + "\n Total weight of the cargo: " +
+                    std::to_string(mission.get_weight()) + "\n Current speed of the convoy: " +
+                    std::to_string(mission.get_convoy_speed());
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)){
+                wd = "Enter the weight (in console) \n";
+                text.setString(wd);
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+                std::cout << "enter weight: " << std::endl;
+                weight_aut = enter_int();
+                if (weight_aut < 0){
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("You entered a negative number!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                } else {
+                    try {
+                        mission.upload_automatically(weight_aut);
+                        while (window->isOpen()){
+                            sf::Event event;
+                            while (window->pollEvent(event)) {
+                                if (event.type == sf::Event::Closed)
+                                    window->close();
+                                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                    window->close();
+                                }
+                            }
+
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                                break;
+                            }
+                            text.setString("Automatic upload successfully completed!");
+                            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                            window->clear();
+                            window->draw(fon.sprite);
+                            window->draw(text);
+                            window->display();
+                        }
+                    } catch (std::invalid_argument const &err) {
+                        while (window->isOpen()){
+                            sf::Event event;
+                            while (window->pollEvent(event)) {
+                                if (event.type == sf::Event::Closed)
+                                    window->close();
+                                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                    window->close();
+                                }
+                            }
+
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                                break;
+                            }
+                            text.setString("Too few ships! Buy more");
+                            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                            window->clear();
+                            window->draw(fon.sprite);
+                            window->draw(text);
+                            window->display();
+                        }
+                    }
+                }
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                wd = "Enter the name of the transport ship (in console)";
+                text.setString(wd);
+                text.setCharacterSize(30);
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+                wd = "";
+                std::cout << "Enter the name of the transport ship" << std::endl;
+                std::cin >> name;
+                try{
+                    id = mission.get_convoy_id(name);
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("The ship was successfully found!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }catch (std::invalid_argument const &err1){
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("This ship was not found!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                    continue;
+                }
+                wd += "\n The available amount of loaded cargo on this ship: " + std::to_string(mission.get_convoy(id)->get_max_weight() - mission.get_convoy(id)->get_weight()) + "\n"
+                        + "Enter the quantity of the loaded cargo (in console)\n";
+                text.setString(wd);
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+                text.setCharacterSize(30);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+                std::cout << "Enter the quantity of the loaded cargo" << std::endl;
+                weight = enter_int();
+                try {
+                    mission.upload_weight(id, weight);
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("The ship was successfully uploaded!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }catch (std::invalid_argument const &err1){
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("Too much weight value or negative weight value!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)){
+                wd = "Enter the name of the transport ship (in console)";
+                text.setString(wd);
+                text.setCharacterSize(30);
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+                wd = "";
+                std::cin >> name;
+                try{
+                    id = mission.get_convoy_id(name);
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("The ship was successfully found!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }catch (std::invalid_argument const &err1){
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("This ship was not found!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                    continue;
+                }
+                wd += "\n Current cargo on this ship: " + std::to_string(mission.get_convoy(id)->get_weight()) + "\n"
+                      + "Enter the quantity of cargo you want to unload (in console)\n";
+                text.setString(wd);
+                text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                window->clear();
+                window->draw(fon.sprite);
+                window->draw(text);
+                window->display();
+                std::cout << "Enter the quantity of cargo you want to unload" << std::endl;
+                weight = enter_int();
+                try{
+                    mission.unload_weight(id, weight);
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("The ship was successfully unloaded!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }   catch (std::invalid_argument const &err){
+                    while (window->isOpen()){
+                        sf::Event event;
+                        while (window->pollEvent(event)) {
+                            if (event.type == sf::Event::Closed)
+                                window->close();
+                            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                                window->close();
+                            }
+                        }
+
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                            break;
+                        }
+                        text.setString("The weight format is incorrectly specified or the value is too large!");
+                        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+                        window->clear();
+                        window->draw(fon.sprite);
+                        window->draw(text);
+                        window->display();
+                    }
+                }
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)){
+                print_all_convoy(window);
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)){
                 break;
             }
+            text.setString(wd);
+            text.setCharacterSize(50);
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+            wd = "";
         }
-    } while (true);
-    if (result == 5){
-        return false;
-    }
-    return true;
 }
 
-void App::print_all_convoy() const noexcept {
+void App::print_all_convoy(sf::RenderWindow* window) const noexcept {
+    Map_Window fon;
+    sf::Font font;
+
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("", font, 20);
+    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+
+
     if (mission.count_convoy() == 0){
-        std::cout << "List of ships let!" << std::endl;
-    } else {
-        auto table = mission.get_convoy_table()->get_table();
-        for (auto const &i: table) {
-            std::cout << "Name: " << i.second.ship->get_name() << "\t Type of ship: ";
-            i.second.ship->print_type();
-            std::cout << "\t Speed: " << i.second.ship->get_speed();
-            std::cout << "\t HP: " << i.second.ship->get_hp();
-            if (i.second.ship->get_type() == TRANSPORT || i.second.ship->get_type() == BATTLETRANSPORT) {
-                std::cout << "\t Weight: " << i.second.ship->get_weight() << "\t Max weight: "
-                          << i.second.ship->get_max_weight();
-            }
-            if (i.second.ship->get_type() != TRANSPORT) {
-                for (int k = 0; k < 4; k++) {
-                    std::cout << "\t" << k + 1 << " cannon: ";
-                    i.second.ship->get_weapons(k + 1).print_type();
+        text.setString("The list of ships is empty!");
+        text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
                 }
             }
-            std::cout << std::endl;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
         }
-        std::cout << std::endl;
+    } else {
+        std::string ptr = "";
+        auto table = mission.get_convoy_table()->get_table();
+        while (window->isOpen()){
+            sf::Event event;
+            while (window->pollEvent(event)) {
+                if (event.type == sf::Event::Closed)
+                    window->close();
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                    window->close();
+                }
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)){
+                break;
+            }
+
+            for (auto const &i: table) {
+                ptr.append("Name: " + i.second.ship->get_name() + " \t Type of ship: " + string_ship(i.second.ship->get_type()) +
+                        " \t Speed: " + std::to_string((int)i.second.ship->get_speed()) + "\t HP: " + std::to_string(i.second.ship->get_hp()));
+                if (i.second.ship->get_type() == TRANSPORT || i.second.ship->get_type() == BATTLETRANSPORT) {
+                    ptr.append(" \t Weight: " + std::to_string(i.second.ship->get_weight()) + " \t Max weight: " +
+                            std::to_string(i.second.ship->get_max_weight()));
+                }
+                if (i.second.ship->get_type() != TRANSPORT) {
+                    for (int k = 0; k < 4; k++) {
+                        ptr.append("\t" + std::to_string(k+1) + " wp: " + string_weapon(i.second.ship->get_weapons(k + 1).get_name()));
+                    }
+                }
+                ptr.append(" \n");
+            }
+            text.setString(ptr);
+            text.setPosition(centerPos.x - text.getGlobalBounds().width / 2, centerPos.y - text.getGlobalBounds().height / 2);
+            window->clear();
+            window->draw(fon.sprite);
+            window->draw(text);
+            window->display();
+            ptr = "";
+            text.setString(ptr);
+        }
     }
 }
 
-void App::gameplay() noexcept {
-    std::string menu[] = {"1) Right", "2) Left", "3) Up", "4) Down"};
+void App::gameplay(sf::RenderWindow* window) noexcept {
+    sf::Font font;
+    bool flag = true;
+    font.loadFromFile("../Images/PFAgoraSlabProBold.ttf");
+    sf::Vector2f centerPos = sf::Vector2f(window->getSize().x / 2, window->getSize().y / 2);
+    sf::Text text("", font, 30);
+
+    float heroteleporttimer = 0; //создаем для примера телепортации героя через 3 секунды
+    sf::Clock clock; //создаем переменную времени, т.о. привязка ко времени(а не мощности/загруженности процессора)
+
     int result;
     Map map(mission.get_pirate_base().x, mission.get_pirate_base().y, mission.get_convoy_table(), mission.get_pirate_table());
-    map.print();
-    do{
-        std::cout << "Текущее состояние конвоя" << std::endl;
-        print_all_convoy();
-        std::cout << "Choose action" << std::endl;
-        for (std::string const &k : menu){
-            std::cout << k << std::endl;
-        }
-        map.clear_ships_in_map();
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)){
-            displace(1, 0);
-            shoot();
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)){
-            displace(-1, 0);
-            shoot();
-        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)){
-            displace(0, -1);
-            shoot();
-        }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)){
-            displace(0, 1);
-            shoot();
-        }
-        bot_turn();
-        map.set_ships_in_map();
-        map.print();
-        if (mission.get_weight_delivered() >= mission.get_max_weight() || mission.count_pirates() == 0){
-            std::cout << "Вы выиграли!!!" << std::endl;
-            if (mission.count_pirates() == 0){
-                std::cout << "Все корабли пиратов уничтожены!" << std::endl;
-            } else{
-                std::cout << "Вы привезли " << mission.get_weight_delivered() << " груза" << std::endl;
+    while (window->isOpen()) {
+
+        float time = clock.getElapsedTime().asMicroseconds(); //дать прошедшее время в микросекундах
+        clock.restart(); //перезагружает время
+        time = time/800; //скорость игры
+
+        heroteleporttimer += time;
+
+        sf::Event event;
+        while (window->pollEvent(event)) {
+            if (event.type == sf::Event::Closed)
+                window->close();
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                window->close();
             }
-            break;
         }
-        if (mission.get_weight() < mission.get_max_weight()){
-            std::cout << "Вы проиграли!" << std::endl;
-            break;
+
+        if (flag &&  heroteleporttimer > 100) {
+            heroteleporttimer = 0;
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
+                displace(1, 0);
+                shoot();
+                flag = false;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
+                displace(-1, 0);
+                shoot();
+                flag = false;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
+                displace(0, -1);
+                shoot();
+                flag = false;
+            } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+                displace(0, 1);
+                shoot();
+                flag = false;
+            }
+
+            if (mission.get_weight_delivered() >= mission.get_max_weight() || mission.count_pirates() == 0) {
+                std::string final;
+                if (mission.count_pirates() == 0) {
+                    final = "All the pirate ships have been destroyed!";
+                } else {
+                    final = "You delivered " + std::to_string(mission.get_weight_delivered()) + " amount of weight \n";
+                }
+                while (window->isOpen()) {
+                    sf::Event event;
+                    while (window->pollEvent(event)) {
+                        if (event.type == sf::Event::Closed)
+                            window->close();
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                            window->close();
+                        }
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
+                        break;
+                    }
+
+                    text.setString("You`re win!!! \n" + final);
+                    text.setFillColor(sf::Color::Red);
+                    text.setCharacterSize(60);
+                    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2,
+                                     centerPos.y - text.getGlobalBounds().height / 2);
+                    window->clear();
+                    window->draw(map.sprite);
+                    for (auto &i : mission.get_convoy_table()->get_table()){
+                        i.second.ship->sprite.setPosition(i.second.coord.x* 10, i.second.coord.y* 10);
+                        window->draw(i.second.ship->sprite);
+                    }
+                    for (auto &j : mission.get_pirate_table()->get_table()){
+                        j.second.ship->sprite.setPosition(j.second.coord.x* 10, j.second.coord.y* 10);
+                        window->draw(j.second.ship->sprite);
+                    }
+                    window->draw(text);
+                    window->display();
+                }
+                break;
+            }
+            window->clear();
+            window->draw(map.sprite);
+            for (auto &i : mission.get_convoy_table()->get_table()){
+                i.second.ship->sprite.setPosition(i.second.coord.x * 10, i.second.coord.y * 10);
+                window->draw(i.second.ship->sprite);
+            }
+            for (auto &j : mission.get_pirate_table()->get_table()){
+                j.second.ship->sprite.setPosition(j.second.coord.x * 10, j.second.coord.y * 10);
+                window->draw(j.second.ship->sprite);
+            }
+            window->draw(text);
+            window->display();
+        } else if (heroteleporttimer > 100){
+            heroteleporttimer = 0;
+            bot_turn();
+
+
+            if (mission.get_weight() < mission.get_max_weight()) {
+                while (window->isOpen()) {
+                    sf::Event event;
+                    while (window->pollEvent(event)) {
+                        if (event.type == sf::Event::Closed)
+                            window->close();
+                        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) {
+                            window->close();
+                        }
+                    }
+                    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) {
+                        break;
+                    }
+
+                    text.setString("You`re lose!");
+                    text.setFillColor(sf::Color::Red);
+                    text.setCharacterSize(90);
+                    text.setPosition(centerPos.x - text.getGlobalBounds().width / 2,
+                                     centerPos.y - text.getGlobalBounds().height / 2);
+                    window->clear();
+                    window->draw(map.sprite);
+                    for (auto &i : mission.get_convoy_table()->get_table()){
+                        i.second.ship->sprite.setPosition(i.second.coord.x * 10, i.second.coord.y * 10);
+                        window->draw(i.second.ship->sprite);
+                    }
+                    for (auto &j : mission.get_pirate_table()->get_table()){
+                        j.second.ship->sprite.setPosition(j.second.coord.x * 10, j.second.coord.y * 10);
+                        window->draw(j.second.ship->sprite);
+                    }
+                    window->draw(text);
+                    window->display();
+                }
+                break;
+            }
+
+            window->clear();
+            window->draw(map.sprite);
+            for (auto &i : mission.get_convoy_table()->get_table()){
+                i.second.ship->sprite.setPosition(i.second.coord.x * 10, i.second.coord.y * 10);
+                window->draw(i.second.ship->sprite);
+            }
+            for (auto &j : mission.get_pirate_table()->get_table()){
+                j.second.ship->sprite.setPosition(j.second.coord.x * 10, j.second.coord.y * 10);
+                window->draw(j.second.ship->sprite);
+            }
+            window->draw(text);
+            window->display();
+            flag = true;
         }
-    } while (true);
+    }
 }
 
 void App::displace(int x_, int y_) noexcept {
@@ -877,43 +1684,22 @@ void App::displace(int x_, int y_) noexcept {
 }
 
 void App::shoot() noexcept {
+
     if (mission.count_convoy() != 0) {
-        auto table = mission.get_convoy_table()->get_table();
-        unsigned long result;
-        std::string name;
-        bool flag = false;
-        int count = 0;
-        std::vector<std::pair<unsigned long, int>> *data;
-        for (auto &i: table) {
-            data = mission.find_to_shoot(i.first);
-            for (auto const &j: *data) {
-                auto pirate = mission.get_pirate(j.first);
-                if (j.second != 0) {
-                    if (count == 0) {
-                        std::cout << "Сейчас стреляет корабль " << i.second.ship->get_name() << std::endl;
-                        std::cout << "Доступна стрельба по кораблям пиратов: " << std::endl;
-                    }
-                    std::cout << "Имя: " << pirate->get_name() << "\t Тип: ";
-                    pirate->print_type();
-                    std::cout << "\t Текущее здоровье: " << pirate->get_hp() << "\t Урон по кораблю: " << j.second
-                              << std::endl;
-                    flag = true;
-                    count++;
+        auto table_pirate = mission.get_pirate_table()->get_table();
+        auto table_convoy = mission.get_convoy_table()->get_table();
+
+        unsigned long count_pirate = mission.count_pirates();
+        if (count_pirate == 0){
+            return;
+        }
+        for (auto &j : table_convoy){
+            if (j.second.ship->get_type() != TRANSPORT) {
+                if (mission.count_pirates() == 0) {
+                    return;
                 }
+                mission.shoot(j.first, table_pirate.begin()->first);
             }
-            count = 0;
-            if (flag) {
-                std::cout << "Выберете корабль, по которому будете стрелять" << std::endl;
-                std::cin >> name;
-                try {
-                    result = mission.get_pirate_id(name);
-                    mission.shoot(i.first, result);
-                } catch (std::invalid_argument const &err) {
-                    std::cout << "Такого корабля нет!" << std::endl;
-                }
-            }
-            flag = false;
-            delete data;
         }
     }
 }

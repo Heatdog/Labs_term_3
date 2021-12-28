@@ -334,6 +334,8 @@ public:
     sf::Image image;
     sf::Texture texture;
     sf::Sprite sprite;
+
+
 private:
     ShipType type; ///< тип корабля
     std::string name; ///< имя

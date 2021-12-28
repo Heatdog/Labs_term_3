@@ -87,12 +87,16 @@ int main() {
         }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
             start.buy_convoy(window);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)){
             start.buy_weapon(window);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)) {
-
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)){
+            start.sell_convoy(window);
+        }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+            start.sell_weapon(window);
+        }else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)){
+            start.print_all_convoy(window);
+        } else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num0)){
+            break;
         }
         text_money.setString("Current money: " + std::to_string(start.mission.get_money() - start.mission.get_spent_money()));
         if (start.mission.get_max_weight() - start.mission.get_weight() > 0){
@@ -115,6 +119,9 @@ int main() {
 
         window->display();
     }
+
+    start.upload(window);
+    start.gameplay(window);
 
     delete window;
     return 0;

@@ -69,8 +69,8 @@ Mission::Mission() : money(0), max_weight(0){
     base.at(0).y = Map::get_height()/2;
     base.at(1).x = Map::get_distance()-1;
     base.at(1).y = Map::get_height()/2;
-    base_pirate.x = static_cast<int>(mersenne()%(base.at(1).x-50) + 50);
-    base_pirate.y = static_cast<int>(mersenne()%Map::get_height());
+    base_pirate.x = Map::get_distance() - 20;
+    base_pirate.y = Map::get_height()/4;
     set_pirates();
     spent_money = 0;
     weight = 0;
@@ -416,19 +416,23 @@ std::vector<std::pair<unsigned long, int>>* Mission::find_to_shoot(const unsigne
 }
 
 void Mission::shoot(const unsigned long &id_from, const unsigned long &id_to) noexcept {
-    Element convoy = get_convoy_table()->find_element(id_from);
-    Element pirate = get_pirate_table()->find_element(id_to);
-    int sum_damage = 0;
-    std::array<Weapon, 4> wp = convoy.ship->get_wp();
-    double displacement = sqrt(pow(convoy.coord.x - pirate.coord.x, 2) + pow(convoy.coord.y - pirate.coord.y, 2));
-    for (int i = 0; i < 4; i++){
-        if (wp[i].get_range() >= displacement){
-            sum_damage += wp[i].shoot();
+    try {
+        Element convoy = get_convoy_table()->find_element(id_from);
+        Element pirate = get_pirate_table()->find_element(id_to);
+        int sum_damage = 0;
+        std::array<Weapon, 4> wp = convoy.ship->get_wp();
+        double displacement = sqrt(pow(convoy.coord.x - pirate.coord.x, 2) + pow(convoy.coord.y - pirate.coord.y, 2));
+        for (int i = 0; i < 4; i++) {
+            if (wp[i].get_range() >= displacement) {
+                sum_damage += wp[i].shoot();
+            }
         }
-    }
-    get_pirate(id_to)->take_damage(sum_damage);
-    if (get_pirate(id_to)->get_hp() <= 0){
-        erase_pirate(id_to);
+        get_pirate(id_to)->take_damage(sum_damage);
+        if (get_pirate(id_to)->get_hp() <= 0) {
+            erase_pirate(id_to);
+        }
+    }catch (std::invalid_argument const &err){
+        return;
     }
 }
 

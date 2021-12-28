@@ -38,9 +38,6 @@ private:
     static std::string print_info_weapon(WeaponName type_, std::string& wd) noexcept;
     static WeaponName select_weapon(sf::RenderWindow* window, int i) noexcept;
     static int enter_int() noexcept;
-    void sell_convoy() noexcept;
-    void sell_weapon() noexcept;
-    void print_all_convoy() const noexcept;
     void displace(int x_, int y_) noexcept;
     void shoot() noexcept;
     void bot_turn() noexcept;
@@ -49,12 +46,15 @@ private:
 public:
     explicit App(Level level_) noexcept; // выбор уровня
     void buy(sf::RenderWindow* window) noexcept; // покупка кораблей и вооружения
-    bool upload() noexcept; // загрузка груза
-    void gameplay() noexcept; // геймплей
+    bool upload(sf::RenderWindow* window) noexcept; // загрузка груза
+    void gameplay(sf::RenderWindow* window) noexcept; // геймплей
     Level get_level() const noexcept {return level;}
     Mission mission; // миссия
     void buy_convoy(sf::RenderWindow* window) noexcept;
     void buy_weapon(sf::RenderWindow* window) noexcept;
+    void sell_convoy(sf::RenderWindow* window) noexcept;
+    void sell_weapon(sf::RenderWindow* window) noexcept;
+    void print_all_convoy(sf::RenderWindow* window) const noexcept;
     static std::string print_info_ship(ShipType type_, std::string& wd) noexcept;
 };
 
