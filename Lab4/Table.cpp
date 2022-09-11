@@ -45,6 +45,8 @@ void Table::erase(unsigned long const &id) {
     }
 }
 
+gggg
+
 std::shared_ptr<Ship> Table::find(unsigned long const &id) const{
     auto i = table.find(id);
     if (i == table.end()){

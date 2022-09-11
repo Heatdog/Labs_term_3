@@ -97,11 +97,6 @@ void Mission::set_pirates() const { // можно для пиратов сдел
             throw err;
         }
         try{
-            insert_pirate(HCRUISER, "3", MEDIUM, MEDIUM, MEDIUM, BIG);
-        }catch (std::invalid_argument const &err) {
-            throw err;
-        }
-        try{
             insert_pirate(LCRUISER, "4", MEDIUM, MEDIUM, MEDIUM, SMALL);
         }catch (std::invalid_argument const &err) {
             throw err;
